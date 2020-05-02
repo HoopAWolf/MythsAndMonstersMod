@@ -1,0 +1,10 @@
+# THIS IS THE BLOCKSTATE FILE. IT GOES IN THE assets/mwaw/blockstates/ folder.
+# Generated using sheenrox82's JSON File Generator for Minecraft 1.8.
+
+{
+"variants": {
+"normal": {
+"model": "mwaw:mwaw_lightningwitchspawner"
+}
+}
+}
