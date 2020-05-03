@@ -20,6 +20,6 @@ public class KitsuneRenderer extends MobRenderer<KitsuneEntity, KitsuneModel>
     @Override
     public ResourceLocation getEntityTexture(KitsuneEntity _entity)
     {
-        return TEXTURE;
+        return (_entity.isVillagerForm()) ? VILLAGER_TEXTURE : TEXTURE;
     }
 }

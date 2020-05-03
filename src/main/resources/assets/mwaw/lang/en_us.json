@@ -43,19 +43,19 @@
   "item.mwaw.antler": "Mystical Antler",
   "item.mwaw.fairydust": "Fairy Dust",
   "item.mwaw.badapple": "Bad Apple",
-
+  "item.mwaw.scalemail": "Scale Mail",
+  "item.mwaw.taintedseed": "Tainted Seed",
   "item.mwaw.goldenbow": "Golden Bow",
   "item.mwaw.goldenarrow": "Golden Arrow",
   "item.mwaw.dendroidsword": "Dendroid Sword",
   "item.mwaw.marrowsword": "Marrow Sword",
+  "item.mwaw.bonedagger": "Bone Dagger",
   "item.mwaw.fairyspawnegg": "Fairy Spawn Egg",
   "item.mwaw.sandwyrmspawnegg": "Sand Wyrm Spawn Egg",
   "item.mwaw.dendroidspawnegg": "Dendroid Spawn Egg",
   "item.mwaw.wolpertingerspawnegg": "Wolpertinger Spawn Egg",
   "item.mwaw.kitsunespawnegg": "Kitsune Spawn Egg",
-
   "block.mwaw.fairymushroom": "Fairy Mushroom",
-
   "itemGroup.mwawItemGroup": "Myths & Monsters",
   "tooltip.mwaw:dendroidinfo": "Hold Logs in your offhand to repair this weapon",
   "tooltip.mwaw:marrowinfo": "Turns hunger into health upon taking damage",
@@ -70,19 +70,15 @@
   "tooltip.mwaw:airshard": "Air Energy",
   "tooltip.mwaw:iceshard": "Ice Energy",
   "tooltip.mwaw:sandshard": "Sand Energy",
-
   "entity.mwaw.fairy": "Fairy",
   "entity.mwaw.sandwyrm": "Sand Wyrm",
   "entity.mwaw.dendroid": "Dendroid",
   "entity.mwaw.wolpertinger": "Wolpertinger",
   "entity.mwaw.kitsune": "Kitsune",
-
   "entity.mwaw.goldenarrow": "Golden Arrow",
   "entity.mwaw.sap": "Soul Sap",
-
+  "entity.mwaw.foxhead": "Fox Spirit",
   "advancements.mwaw.root.description": "Folklore, Myth and Urban Legend",
-
   "advancements.mwaw.killfairy.title": "A Fairy tale beginning...",
   "advancements.mwaw.killfairy.description": "Killed a Fairy"
-
 }

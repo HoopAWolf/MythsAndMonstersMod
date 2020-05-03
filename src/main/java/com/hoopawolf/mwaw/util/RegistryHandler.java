@@ -2,15 +2,14 @@ package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.blocks.FairyMushroomBlock;
 import com.hoopawolf.mwaw.entities.*;
+import com.hoopawolf.mwaw.entities.projectiles.FoxHeadEntity;
 import com.hoopawolf.mwaw.entities.projectiles.GoldenArrowEntity;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
+import com.hoopawolf.mwaw.items.BadAppleItem;
 import com.hoopawolf.mwaw.items.ItemBase;
 import com.hoopawolf.mwaw.items.MWAWSpawnEggItem;
 import com.hoopawolf.mwaw.items.ShardItem;
-import com.hoopawolf.mwaw.items.weapons.DendroidSwordItem;
-import com.hoopawolf.mwaw.items.weapons.GoldenArrowItem;
-import com.hoopawolf.mwaw.items.weapons.GoldenBowItem;
-import com.hoopawolf.mwaw.items.weapons.MarrowSwordItem;
+import com.hoopawolf.mwaw.items.weapons.*;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.tab.MWAWItemGroup;
 import net.minecraft.block.Block;
@@ -19,6 +18,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTier;
 import net.minecraft.particles.BasicParticleType;
@@ -41,6 +41,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class RegistryHandler
 {
+    public static final Food BAD_APPLE_STAT = (new Food.Builder()).hunger(4).saturation(1.2F).setAlwaysEdible().build();
+
+
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Reference.MOD_ID);
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Reference.MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Reference.MOD_ID);
@@ -113,7 +116,11 @@ public class RegistryHandler
     public static final RegistryObject<Item> DENDROID_EYE = ITEMS.register("dendroideye", () -> new ItemBase(new Item.Properties().maxStackSize(1)));
     public static final RegistryObject<Item> ANTLER = ITEMS.register("antler", () -> new ItemBase(new Item.Properties()));
     public static final RegistryObject<Item> FAIRY_DUST = ITEMS.register("fairydust", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> BAD_APPLE = ITEMS.register("badapple", () -> new ItemBase(new Item.Properties()));
+    public static final RegistryObject<Item> SCALE_MAIL = ITEMS.register("scalemail", () -> new ItemBase(new Item.Properties()));
+    public static final RegistryObject<Item> TAINTED_SEED = ITEMS.register("taintedseed", () -> new ItemBase(new Item.Properties().maxStackSize(16)));
+
+
+    public static final RegistryObject<Item> BAD_APPLE = ITEMS.register("badapple", () -> new BadAppleItem(new Item.Properties().group(MWAWItemGroup.instance).food(BAD_APPLE_STAT)));
 
 
     public static final RegistryObject<Item> FIRE_EGG = ITEMS.register("fireegg", () -> new ItemBase(new Item.Properties().maxStackSize(1)));
@@ -128,6 +135,7 @@ public class RegistryHandler
     public static final RegistryObject<Item> FIRE_STAFF = ITEMS.register("firestaff", () -> new ItemBase(new Item.Properties()));
     public static final RegistryObject<Item> DENDROID_SWORD = ITEMS.register("dendroidsword", () -> new DendroidSwordItem(ItemTier.DIAMOND, 3, -2.5f, new Item.Properties().maxDamage(359)));
     public static final RegistryObject<Item> MARROW_SWORD = ITEMS.register("marrowsword", () -> new MarrowSwordItem(ItemTier.DIAMOND, 4, -2.5f, new Item.Properties().maxDamage(1000)));
+    public static final RegistryObject<Item> BONE_DAGGER = ITEMS.register("bonedagger", () -> new BoneDaggerItem(ItemTier.DIAMOND, 4, -2.5f, new Item.Properties().maxDamage(1000)));
     public static final RegistryObject<Item> GOLDEN_BOW = ITEMS.register("goldenbow", () -> new GoldenBowItem(new Item.Properties().maxStackSize(1).group(MWAWItemGroup.instance)));
     /*public static final RegistryObject<Item> WATER_STAFF = ITEMS.register("waterstaff", ItemBase::new);
     public static final RegistryObject<Item> LIGHTNING_STAFF = ITEMS.register("lightningstaff", ItemBase::new);
@@ -175,9 +183,14 @@ public class RegistryHandler
             .size(0.25F, 0.25F)
             .build("sap"));
 
+    public static final RegistryObject<EntityType<FoxHeadEntity>> FOX_HEAD_ENTITY = ENTITIES.register("foxspirit", () -> EntityType.Builder.<FoxHeadEntity>create(FoxHeadEntity::new, EntityClassification.MISC)
+            .size(0.5F, 0.5F)
+            .build("foxspirit"));
+
     //PARTICLES
     public static final RegistryObject<BasicParticleType> YELLOW_ORBITING_ENCHANTMENT_PARTICLE = PARTICLES.register("yelloworbitingenchantparticle", () -> new BasicParticleType(false));
-    public static final RegistryObject<BasicParticleType> YELLOW_SUCKING_ENCHANTMENT_PARTICLE = PARTICLES.register("yellowsuckingenchantparticle", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> GREEN_SUCKING_ENCHANTMENT_PARTICLE = PARTICLES.register("yellowsuckingenchantparticle", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> GREEN_FLAME_PARTICLE = PARTICLES.register("greenflameparticle", () -> new BasicParticleType(false));
 
 
     //SPAWN EGGS

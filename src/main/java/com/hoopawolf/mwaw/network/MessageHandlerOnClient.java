@@ -33,12 +33,12 @@ public class MessageHandlerOnClient
 
     static BasicParticleType[] orbiting_types = //0 - YELLOW ENCHANTMENT
             {
-                   RegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get()
+                    RegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get()
             };
 
     static BasicParticleType[] sucking_types = //0 - YELLOW ENCHANTMENT
             {
-                    RegistryHandler.YELLOW_SUCKING_ENCHANTMENT_PARTICLE.get()
+                    RegistryHandler.GREEN_SUCKING_ENCHANTMENT_PARTICLE.get()
             };
 
     public static void onMessageReceived(final MessageToClient message, Supplier<NetworkEvent.Context> ctxSupplier)

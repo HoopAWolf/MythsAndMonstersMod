@@ -95,7 +95,7 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
         this.field_217152_f = (new ModelRenderer(this)).setTextureSize(64, 64);
         this.field_217152_f.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.field_217152_f.setTextureOffset(30, 47).addBox(-8.0F, -8.0F, -6.0F, 16.0F, 16.0F, 1.0F, 64);
-        this.field_217152_f.rotateAngleX = (-(float)Math.PI / 2F);
+        this.field_217152_f.rotateAngleX = (-(float) Math.PI / 2F);
         this.field_217151_b.addChild(this.field_217152_f);
         this.villagerNose = (new ModelRenderer(this)).setTextureSize(64, 64);
         this.villagerNose.setRotationPoint(0.0F, -2.0F, 0.0F);
@@ -145,11 +145,15 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
 
     public void setLivingAnimations(KitsuneEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
     {
-        villagerHead.showModel = false;
-        villagerBody.showModel = false;
-        villagerArms.showModel = false;
-        leftVillagerLeg.showModel = false;
-        rightVillagerLeg.showModel = false;
+        if (entityIn.isVillagerForm())
+        {
+            showFoxModel(false, entityIn.getFoxPhase());
+            showVillagerModel(true);
+        } else
+        {
+            showFoxModel(true, entityIn.getFoxPhase());
+            showVillagerModel(false);
+        }
     }
 
     @Override
@@ -192,8 +196,8 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
         }
 
         //villager
-        this.villagerHead.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
-        this.villagerHead.rotateAngleX = headPitch * ((float)Math.PI / 180F);
+        this.villagerHead.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
+        this.villagerHead.rotateAngleX = headPitch * ((float) Math.PI / 180F);
 //        if (flag) {
 //            this.villagerHead.rotateAngleZ = 0.3F * MathHelper.sin(0.45F * ageInTicks);
 //            this.villagerHead.rotateAngleX = 0.4F;
@@ -205,8 +209,30 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
         this.villagerArms.rotationPointZ = -1.0F;
         this.villagerArms.rotateAngleX = -0.75F;
         this.rightVillagerLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount * 0.5F;
-        this.leftVillagerLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount * 0.5F;
+        this.leftVillagerLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount * 0.5F;
         this.rightVillagerLeg.rotateAngleY = 0.0F;
         this.leftVillagerLeg.rotateAngleY = 0.0F;
+    }
+
+    private void showFoxModel(boolean _isShowing, int foxPhase)
+    {
+        Body.showModel = _isShowing;
+        RightTail.showModel = (foxPhase > 2) ? _isShowing : false;
+        LeftTail.showModel = (foxPhase > 1) ? _isShowing : false;
+        CenterTail.showModel = (foxPhase > 0) ? _isShowing : false;
+        Head.showModel = _isShowing;
+        FrontRightLeg.showModel = _isShowing;
+        FrontLeftLeg.showModel = _isShowing;
+        BackLeftLeg.showModel = _isShowing;
+        BackRightLeg.showModel = _isShowing;
+    }
+
+    private void showVillagerModel(boolean _isShowing)
+    {
+        villagerHead.showModel = _isShowing;
+        villagerBody.showModel = _isShowing;
+        villagerArms.showModel = _isShowing;
+        rightVillagerLeg.showModel = _isShowing;
+        leftVillagerLeg.showModel = _isShowing;
     }
 }

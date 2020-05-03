@@ -1,10 +1,9 @@
 package com.hoopawolf.mwaw.client.particles;
 
-import net.minecraft.client.particle.*;
-import net.minecraft.particles.BasicParticleType;
+import net.minecraft.client.particle.IParticleRenderType;
+import net.minecraft.client.particle.SpriteTexturedParticle;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class OrbitingParticle extends SpriteTexturedParticle
 {
@@ -37,11 +36,6 @@ public class OrbitingParticle extends SpriteTexturedParticle
         this.prevPosY = yCoordIn + ySpeedIn;
         this.prevPosZ = coordZ + Math.sin(orbitAngle) * spread;
         this.particleScale = 0.1F * (this.rand.nextFloat() * 0.5F + 0.2F);
-        float f = this.rand.nextFloat() * 0.6F + 0.4F;
-        this.particleRed = 0.9F * f;
-        this.particleGreen = 0.9F * f;
-        this.particleBlue = 0.0F;
-        this.particleAlpha = 0.5F;
         this.canCollide = false;
         this.maxAge = (int) (Math.random() * 10.0D) + 40;
         this.particleGravity = 0.0F;
@@ -66,16 +60,15 @@ public class OrbitingParticle extends SpriteTexturedParticle
 
     public int getBrightnessForRender(float partialTick)
     {
+        float f = ((float) this.age + partialTick) / (float) this.maxAge;
+        f = MathHelper.clamp(f, 0.0F, 1.0F);
         int i = super.getBrightnessForRender(partialTick);
-        float f = (float) this.age / (float) this.maxAge;
-        f = f * f;
-        f = f * f;
         int j = i & 255;
         int k = i >> 16 & 255;
-        k = k + (int) (f * 15.0F * 16.0F);
-        if (k > 240)
+        j = j + (int) (f * 15.0F * 16.0F);
+        if (j > 240)
         {
-            k = 240;
+            j = 240;
         }
 
         return j | k << 16;

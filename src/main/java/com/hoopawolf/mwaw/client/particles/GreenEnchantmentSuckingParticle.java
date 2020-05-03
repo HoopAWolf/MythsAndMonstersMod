@@ -8,16 +8,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class YellowEnchantmentSuckingParticle extends SuckingParticle
+public class GreenEnchantmentSuckingParticle extends SuckingParticle
 {
-    protected YellowEnchantmentSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
+    protected GreenEnchantmentSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, spreadIn);
     }
 
-    protected YellowEnchantmentSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    protected GreenEnchantmentSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+        float f = this.rand.nextFloat() * 0.6F + 0.4F;
+        this.particleRed = 0.4F;
+        this.particleGreen = 0.9F * f;
+        this.particleBlue = 0.4F;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -32,7 +36,7 @@ public class YellowEnchantmentSuckingParticle extends SuckingParticle
 
         public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
         {
-            YellowEnchantmentSuckingParticle yellowenchantmentparticle = new YellowEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
+            GreenEnchantmentSuckingParticle yellowenchantmentparticle = new GreenEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
             return yellowenchantmentparticle;
         }
@@ -40,32 +44,32 @@ public class YellowEnchantmentSuckingParticle extends SuckingParticle
         @Override
         public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
-            YellowEnchantmentSuckingParticle yellowenchantmentparticle = new YellowEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
+            GreenEnchantmentSuckingParticle yellowenchantmentparticle = new GreenEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
             return yellowenchantmentparticle;
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class NautilusFactory implements IParticleFactory<BasicParticleType>
+    public static class Factory implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;
 
-        public NautilusFactory(IAnimatedSprite p_i50442_1_)
+        public Factory(IAnimatedSprite p_i50442_1_)
         {
             this.spriteSet = p_i50442_1_;
         }
 
         public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
         {
-            YellowEnchantmentSuckingParticle yellowenchantmentparticle = new YellowEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
+            GreenEnchantmentSuckingParticle yellowenchantmentparticle = new GreenEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
             return yellowenchantmentparticle;
         }
 
         public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
-            YellowEnchantmentSuckingParticle yellowenchantmentparticle = new YellowEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
+            GreenEnchantmentSuckingParticle yellowenchantmentparticle = new GreenEnchantmentSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
             return yellowenchantmentparticle;
         }

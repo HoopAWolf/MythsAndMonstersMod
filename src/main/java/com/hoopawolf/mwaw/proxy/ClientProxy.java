@@ -1,9 +1,11 @@
 package com.hoopawolf.mwaw.proxy;
 
+import com.hoopawolf.mwaw.client.particles.GreenEnchantmentSuckingParticle;
+import com.hoopawolf.mwaw.client.particles.GreenFlameParticle;
 import com.hoopawolf.mwaw.client.particles.YellowEnchantmentOrbitingParticle;
-import com.hoopawolf.mwaw.client.particles.YellowEnchantmentSuckingParticle;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import com.hoopawolf.mwaw.entities.renderer.*;
+import com.hoopawolf.mwaw.entities.renderer.projectiles.FoxHeadRenderer;
 import com.hoopawolf.mwaw.entities.renderer.projectiles.GoldenArrowRenderer;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.util.RegistryHandler;
@@ -48,15 +50,18 @@ public class ClientProxy implements IProxy
 
         RenderingRegistry.registerEntityRenderingHandler(RegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(RegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(RegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
 
         RenderTypeLookup.setRenderLayer(RegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
     }
 
     @SubscribeEvent
-    public static void registerFactories(ParticleFactoryRegisterEvent event) {
+    public static void registerFactories(ParticleFactoryRegisterEvent event)
+    {
         ParticleManager particles = Minecraft.getInstance().particles;
 
-        particles.registerFactory(RegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get(), YellowEnchantmentOrbitingParticle.NautilusFactory::new);
-        particles.registerFactory(RegistryHandler.YELLOW_SUCKING_ENCHANTMENT_PARTICLE.get(), YellowEnchantmentSuckingParticle.NautilusFactory::new);
+        particles.registerFactory(RegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get(), YellowEnchantmentOrbitingParticle.Factory::new);
+        particles.registerFactory(RegistryHandler.GREEN_SUCKING_ENCHANTMENT_PARTICLE.get(), GreenEnchantmentSuckingParticle.Factory::new);
+        particles.registerFactory(RegistryHandler.GREEN_FLAME_PARTICLE.get(), GreenFlameParticle.Factory::new);
     }
 }

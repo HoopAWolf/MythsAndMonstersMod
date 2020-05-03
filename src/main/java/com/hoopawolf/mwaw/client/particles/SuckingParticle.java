@@ -18,7 +18,7 @@ public class SuckingParticle extends SpriteTexturedParticle
     protected SuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn);
-        spread = 3.75D; //TODO will be here until i find a better way
+        spread = 1.75D; //TODO will be here until i find a better way
 
         double coordX = (worldIn.rand.nextInt(100) < 50) ? xCoordIn - spread : xCoordIn + spread;
         double coordY = (worldIn.rand.nextInt(100) < 50) ? yCoordIn - spread : yCoordIn + spread;
@@ -34,13 +34,9 @@ public class SuckingParticle extends SpriteTexturedParticle
         this.posY = coordY;
         this.posZ = coordZ;
         this.particleScale = 0.1F * (this.rand.nextFloat() * 0.5F + 0.2F);
-        float f = this.rand.nextFloat() * 0.6F + 0.4F;
-        this.particleRed = 0.9F * f;
-        this.particleGreen = 0.9F * f;
-        this.particleBlue = 0.0F;
         this.setAlphaF(0.5F);
         this.canCollide = false;
-        this.maxAge = (int) (Math.random() * 10.0D) + 80;
+        this.maxAge = (int) (Math.random() * 10.0D) + 10;
         this.particleGravity = 0.0F;
     }
 
@@ -57,16 +53,15 @@ public class SuckingParticle extends SpriteTexturedParticle
 
     public int getBrightnessForRender(float partialTick)
     {
+        float f = ((float) this.age + partialTick) / (float) this.maxAge;
+        f = MathHelper.clamp(f, 0.0F, 1.0F);
         int i = super.getBrightnessForRender(partialTick);
-        float f = (float) this.age / (float) this.maxAge;
-        f = f * f;
-        f = f * f;
         int j = i & 255;
         int k = i >> 16 & 255;
-        k = k + (int) (f * 15.0F * 16.0F);
-        if (k > 240)
+        j = j + (int) (f * 15.0F * 16.0F);
+        if (j > 240)
         {
-            k = 240;
+            j = 240;
         }
 
         return j | k << 16;

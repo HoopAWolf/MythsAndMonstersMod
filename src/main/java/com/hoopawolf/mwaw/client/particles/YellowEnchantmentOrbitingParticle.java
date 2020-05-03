@@ -1,6 +1,8 @@
 package com.hoopawolf.mwaw.client.particles;
 
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.IAnimatedSprite;
+import net.minecraft.client.particle.IParticleFactory;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,6 +20,11 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
     private YellowEnchantmentOrbitingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+        float f = this.rand.nextFloat() * 0.6F + 0.4F;
+        this.particleRed = 0.9F * f;
+        this.particleGreen = 0.9F * f;
+        this.particleBlue = 0.0F;
+        this.particleAlpha = 0.5F;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -47,11 +54,11 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class NautilusFactory implements IParticleFactory<BasicParticleType>
+    public static class Factory implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;
 
-        public NautilusFactory(IAnimatedSprite p_i50442_1_)
+        public Factory(IAnimatedSprite p_i50442_1_)
         {
             this.spriteSet = p_i50442_1_;
         }

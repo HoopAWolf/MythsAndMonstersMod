@@ -2,8 +2,6 @@ package com.hoopawolf.mwaw.items.weapons;
 
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnOrbitingParticleMessage;
-import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
-import com.hoopawolf.mwaw.network.packets.client.SpawnSuckingParticleMessage;
 import com.hoopawolf.mwaw.util.RegistryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -45,7 +43,7 @@ public class GoldenBowItem extends ShootableItem
 
     public void onUse(World worldIn, LivingEntity livingEntityIn, ItemStack stack, int count)
     {
-        if(!worldIn.isRemote)
+        if (!worldIn.isRemote)
         {
             SpawnOrbitingParticleMessage spawnParticleMessage = new SpawnOrbitingParticleMessage(livingEntityIn.getPositionVec(), new Vec3d(0.0D, 0.02D, 0.0D), 1, 0, 0.5F);
             MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> livingEntityIn.dimension), spawnParticleMessage);
