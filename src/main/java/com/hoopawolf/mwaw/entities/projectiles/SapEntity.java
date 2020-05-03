@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities.projectiles;
 
+import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import com.hoopawolf.mwaw.util.RegistryHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -30,12 +31,12 @@ public class SapEntity extends ProjectileItemEntity
 
     public SapEntity(World worldIn, LivingEntity throwerIn)
     {
-        super(RegistryHandler.SAP_ENTITY.get(), throwerIn, worldIn);
+        super(EntityRegistryHandler.SAP_ENTITY.get(), throwerIn, worldIn);
     }
 
     public SapEntity(World worldIn, double x, double y, double z)
     {
-        super(RegistryHandler.SAP_ENTITY.get(), x, y, z, worldIn);
+        super(EntityRegistryHandler.SAP_ENTITY.get(), x, y, z, worldIn);
     }
 
     protected Item getDefaultItem()

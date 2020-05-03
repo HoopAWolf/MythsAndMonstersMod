@@ -1,16 +1,11 @@
 package com.hoopawolf.mwaw.ref;
 
-import com.hoopawolf.mwaw.proxy.ClientProxy;
-import com.hoopawolf.mwaw.proxy.IProxy;
-import com.hoopawolf.mwaw.proxy.ServerProxy;
-import net.minecraftforge.fml.DistExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Reference
 {
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final IProxy PROXY = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
     public static final String MESSAGE_PROTOCOL_VERSION = "1.0";
 
     public static final String MOD_ID = "mwaw";

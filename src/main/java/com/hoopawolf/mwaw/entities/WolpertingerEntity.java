@@ -2,7 +2,7 @@ package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -450,7 +450,7 @@ public class WolpertingerEntity extends AnimalEntity
 
     public AgeableEntity createChild(AgeableEntity ageable)
     {
-        WolpertingerEntity wolpertingerbaby = new WolpertingerEntity(RegistryHandler.WOLPERTINGER_ENTITY.get(), world);
+        WolpertingerEntity wolpertingerbaby = new WolpertingerEntity(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), world);
 
         wolpertingerbaby.setWolpertingerType(this.getWolpertingerType());
         return wolpertingerbaby;

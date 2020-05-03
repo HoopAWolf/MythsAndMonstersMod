@@ -1,10 +1,6 @@
 package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.blocks.FairyMushroomBlock;
-import com.hoopawolf.mwaw.entities.*;
-import com.hoopawolf.mwaw.entities.projectiles.FoxHeadEntity;
-import com.hoopawolf.mwaw.entities.projectiles.GoldenArrowEntity;
-import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import com.hoopawolf.mwaw.items.BadAppleItem;
 import com.hoopawolf.mwaw.items.ItemBase;
 import com.hoopawolf.mwaw.items.MWAWSpawnEggItem;
@@ -15,14 +11,10 @@ import com.hoopawolf.mwaw.tab.MWAWItemGroup;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTier;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.GenerationStage;
@@ -43,30 +35,13 @@ public class RegistryHandler
 {
     public static final Food BAD_APPLE_STAT = (new Food.Builder()).hunger(4).saturation(1.2F).setAlwaysEdible().build();
 
-
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Reference.MOD_ID);
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Reference.MOD_ID);
-    public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Reference.MOD_ID);
-    public static final DeferredRegister<ParticleType<?>> PARTICLES = new DeferredRegister<>(ForgeRegistries.PARTICLE_TYPES, Reference.MOD_ID);
 
     public static void init(IEventBus _iEventBus)
     {
         ITEMS.register(_iEventBus);
         BLOCKS.register(_iEventBus);
-        ENTITIES.register(_iEventBus);
-        PARTICLES.register(_iEventBus);
-    }
-
-    public static void generateEntityWorldSpawn()
-    {
-        registerEntityWorldSpawn(SAND_WYRM_ENTITY.get(), EntityClassification.CREATURE, 10, 2, 2, new Biome[]{Biomes.DESERT, Biomes.DESERT_HILLS, Biomes.DESERT_LAKES});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 13, 3, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 10, 3, 3, new Biome[]{Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.BIRCH_FOREST_HILLS, Biomes.TALL_BIRCH_FOREST});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 5, 3, 3, new Biome[]{Biomes.SWAMP});
-        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 10, 1, 3, new Biome[]{Biomes.PLAINS});
-        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 13, 1, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS, Biomes.WOODED_MOUNTAINS, Biomes.GIANT_TREE_TAIGA});
-
-        registerEntityWorldSpawn(DENDROID_ENTITY.get(), EntityClassification.MONSTER, 5, 3, 3, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS});
     }
 
     public static void generateBlockWorldSpawn()
@@ -81,14 +56,6 @@ public class RegistryHandler
         for (Biome biome : biomes)
         {
             biome.addFeature(decoration, featureIn);
-        }
-    }
-
-    protected static void registerEntityWorldSpawn(EntityType<?> entity, EntityClassification classification, int weight, int minGroup, int maxGroup, Biome[] biomes)
-    {
-        for (Biome biome : biomes)
-        {
-            biome.getSpawns(classification).add(new Biome.SpawnListEntry(entity, weight, minGroup, maxGroup));
         }
     }
 
@@ -149,55 +116,11 @@ public class RegistryHandler
     public static final RegistryObject<Block> FAIRY_MUSHROOM_BLOCK = BLOCKS.register("fairymushroom", () -> new FairyMushroomBlock(Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().sound(SoundType.PLANT).lightValue(5)));
     public static final RegistryObject<Item> FAIRY_MUSHROOM_ITEM = ITEMS.register("fairymushroom", () -> new BlockItem(FAIRY_MUSHROOM_BLOCK.get(), new Item.Properties().group(MWAWItemGroup.instance)));
 
-    //ENTITIES
-    public static final RegistryObject<EntityType<FairyEntity>> FAIRY_ENTITY = ENTITIES.register("fairy", () -> EntityType.Builder.create(FairyEntity::new, EntityClassification.CREATURE)
-            .size(0.4F, 0.8F)
-            .setShouldReceiveVelocityUpdates(false)
-            .build("fairy"));
-
-    public static final RegistryObject<EntityType<SandWyrmEntity>> SAND_WYRM_ENTITY = ENTITIES.register("sandwyrm", () -> EntityType.Builder.create(SandWyrmEntity::new, EntityClassification.CREATURE)
-            .size(2.0F, 1.0F)
-            .setShouldReceiveVelocityUpdates(false)
-            .build("sandwyrm"));
-
-    public static final RegistryObject<EntityType<DendroidEntity>> DENDROID_ENTITY = ENTITIES.register("dendroid", () -> EntityType.Builder.create(DendroidEntity::new, EntityClassification.CREATURE)
-            .size(1.0F, 1.5F)
-            .setShouldReceiveVelocityUpdates(false)
-            .build("dendroid"));
-
-    public static final RegistryObject<EntityType<WolpertingerEntity>> WOLPERTINGER_ENTITY = ENTITIES.register("wolpertinger", () -> EntityType.Builder.create(WolpertingerEntity::new, EntityClassification.CREATURE)
-            .size(1.0F, 0.9F)
-            .setShouldReceiveVelocityUpdates(false)
-            .build("wolpertinger"));
-
-    public static final RegistryObject<EntityType<KitsuneEntity>> KITSUNE_ENTITY = ENTITIES.register("kitsune", () -> EntityType.Builder.create(KitsuneEntity::new, EntityClassification.CREATURE)
-            .size(1.0F, 0.9F)
-            .setShouldReceiveVelocityUpdates(false)
-            .build("wolpertinger"));
-
-    public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
-            .size(0.5F, 0.5F)
-            .build("goldenarrow"));
-
-    public static final RegistryObject<EntityType<SapEntity>> SAP_ENTITY = ENTITIES.register("sap", () -> EntityType.Builder.<SapEntity>create(SapEntity::new, EntityClassification.MISC)
-            .size(0.25F, 0.25F)
-            .build("sap"));
-
-    public static final RegistryObject<EntityType<FoxHeadEntity>> FOX_HEAD_ENTITY = ENTITIES.register("foxspirit", () -> EntityType.Builder.<FoxHeadEntity>create(FoxHeadEntity::new, EntityClassification.MISC)
-            .size(0.5F, 0.5F)
-            .build("foxspirit"));
-
-    //PARTICLES
-    public static final RegistryObject<BasicParticleType> YELLOW_ORBITING_ENCHANTMENT_PARTICLE = PARTICLES.register("yelloworbitingenchantparticle", () -> new BasicParticleType(false));
-    public static final RegistryObject<BasicParticleType> GREEN_SUCKING_ENCHANTMENT_PARTICLE = PARTICLES.register("yellowsuckingenchantparticle", () -> new BasicParticleType(false));
-    public static final RegistryObject<BasicParticleType> GREEN_FLAME_PARTICLE = PARTICLES.register("greenflameparticle", () -> new BasicParticleType(false));
-
-
     //SPAWN EGGS
-    public static final RegistryObject<MWAWSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairyspawnegg", () -> new MWAWSpawnEggItem(FAIRY_ENTITY, 0x15153F, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
-    public static final RegistryObject<MWAWSpawnEggItem> SAND_WYRM_SPAWN_EGG = ITEMS.register("sandwyrmspawnegg", () -> new MWAWSpawnEggItem(SAND_WYRM_ENTITY, 0x2A2A00, 0x3F3F15, new Item.Properties().group(MWAWItemGroup.instance)));
-    public static final RegistryObject<MWAWSpawnEggItem> DENDROID_SPAWN_EGG = ITEMS.register("dendroidspawnegg", () -> new MWAWSpawnEggItem(DENDROID_ENTITY, 0x2A2A00, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
-    public static final RegistryObject<MWAWSpawnEggItem> WOLPERTINGER_SPAWN_EGG = ITEMS.register("wolpertingerspawnegg", () -> new MWAWSpawnEggItem(WOLPERTINGER_ENTITY, 0x2A2A00, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
-    public static final RegistryObject<MWAWSpawnEggItem> KITSUNE_SPAWN_EGG = ITEMS.register("kitsunespawnegg", () -> new MWAWSpawnEggItem(KITSUNE_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairyspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.FAIRY_ENTITY, 0x15153F, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> SAND_WYRM_SPAWN_EGG = ITEMS.register("sandwyrmspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.SAND_WYRM_ENTITY, 0x2A2A00, 0x3F3F15, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> DENDROID_SPAWN_EGG = ITEMS.register("dendroidspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.DENDROID_ENTITY, 0x2A2A00, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> WOLPERTINGER_SPAWN_EGG = ITEMS.register("wolpertingerspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.WOLPERTINGER_ENTITY, 0x2A2A00, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> KITSUNE_SPAWN_EGG = ITEMS.register("kitsunespawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.KITSUNE_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
 
 }

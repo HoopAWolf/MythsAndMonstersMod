@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities.projectiles;
 
+import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import com.hoopawolf.mwaw.util.RegistryHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -21,12 +22,12 @@ public class GoldenArrowEntity extends AbstractArrowEntity
 
     public GoldenArrowEntity(World worldIn, double x, double y, double z)
     {
-        super(RegistryHandler.GOLDEN_ARROW_ENTITY.get(), x, y, z, worldIn);
+        super(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), x, y, z, worldIn);
     }
 
     public GoldenArrowEntity(World worldIn, LivingEntity shooter)
     {
-        super(RegistryHandler.GOLDEN_ARROW_ENTITY.get(), shooter, worldIn);
+        super(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), shooter, worldIn);
     }
 
     /**

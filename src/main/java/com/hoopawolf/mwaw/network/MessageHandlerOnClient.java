@@ -5,7 +5,7 @@ import com.hoopawolf.mwaw.network.packets.client.SpawnOrbitingParticleMessage;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import com.hoopawolf.mwaw.network.packets.client.SpawnSuckingParticleMessage;
 import com.hoopawolf.mwaw.ref.Reference;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ParticleRegistryHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.BlockParticleData;
@@ -33,12 +33,12 @@ public class MessageHandlerOnClient
 
     static BasicParticleType[] orbiting_types = //0 - YELLOW ENCHANTMENT
             {
-                    RegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get()
+                    ParticleRegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get()
             };
 
     static BasicParticleType[] sucking_types = //0 - YELLOW ENCHANTMENT
             {
-                    RegistryHandler.GREEN_SUCKING_ENCHANTMENT_PARTICLE.get()
+                    ParticleRegistryHandler.GREEN_SUCKING_ENCHANTMENT_PARTICLE.get()
             };
 
     public static void onMessageReceived(final MessageToClient message, Supplier<NetworkEvent.Context> ctxSupplier)

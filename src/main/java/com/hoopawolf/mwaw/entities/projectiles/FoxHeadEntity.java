@@ -2,7 +2,8 @@ package com.hoopawolf.mwaw.entities.projectiles;
 
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnSuckingParticleMessage;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.EntityRegistryHandler;
+import com.hoopawolf.mwaw.util.ParticleRegistryHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -58,14 +59,14 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
     @OnlyIn(Dist.CLIENT)
     public FoxHeadEntity(World worldIn, double x, double y, double z, double motionXIn, double motionYIn, double motionZIn)
     {
-        this(RegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
+        this(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
         this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
         this.setMotion(motionXIn, motionYIn, motionZIn);
     }
 
     public FoxHeadEntity(World worldIn, LivingEntity ownerIn, Entity targetIn, Direction.Axis p_i46772_4_)
     {
-        this(RegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
+        this(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
         this.owner = ownerIn;
         BlockPos blockpos = new BlockPos(ownerIn);
         double d0 = (double) blockpos.getX() + 0.5D;
@@ -199,7 +200,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
 
     protected IParticleData getParticle()
     {
-        return RegistryHandler.GREEN_FLAME_PARTICLE.get();
+        return ParticleRegistryHandler.GREEN_FLAME_PARTICLE.get();
     }
 
     protected void onImpact(RayTraceResult result)
