@@ -28,8 +28,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -347,7 +345,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         return modelRotateX;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean isTired()
     {
         return this.dataManager.get(TIRED);
@@ -358,7 +355,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.dataManager.set(TIRED, tired);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public int getSandWyrmType()
     {
         return this.dataManager.get(TYPE);
@@ -369,7 +365,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.dataManager.set(TYPE, type);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public int getRotation()
     {
         return this.dataManager.get(ROTATION);

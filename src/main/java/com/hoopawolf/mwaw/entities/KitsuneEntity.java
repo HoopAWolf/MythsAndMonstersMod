@@ -23,8 +23,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -109,7 +107,6 @@ public class KitsuneEntity extends CreatureEntity
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean isVillagerForm()
     {
         return this.dataManager.get(VILLAGER_FORM);
@@ -120,7 +117,6 @@ public class KitsuneEntity extends CreatureEntity
         this.dataManager.set(VILLAGER_FORM, isVillagerForm);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public int getFoxPhase()
     {
         return this.dataManager.get(FOX_PHASE);

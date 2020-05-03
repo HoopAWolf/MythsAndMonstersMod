@@ -30,8 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -87,7 +85,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.targetSelector.addGoal(2, (new FairyEntity.AngerGoal(this)).setCallsForHelp(new Class[0]));
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean isAngry()
     {
         return this.dataManager.get(ANGRY);
@@ -98,7 +95,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.dataManager.set(ANGRY, angry);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean isResting()
     {
         return this.dataManager.get(RESTING);

@@ -34,8 +34,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -206,7 +204,6 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public float getJumpCompletion(float p_175521_1_)
     {
         return this.jumpDuration == 0 ? 0.0F : ((float) this.jumpTicks + p_175521_1_) / (float) this.jumpDuration;
@@ -482,7 +479,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+
     public void handleStatusUpdate(byte id)
     {
         if (id == 1)
