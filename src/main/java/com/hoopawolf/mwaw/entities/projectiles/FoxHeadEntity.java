@@ -27,26 +27,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND DROP PLAYER MAIN HAND ITEM, MAYBE HAVE SOME HEALTH
 {
     private LivingEntity owner;
     private Entity target;
-    @Nullable
     private Direction direction;
     private double targetDeltaX;
     private double targetDeltaY;
     private double targetDeltaZ;
-    @Nullable
     private UUID ownerUniqueId;
-    @Nullable
     private UUID targetUniqueId;
 
     public FoxHeadEntity(EntityType<? extends FoxHeadEntity> p_i50161_1_, World p_i50161_2_)
@@ -56,7 +50,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         this.setNoGravity(true);
     }
 
-    @OnlyIn(Dist.CLIENT)
+
     public FoxHeadEntity(World worldIn, double x, double y, double z, double motionXIn, double motionYIn, double motionZIn)
     {
         this(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
@@ -76,11 +70,13 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         this.target = targetIn;
     }
 
+    @Override
     public SoundCategory getSoundCategory()
     {
         return SoundCategory.HOSTILE;
     }
 
+    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         if (this.owner != null)
@@ -113,9 +109,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         compound.putDouble("TZD", this.targetDeltaZ);
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readAdditional(CompoundNBT compound)
     {
         this.targetDeltaX = compound.getDouble("TXD");
@@ -140,9 +134,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
 
     }
 
-    /**
-     * Makes the entity despawn if requirements are reached
-     */
+    @Override
     public void checkDespawn()
     {
         if (this.world.getDifficulty() == Difficulty.PEACEFUL)
@@ -151,9 +143,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         }
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
+    @Override
     public void tick()
     {
         super.tick();
@@ -168,41 +158,37 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         }
     }
 
+    @Override
     protected float getMotionFactor()
     {
         return super.getMotionFactor();
     }
 
-    /**
-     * Returns true if the entity is on fire. Used by render to add the fire effect on rendering.
-     */
+    @Override
     public boolean isBurning()
     {
         return false;
     }
 
-    /**
-     * Checks if the entity is in range to render.
-     */
-    @OnlyIn(Dist.CLIENT)
+    @Override
     public boolean isInRangeToRenderDist(double distance)
     {
         return distance < 16384.0D;
     }
 
-    /**
-     * Gets how bright this entity is.
-     */
+    @Override
     public float getBrightness()
     {
         return 1.0F;
     }
 
+    @Override
     protected IParticleData getParticle()
     {
         return ParticleRegistryHandler.GREEN_FLAME_PARTICLE.get();
     }
 
+    @Override
     protected void onImpact(RayTraceResult result)
     {
         super.onImpact(result);
@@ -250,9 +236,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         }
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (!this.world.isRemote)
@@ -277,11 +261,13 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         this.remove();
     }
 
+    @Override
     protected boolean isFireballFiery()
     {
         return false;
     }
 
+    @Override
     public IPacket<?> createSpawnPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);

@@ -77,17 +77,20 @@ public class WolpertingerEntity extends AnimalEntity
         this.removePassengers();
     }
 
+    @Override
     public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn)
     {
         return worldIn.isAirBlock(pos) ? 10.0F : 0.0F;
     }
 
+    @Override
     protected void registerData()
     {
         super.registerData();
         this.dataManager.register(TYPE, 0);
     }
 
+    @Override
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new SwimGoal(this));
@@ -99,6 +102,7 @@ public class WolpertingerEntity extends AnimalEntity
         this.goalSelector.addGoal(8, new LookAtWithPassenger(this, CreatureEntity.class, 4.0F));
     }
 
+    @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
@@ -123,6 +127,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
+    @Override
     protected float getJumpUpwardsMotion()
     {
         if (!this.collidedHorizontally && (!this.moveController.isUpdating() || !(this.moveController.getY() > this.getPosY() + 0.5D)))
@@ -144,9 +149,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
-    /**
-     * Causes this entity to do an upwards motion (jumping).
-     */
+    @Override
     protected void jump()
     {
         if (!isScared)
@@ -178,6 +181,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
+    @Override
     protected PathNavigator createNavigator(World worldIn)
     {
         if (isScared)
@@ -215,6 +219,7 @@ public class WolpertingerEntity extends AnimalEntity
         this.moveController.setMoveTo(this.moveController.getX(), this.moveController.getY(), this.moveController.getZ(), newSpeed);
     }
 
+    @Override
     public void setJumping(boolean jumping)
     {
         super.setJumping(jumping);
@@ -237,25 +242,26 @@ public class WolpertingerEntity extends AnimalEntity
         return SoundEvents.ENTITY_RABBIT_JUMP;
     }
 
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundEvents.ENTITY_RABBIT_DEATH;
     }
 
+    @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
         return SoundEvents.ENTITY_RABBIT_HURT;
     }
 
+    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
         compound.putInt("WolpertingerType", this.getWolpertingerType());
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readAdditional(CompoundNBT compound)
     {
         super.readAdditional(compound);
@@ -272,6 +278,7 @@ public class WolpertingerEntity extends AnimalEntity
         this.dataManager.set(TYPE, wolperTypeId);
     }
 
+    @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
         int i = 0;
@@ -290,6 +297,7 @@ public class WolpertingerEntity extends AnimalEntity
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
+    @Override
     protected void updateAITasks()
     {
         if (this.currentMoveTypeDuration > 0)
@@ -362,6 +370,7 @@ public class WolpertingerEntity extends AnimalEntity
         this.disableJumpControl();
     }
 
+    @Override
     public void tick()
     {
         super.tick();
@@ -391,6 +400,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
+    @Override
     public void livingTick()
     {
         super.livingTick();
@@ -440,11 +450,13 @@ public class WolpertingerEntity extends AnimalEntity
         return isJumping;
     }
 
+    @Override
     public boolean isBreedingItem(ItemStack stack)
     {
         return stack.getItem() == Items.GOLDEN_CARROT;
     }
 
+    @Override
     public AgeableEntity createChild(AgeableEntity ageable)
     {
         WolpertingerEntity wolpertingerbaby = new WolpertingerEntity(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), world);
@@ -453,6 +465,7 @@ public class WolpertingerEntity extends AnimalEntity
         return wolpertingerbaby;
     }
 
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (this.isInvulnerableTo(source))
@@ -479,7 +492,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
-
+    @Override
     public void handleStatusUpdate(byte id)
     {
         if (id == 1)
@@ -493,11 +506,13 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
+    @Override
     public boolean onLivingFall(float distance, float damageMultiplier)
     {
         return false;
     }
 
+    @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
     }
@@ -528,9 +543,7 @@ public class WolpertingerEntity extends AnimalEntity
             this.canJump = canJumpIn;
         }
 
-        /**
-         * Called to actually make the entity jump if isJumping is true.
-         */
+        @Override
         public void tick()
         {
             if (this.isJumping && !isScared)
@@ -552,8 +565,10 @@ public class WolpertingerEntity extends AnimalEntity
             this.wolpertinger = _wolpertinger;
         }
 
+        @Override
         public void tick()
         {
+            super.tick();
             if (this.wolpertinger.onGround && !this.wolpertinger.isJumping && !((WolpertingerEntity.JumpHelperController) this.wolpertinger.jumpController).getIsJumping())
             {
                 this.wolpertinger.setMovementSpeed(0.0D);
@@ -563,12 +578,9 @@ public class WolpertingerEntity extends AnimalEntity
                 this.wolpertinger.moving_timer = 0.0F;
             }
 
-            super.tick();
         }
 
-        /**
-         * Sets the speed and location to move to
-         */
+        @Override
         public void setMoveTo(double x, double y, double z, double speedIn)
         {
             if (this.wolpertinger.isInWater())
@@ -597,21 +609,20 @@ public class WolpertingerEntity extends AnimalEntity
             this.avoidDistance = p_i46403_3_;
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+
         @Override
         public boolean shouldExecute()
         {
             return this.wolpertinger.isScared;
         }
 
+        @Override
         public boolean shouldContinueExecuting()
         {
             return this.wolpertinger.isScared;
         }
 
+        @Override
         public void tick()
         {
             if (this.wolpertinger.getDistance(avoidTarget) < avoidDistance)
@@ -683,16 +694,19 @@ public class WolpertingerEntity extends AnimalEntity
             return false;
         }
 
+        @Override
         public void resetTask()
         {
             tryGrabTarget = null;
         }
 
+        @Override
         public boolean shouldContinueExecuting()
         {
             return this.wolpertinger.grabbedEntity == null && tryGrabTarget.getDistanceSq(this.wolpertinger) < 40;
         }
 
+        @Override
         public void tick()
         {
             this.wolpertinger.navigator.tryMoveToXYZ(tryGrabTarget.getPosition().getX(), tryGrabTarget.getPosition().getY(), tryGrabTarget.getPosition().getZ(), this.wolpertinger.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
@@ -721,6 +735,7 @@ public class WolpertingerEntity extends AnimalEntity
             super(creature, speedIn);
         }
 
+        @Override
         public boolean shouldExecute()
         {
             if (!this.mustUpdate)
@@ -750,6 +765,7 @@ public class WolpertingerEntity extends AnimalEntity
             }
         }
 
+        @Override
         public boolean shouldContinueExecuting()
         {
             return !this.creature.getNavigator().noPath();
@@ -763,6 +779,7 @@ public class WolpertingerEntity extends AnimalEntity
             super(entityIn, watchTargetClass, maxDistance);
         }
 
+        @Override
         public boolean shouldExecute()
         {
             return this.entity.getPassengers().isEmpty() && super.shouldExecute();

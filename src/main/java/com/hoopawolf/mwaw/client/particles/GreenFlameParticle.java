@@ -4,10 +4,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class GreenFlameParticle extends SpriteTexturedParticle
 {
     private GreenFlameParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
@@ -26,23 +23,27 @@ public class GreenFlameParticle extends SpriteTexturedParticle
         this.particleBlue = 0.4F;
     }
 
+    @Override
     public IParticleRenderType getRenderType()
     {
         return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
+    @Override
     public void move(double x, double y, double z)
     {
         this.setBoundingBox(this.getBoundingBox().offset(x, y, z));
         this.resetPositionToBB();
     }
 
+    @Override
     public float getScale(float scaleFactor)
     {
         float f = ((float) this.age + scaleFactor) / (float) this.maxAge;
         return this.particleScale * (1.0F - f * f * 0.5F);
     }
 
+    @Override
     public int getBrightnessForRender(float partialTick)
     {
         float f = ((float) this.age + partialTick) / (float) this.maxAge;
@@ -59,6 +60,7 @@ public class GreenFlameParticle extends SpriteTexturedParticle
         return j | k << 16;
     }
 
+    @Override
     public void tick()
     {
         this.prevPosX = this.posX;
@@ -82,7 +84,6 @@ public class GreenFlameParticle extends SpriteTexturedParticle
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Factory implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;
@@ -92,6 +93,7 @@ public class GreenFlameParticle extends SpriteTexturedParticle
             this.spriteSet = p_i50823_1_;
         }
 
+        @Override
         public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             GreenFlameParticle flameparticle = new GreenFlameParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);

@@ -48,10 +48,7 @@ public class RangedAttackWithStrafeGoal extends Goal
         }
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
+   @Override
     public boolean shouldExecute()
     {
         LivingEntity livingentity = this.entityHost.getAttackTarget();
@@ -65,17 +62,13 @@ public class RangedAttackWithStrafeGoal extends Goal
         }
     }
 
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
+    @Override
     public boolean shouldContinueExecuting()
     {
         return (this.shouldExecute() || !this.entityHost.getNavigator().noPath());
     }
 
-    /**
-     * Reset the task's internal state. Called when this task is interrupted by another one
-     */
+    @Override
     public void resetTask()
     {
         this.attackTarget = null;
@@ -83,9 +76,7 @@ public class RangedAttackWithStrafeGoal extends Goal
         this.rangedAttackTime = -1;
     }
 
-    /**
-     * Keep ticking a continuous task that has already been started
-     */
+    @Override
     public void tick()
     {
         if (attackTarget != null)

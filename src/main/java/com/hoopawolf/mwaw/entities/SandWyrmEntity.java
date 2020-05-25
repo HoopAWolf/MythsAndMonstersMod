@@ -61,6 +61,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.experienceValue = 5;
     }
 
+    @Override
     protected void registerData()
     {
         super.registerData();
@@ -70,12 +71,14 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.dataManager.register(TYPE, 0);
     }
 
+    @Override
     public void move(MoverType typeIn, Vec3d pos)
     {
         super.move(typeIn, pos);
         this.doBlockCollisions();
     }
 
+    @Override
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new SwimGoal(this));
@@ -87,6 +90,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     }
 
+    @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
@@ -99,7 +103,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(12.0D);
     }
 
-
+    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
@@ -111,9 +115,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         }
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readAdditional(CompoundNBT compound)
     {
         super.readAdditional(compound);
@@ -132,16 +134,19 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         }
     }
 
+    @Override
     protected boolean isDespawnPeaceful()
     {
         return true;
     }
 
+    @Override
     public float getBrightness()
     {
         return 1.0F;
     }
 
+    @Override
     public void tick()
     {
         super.tick();
@@ -263,6 +268,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         }
     }
 
+    @Override
     protected void updateAITasks()
     {
         if (!this.isTired())
@@ -295,6 +301,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         }
     }
 
+    @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
         int i = 0;
@@ -306,6 +313,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (source.damageType.equals(DamageSource.IN_WALL.damageType))
@@ -316,25 +324,30 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         return super.attackEntityFrom(source, amount);
     }
 
+    @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
     }
 
+    @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
     {
         return worldIn.canSeeSky(getPosition());
     }
 
+    @Override
     protected SoundEvent getAmbientSound()
     {
         return null;
     }
 
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundEvents.ENTITY_VEX_DEATH;
     }
 
+    @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
         return SoundEvents.ENTITY_VEX_HURT;
@@ -382,26 +395,19 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return dived && !_flag && !SandWyrmEntity.this.isTired() && SandWyrmEntity.this.getAttackTarget() != null;
         }
 
-        /**
-         * Reset the task's internal state. Called when this task is interrupted by another one
-         */
+        @Override
         public void resetTask()
         {
             dived = false;
         }
 
-        /**
-         * Keep ticking a continuous task that has already been started
-         */
+        @Override
         public void tick()
         {
             LivingEntity livingentity = SandWyrmEntity.this.getAttackTarget();
@@ -438,29 +444,26 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return !dived && !SandWyrmEntity.this.isTired();
         }
 
+        @Override
         public boolean shouldContinueExecuting()
         {
             return !dived && _flag && !SandWyrmEntity.this.isTired();
         }
 
+        @Override
         public void resetTask()
         {
             dived = true;
             hasDived = false;
         }
 
-        /**
-         * Keep ticking a continuous task that has already been started
-         */
+        @Override
         public void tick()
         {
             SandWyrmEntity.this.navigator.clearPath();
@@ -493,6 +496,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
             super(sandwyrm);
         }
 
+        @Override
         public void tick()
         {
             if (this.action == MovementController.Action.MOVE_TO)
@@ -541,18 +545,13 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return dived && !_flag && !SandWyrmEntity.this.isTired() && !SandWyrmEntity.this.getMoveHelper().isUpdating() && SandWyrmEntity.this.rand.nextInt(20) == 0;
         }
 
-        /**
-         * Keep ticking a continuous task that has already been started
-         */
+        @Override
         public void tick()
         {
             for (int i = 0; i < 3; ++i)
@@ -575,11 +574,13 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
             super(creature, speedIn, useLongMemory);
         }
 
+        @Override
         public boolean shouldExecute()
         {
             return !noClip && super.shouldExecute();
         }
 
+        @Override
         public boolean shouldContinueExecuting()
         {
             return !noClip && super.shouldContinueExecuting();

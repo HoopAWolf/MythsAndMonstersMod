@@ -6,12 +6,10 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 
-@OnlyIn(Dist.CLIENT)
+
 public class SandWyrmModel extends EntityModel<SandWyrmEntity>
 {
     private final ModelRenderer Head;
@@ -122,6 +120,7 @@ public class SandWyrmModel extends EntityModel<SandWyrmEntity>
         Body1.render(matrixStack, iVertexBuilder, packedLightIn, packedOverlayIn);
     }
 
+    @Override
     public void setRotationAngles(SandWyrmEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         float rotation;

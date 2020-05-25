@@ -2,7 +2,6 @@ package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.blocks.FairyMushroomBlock;
 import com.hoopawolf.mwaw.items.BadAppleItem;
-import com.hoopawolf.mwaw.items.ItemBase;
 import com.hoopawolf.mwaw.items.MWAWSpawnEggItem;
 import com.hoopawolf.mwaw.items.ShardItem;
 import com.hoopawolf.mwaw.items.weapons.*;
@@ -71,26 +70,26 @@ public class RegistryHandler
     public static final RegistryObject<Item> AIR_SHARD = ITEMS.register("airshard", () -> new ShardItem());
     public static final RegistryObject<Item> SAND_SHARD = ITEMS.register("sandshard", () -> new ShardItem());
 
-    public static final RegistryObject<Item> MAGICAL_SEED = ITEMS.register("magicalseed", () -> new ItemBase(new Item.Properties().maxStackSize(16)));
-    public static final RegistryObject<Item> SAP = ITEMS.register("sap", () -> new ItemBase(new Item.Properties().maxStackSize(64)));
+    public static final RegistryObject<Item> MAGICAL_SEED = ITEMS.register("magicalseed", () -> new Item(new Item.Properties().maxStackSize(16).group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> SAP = ITEMS.register("sap", () -> new Item(new Item.Properties().maxStackSize(64)));
     public static final RegistryObject<Item> GOLDEN_ARROW = ITEMS.register("goldenarrow", () -> new GoldenArrowItem(new Item.Properties().maxStackSize(16).group(MWAWItemGroup.instance)));
-    public static final RegistryObject<Item> HARDENED_LEATHER = ITEMS.register("hardenedleather", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> SAND_WYRM_TUSK = ITEMS.register("sandwyrmtusk", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> SAND_SCALE = ITEMS.register("sandscale", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> CELESTIAL_STAR_DUST = ITEMS.register("celestialstardust", () -> new ItemBase(new Item.Properties().maxStackSize(16)));
-    public static final RegistryObject<Item> VOID_STAR_DUST = ITEMS.register("voidstardust", () -> new ItemBase(new Item.Properties().maxStackSize(16)));
-    public static final RegistryObject<Item> DENDROID_ROOT = ITEMS.register("dendroidroot", () -> new ItemBase(new Item.Properties().maxStackSize(1)));
-    public static final RegistryObject<Item> DENDROID_EYE = ITEMS.register("dendroideye", () -> new ItemBase(new Item.Properties().maxStackSize(1)));
-    public static final RegistryObject<Item> ANTLER = ITEMS.register("antler", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> FAIRY_DUST = ITEMS.register("fairydust", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> SCALE_MAIL = ITEMS.register("scalemail", () -> new ItemBase(new Item.Properties()));
-    public static final RegistryObject<Item> TAINTED_SEED = ITEMS.register("taintedseed", () -> new ItemBase(new Item.Properties().maxStackSize(16)));
+    public static final RegistryObject<Item> HARDENED_LEATHER = ITEMS.register("hardenedleather", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> SAND_WYRM_TUSK = ITEMS.register("sandwyrmtusk", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> SAND_SCALE = ITEMS.register("sandscale", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> CELESTIAL_STAR_DUST = ITEMS.register("celestialstardust", () -> new Item(new Item.Properties().maxStackSize(16).group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> VOID_STAR_DUST = ITEMS.register("voidstardust", () -> new Item(new Item.Properties().maxStackSize(16).group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> DENDROID_ROOT = ITEMS.register("dendroidroot", () -> new Item(new Item.Properties().maxStackSize(1).group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> DENDROID_EYE = ITEMS.register("dendroideye", () -> new Item(new Item.Properties().maxStackSize(1).group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> ANTLER = ITEMS.register("antler", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> FAIRY_DUST = ITEMS.register("fairydust", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> SCALE_MAIL = ITEMS.register("scalemail", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> TAINTED_SEED = ITEMS.register("taintedseed", () -> new Item(new Item.Properties().maxStackSize(16).group(MWAWItemGroup.instance)));
 
 
     public static final RegistryObject<Item> BAD_APPLE = ITEMS.register("badapple", () -> new BadAppleItem(new Item.Properties().group(MWAWItemGroup.instance).food(BAD_APPLE_STAT)));
 
 
-    public static final RegistryObject<Item> FIRE_EGG = ITEMS.register("fireegg", () -> new ItemBase(new Item.Properties().maxStackSize(1)));
+    public static final RegistryObject<Item> FIRE_EGG = ITEMS.register("fireegg", () -> new Item(new Item.Properties().maxStackSize(1).group(MWAWItemGroup.instance)));
    /* public static final RegistryObject<Item> WATER_EGG = ITEMS.register("wateregg", ItemBase::new);
     public static final RegistryObject<Item> LIGHTNING_EGG = ITEMS.register("lightningegg", ItemBase::new);
     public static final RegistryObject<Item> EARTH_EGG = ITEMS.register("earthegg", ItemBase::new);
@@ -99,7 +98,7 @@ public class RegistryHandler
     public static final RegistryObject<Item> NATURE_EGG = ITEMS.register("natureegg", ItemBase::new);*/
 
 
-    public static final RegistryObject<Item> FIRE_STAFF = ITEMS.register("firestaff", () -> new ItemBase(new Item.Properties()));
+    public static final RegistryObject<Item> FIRE_STAFF = ITEMS.register("firestaff", () -> new Item(new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<Item> DENDROID_SWORD = ITEMS.register("dendroidsword", () -> new DendroidSwordItem(ItemTier.DIAMOND, 3, -2.5f, new Item.Properties().maxDamage(359)));
     public static final RegistryObject<Item> MARROW_SWORD = ITEMS.register("marrowsword", () -> new MarrowSwordItem(ItemTier.DIAMOND, 4, -2.5f, new Item.Properties().maxDamage(1000)));
     public static final RegistryObject<Item> BONE_DAGGER = ITEMS.register("bonedagger", () -> new BoneDaggerItem(ItemTier.DIAMOND, 4, -2.5f, new Item.Properties().maxDamage(1000)));

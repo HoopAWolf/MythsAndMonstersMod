@@ -21,6 +21,7 @@ public class GoldenArrowItem extends ArrowItem
         return new GoldenArrowEntity(worldIn, shooter);
     }
 
+    @Override
     public Rarity getRarity(ItemStack stack)
     {
         return Rarity.UNCOMMON;

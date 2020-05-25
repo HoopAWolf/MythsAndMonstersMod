@@ -14,12 +14,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
+
 public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
 {
     private static final RenderType KITSUNE_SPARK_TEXTURE_TRANSPARANCY = RenderType.getEntityTranslucent(new ResourceLocation(Reference.MOD_ID, "textures/entity/kitsune.png"));
@@ -31,11 +29,13 @@ public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
         super(manager);
     }
 
+    @Override
     protected int getBlockLight(FoxHeadEntity entityIn, float partialTicks)
     {
         return 15;
     }
 
+    @Override
     public void render(FoxHeadEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
         matrixStackIn.push();
@@ -51,14 +51,13 @@ public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
+    @Override
     public Vec3d getRenderOffset(FoxHeadEntity entityIn, float partialTicks)
     {
         return new Vec3d(this.rnd.nextGaussian() * 0.02D, 0.0D, this.rnd.nextGaussian() * 0.02D);
     }
 
-    /**
-     * Returns the location of an entity's texture.
-     */
+    @Override
     public ResourceLocation getEntityTexture(FoxHeadEntity entity)
     {
         return null;

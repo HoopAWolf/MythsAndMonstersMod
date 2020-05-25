@@ -18,8 +18,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class SapEntity extends ProjectileItemEntity
@@ -39,22 +37,19 @@ public class SapEntity extends ProjectileItemEntity
         super(EntityRegistryHandler.SAP_ENTITY.get(), x, y, z, worldIn);
     }
 
+    @Override
     protected Item getDefaultItem()
     {
         return RegistryHandler.SAP.get();
     }
 
-    @OnlyIn(Dist.CLIENT)
     private IParticleData makeParticle()
     {
         ItemStack itemstack = this.func_213882_k();
         return (IParticleData) (itemstack.isEmpty() ? ParticleTypes.ITEM_SLIME : new ItemParticleData(ParticleTypes.ITEM, itemstack));
     }
 
-    /**
-     * Handler for {@link World#setEntityState}
-     */
-    @OnlyIn(Dist.CLIENT)
+    @Override
     public void handleStatusUpdate(byte id)
     {
         if (id == 3)
@@ -69,9 +64,7 @@ public class SapEntity extends ProjectileItemEntity
 
     }
 
-    /**
-     * Called when this EntityThrowable hits a block or entity.
-     */
+    @Override
     protected void onImpact(RayTraceResult result)
     {
         if (result.getType() == RayTraceResult.Type.ENTITY)
@@ -92,10 +85,9 @@ public class SapEntity extends ProjectileItemEntity
         }
     }
 
-
+    @Override
     public IPacket<?> createSpawnPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
-
 }

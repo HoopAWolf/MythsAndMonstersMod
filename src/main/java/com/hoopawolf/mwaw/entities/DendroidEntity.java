@@ -31,12 +31,14 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         shootRenderTimer = 0.0F;
     }
 
+    @Override
     protected void registerData()
     {
         super.registerData();
         this.dataManager.register(SHOOTING, false);
     }
 
+    @Override
     protected void registerGoals()
     {
         this.goalSelector.addGoal(4, new RangedAttackWithStrafeGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), 40, 50, 10.0F));
@@ -51,6 +53,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         }));   //TODO FOR WHEN DENDROID ELDER GETS ADDED ALSO
     }
 
+    @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
@@ -71,21 +74,25 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         this.dataManager.set(SHOOTING, _isShooting);
     }
 
+    @Override
     protected boolean isDespawnPeaceful()
     {
         return true;
     }
 
+    @Override
     public CreatureAttribute getCreatureAttribute()
     {
         return CreatureAttribute.UNDEFINED;
     }
 
+    @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
     {
         return worldIn.canSeeSky(getPosition());
     }
 
+    @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn)
     {
         this.playSound(this.getStepSound(), 0.15F, 5.0F);
@@ -96,16 +103,19 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         return SoundEvents.BLOCK_WOOD_STEP;
     }
 
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR;
     }
 
+    @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
         return SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR;
     }
 
+    @Override
     protected void updateAITasks()
     {
         if (isShooting())
@@ -120,6 +130,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
 
     }
 
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
@@ -133,9 +144,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         return super.attackEntityFrom(source, amount);
     }
 
-    /**
-     * Attack the specified entity using a ranged attack.
-     */
+    @Override
     public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor)
     {
         SapEntity sapentity = new SapEntity(this.world, this);

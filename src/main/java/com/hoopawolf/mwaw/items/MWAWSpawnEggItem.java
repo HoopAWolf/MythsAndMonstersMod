@@ -38,12 +38,6 @@ public class MWAWSpawnEggItem extends SpawnEggItem
         UNADDED_EGGS.add(this);
     }
 
-    /**
-     * Adds all the supplier based spawn eggs to vanilla's map and registers an
-     * IDispenseItemBehavior for each of them as normal spawn eggs have one
-     * registered for each of them during {@link net.minecraft.dispenser.IDispenseItemBehavior#init()}
-     * but supplier based ones won't have had their EntityTypes created yet.
-     */
     public static void initUnaddedEggs()
     {
         final Map<EntityType<?>, SpawnEggItem> EGGS = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "field_195987_b");
@@ -63,7 +57,6 @@ public class MWAWSpawnEggItem extends SpawnEggItem
         {
             EGGS.put(egg.getType(null), egg);
             DispenserBlock.registerDispenseBehavior(egg, defaultDispenseItemBehavior);
-            // ItemColors for each spawn egg don't need to be registered because this method is called before ItemColors is created
         }
         UNADDED_EGGS.clear();
     }

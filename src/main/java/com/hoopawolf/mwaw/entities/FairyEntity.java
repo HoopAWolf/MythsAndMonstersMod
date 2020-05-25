@@ -9,7 +9,6 @@ import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -43,7 +42,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(FairyEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> RESTING = EntityDataManager.createKey(FairyEntity.class, DataSerializers.BOOLEAN);
     private UUID revengeTargetUUID;
-    @Nullable
     private BlockPos flowerPos = null;
     private int inWaterTick;
     private float staminaRemaining;
@@ -59,6 +57,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.staminaRemaining = this.maxStamina;
     }
 
+    @Override
     protected void registerData()
     {
         super.registerData();
@@ -66,11 +65,13 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.dataManager.register(RESTING, false);
     }
 
+    @Override
     public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn)
     {
         return worldIn.isAirBlock(pos) ? 10.0F : 0.0F;
     }
 
+    @Override
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new FairyEntity.AttackGoal(this, (double) 1.4F, true));
@@ -105,6 +106,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.dataManager.set(RESTING, resting);
     }
 
+    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
@@ -124,9 +126,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         }
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readAdditional(CompoundNBT compound)
     {
         super.readAdditional(compound);
@@ -159,14 +159,13 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
     }
 
+    @Override
     public boolean attackEntityAsMob(Entity entityIn)
     {
         return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), (float) this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue());
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
+    @Override
     public void tick()
     {
         super.tick();
@@ -192,6 +191,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         }
     }
 
+    @Override
     public float getBrightness()
     {
         return 1.0F;
@@ -239,7 +239,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         }
     }
 
-    @Nullable
     public BlockPos GetFlowerPos()
     {
         return this.flowerPos;
@@ -250,10 +249,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         return this.GetFlowerPos() != null;
     }
 
-    /**
-     * Hint to AI tasks that we were attacked by the passed EntityLivingBase and should retaliate. Is not guaranteed to
-     * change our actual active target (for example if we are currently busy attacking someone else)
-     */
+    @Override
     public void setRevengeTarget(@Nullable LivingEntity livingBase)
     {
         super.setRevengeTarget(livingBase);
@@ -264,6 +260,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
     }
 
+    @Override
     protected void updateAITasks()
     {
         if (this.isInWaterOrBubbleColumn())
@@ -301,6 +298,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         return !this.IsWithinDistance(p_226437_1_, 15);
     }
 
+    @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
@@ -312,9 +310,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(12.0D);
     }
 
-    /**
-     * Returns new PathNavigateGround instance
-     */
+    @Override
     protected PathNavigator createNavigator(World worldIn)
     {
         FlyingPathNavigator flyingpathnavigator = new FlyingPathNavigator(this, worldIn)
@@ -343,53 +339,59 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         return this.world.isBlockPresent(p_226439_1_) && (this.world.getBlockState(p_226439_1_).getBlock().isIn(BlockTags.FLOWERS) || this.world.getBlockState(p_226439_1_).getBlock() == RegistryHandler.FAIRY_MUSHROOM_BLOCK.get());
     }
 
+    @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn)
     {
     }
 
+    @Override
     protected SoundEvent getAmbientSound()
     {
         return null;
     }
 
+    @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
         return SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP;
     }
 
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundEvents.BLOCK_FIRE_EXTINGUISH;
     }
 
-    /**
-     * Returns the volume for the sounds this mob makes.
-     */
+    @Override
     protected float getSoundVolume()
     {
         return 0.4F;
     }
 
-    @Nullable
-    public BeeEntity createChild(AgeableEntity ageable)
+    @Override
+    public FairyEntity createChild(AgeableEntity ageable)
     {
         return null;
     }
 
+    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         return sizeIn.height * 0.8F;
     }
 
+    @Override
     public boolean onLivingFall(float distance, float damageMultiplier)
     {
         return false;
     }
 
+    @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
     }
 
+    @Override
     protected boolean makeFlySound()
     {
         return true;
@@ -405,9 +407,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         return true;
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (this.isInvulnerableTo(source))
@@ -426,11 +426,13 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         }
     }
 
+    @Override
     public CreatureAttribute getCreatureAttribute()
     {
         return CreatureAttribute.UNDEFINED;
     }
 
+    @Override
     protected void handleFluidJump(Tag<Fluid> fluidTag)
     {
         this.setMotion(this.getMotion().add(0.0D, 0.01D, 0.0D));
@@ -464,24 +466,20 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             super(p_i225719_1_, DendroidEntity.class, true);
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return super.shouldExecute();
         }
 
+        @Override
         public void startExecuting()
         {
             FairyEntity.this.ResetStamina();
             super.startExecuting();
         }
 
-        /**
-         * Returns whether an in-progress EntityAIBase should continue executing
-         */
+        @Override
         public boolean shouldContinueExecuting()
         {
             if (this.goalOwner.getAttackTarget() != null && this.goalOwner.getAttackTarget() instanceof DendroidEntity)
@@ -504,33 +502,32 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
+        @Override
         public boolean func_225506_g_()
         {
             return FairyEntity.this.flowerPos != null && FairyEntity.this.IsFlowerBlock(FairyEntity.this.flowerPos) && !FairyEntity.this.IsWithinDistance(FairyEntity.this.flowerPos, 2);
         }
 
+        @Override
         public boolean func_225507_h_()
         {
             return this.func_225506_g_();
         }
 
+        @Override
         public boolean shouldExecute()
         {
             return super.shouldExecute();
         }
 
-        /**
-         * Execute a one shot task or start executing a continuous task
-         */
+        @Override
         public void startExecuting()
         {
             this.goToFlowerTimer = 0;
             super.startExecuting();
         }
 
-        /**
-         * Reset the task's internal state. Called when this task is interrupted by another one
-         */
+        @Override
         public void resetTask()
         {
             this.goToFlowerTimer = 0;
@@ -549,9 +546,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             }
         }
 
-        /**
-         * Keep ticking a continuous task that has already been started
-         */
+        @Override
         public void tick()
         {
             if (FairyEntity.this.flowerPos != null)
@@ -593,18 +588,13 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
         public abstract boolean func_225507_h_();
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return this.func_225506_g_();
         }
 
-        /**
-         * Returns whether an in-progress EntityAIBase should continue executing
-         */
+        @Override
         public boolean shouldContinueExecuting()
         {
             return this.func_225507_h_();
@@ -621,28 +611,25 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             parentEntity = p_i225718_2_;
         }
 
+        @Override
         public void resetTask()
         {
             this.parentEntity.setAngry(false);
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return super.shouldExecute();
         }
 
-        /**
-         * Returns whether an in-progress EntityAIBase should continue executing
-         */
+        @Override
         public boolean shouldContinueExecuting()
         {
             return super.shouldContinueExecuting();
         }
 
+        @Override
         public void tick()
         {
             LivingEntity livingentity = FairyEntity.this.getAttackTarget();
@@ -666,26 +653,19 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return FairyEntity.this.navigator.noPath() && FairyEntity.this.rand.nextInt(10) == 0 && !FairyEntity.this.isResting();
         }
 
-        /**
-         * Returns whether an in-progress EntityAIBase should continue executing
-         */
+        @Override
         public boolean shouldContinueExecuting()
         {
             return FairyEntity.this.navigator.func_226337_n_() && !FairyEntity.this.isResting();
         }
 
-        /**
-         * Execute a one shot task or start executing a continuous task
-         */
+        @Override
         public void startExecuting()
         {
             Vec3d vec3d = this.GetNextPosViaForward();
@@ -696,6 +676,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
         }
 
+        @Override
         public void tick()
         {
             FairyEntity.this.DecreaseStamina();
@@ -748,7 +729,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             }
         }
 
-        @Nullable
         private Vec3d GetNextPosViaForward()
         {
             Vec3d vec3d = FairyEntity.this.getLook(0.0F);
@@ -761,29 +741,26 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     class RestingGoal extends Goal
     {
 
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
+        @Override
         public boolean shouldExecute()
         {
             return FairyEntity.this.isResting();
         }
 
-        /**
-         * Returns whether an in-progress EntityAIBase should continue executing
-         */
+        @Override
         public boolean shouldContinueExecuting()
         {
             return FairyEntity.this.isResting();
         }
 
+        @Override
         public void startExecuting()
         {
             FairyEntity.this.navigator.clearPath();
             super.startExecuting();
         }
 
+        @Override
         public void tick()
         {
             FairyEntity.this.IncreaseStamina();

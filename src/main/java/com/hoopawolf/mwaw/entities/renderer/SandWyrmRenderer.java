@@ -8,10 +8,8 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
+
 public class SandWyrmRenderer extends MobRenderer<SandWyrmEntity, SandWyrmModel>
 {
     private static final ResourceLocation[] TEXTURE = {
@@ -24,13 +22,13 @@ public class SandWyrmRenderer extends MobRenderer<SandWyrmEntity, SandWyrmModel>
         super(_manager, new SandWyrmModel(), 1.0f);
     }
 
-
+    @Override
     protected int getBlockLight(SandWyrmEntity entityIn, float partialTicks)
     {
         return ((entityIn.world.getDayTime() > 1000 && entityIn.world.getDayTime() < 13000) ? entityIn.world.getLightFor(LightType.SKY, new BlockPos(entityIn.getPosition().getX(), entityIn.getPosition().getY() + 1, entityIn.getPosition().getZ())) : super.getBlockLight(entityIn, partialTicks));
     }
 
-
+    @Override
     protected float getDeathMaxRotation(SandWyrmEntity entityLivingBaseIn)
     {
         return 180.0F;

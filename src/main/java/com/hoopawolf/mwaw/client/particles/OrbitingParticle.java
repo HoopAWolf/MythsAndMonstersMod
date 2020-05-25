@@ -47,17 +47,20 @@ public class OrbitingParticle extends SpriteTexturedParticle
         this.posZ = coordZ + Math.sin(orbitAngle) * spread;
     }
 
+    @Override
     public IParticleRenderType getRenderType()
     {
         return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
+    @Override
     public void move(double x, double y, double z)
     {
         this.setBoundingBox(this.getBoundingBox().offset(x, y, z));
         this.resetPositionToBB();
     }
 
+    @Override
     public int getBrightnessForRender(float partialTick)
     {
         float f = ((float) this.age + partialTick) / (float) this.maxAge;
@@ -74,6 +77,7 @@ public class OrbitingParticle extends SpriteTexturedParticle
         return j | k << 16;
     }
 
+    @Override
     public void tick()
     {
         this.prevPosX = this.posX;

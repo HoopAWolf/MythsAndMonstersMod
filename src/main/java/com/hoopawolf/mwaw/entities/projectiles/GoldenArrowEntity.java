@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class GoldenArrowEntity extends AbstractArrowEntity
@@ -30,9 +28,7 @@ public class GoldenArrowEntity extends AbstractArrowEntity
         super(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), shooter, worldIn);
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
+    @Override
     public void tick()
     {
         super.tick();
@@ -45,36 +41,33 @@ public class GoldenArrowEntity extends AbstractArrowEntity
         }
     }
 
+    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
 
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readAdditional(CompoundNBT compound)
     {
         super.readAdditional(compound);
 
     }
 
+    @Override //TODO ADD SOME SPECIAL EFFECTS MAYBE
     protected void arrowHit(LivingEntity living)
     {
         super.arrowHit(living);
-
     }
 
+    @Override
     protected ItemStack getArrowStack()
     {
         return new ItemStack(RegistryHandler.GOLDEN_ARROW.get());
     }
 
-    /**
-     * Handler for {@link World#setEntityState}
-     */
-    @OnlyIn(Dist.CLIENT)
+    @Override
     public void handleStatusUpdate(byte id)
     {
         super.handleStatusUpdate(id);

@@ -166,6 +166,7 @@ public class WolpertingerModel extends EntityModel<WolpertingerEntity>
         }
     }
 
+    @Override
     public void setLivingAnimations(WolpertingerEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
     {
         super.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTick);

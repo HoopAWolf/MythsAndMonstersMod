@@ -41,6 +41,7 @@ public class GoldenBowItem extends ShootableItem
         });
     }
 
+    @Override
     public void onUse(World worldIn, LivingEntity livingEntityIn, ItemStack stack, int count)
     {
         if (!worldIn.isRemote)
@@ -50,9 +51,7 @@ public class GoldenBowItem extends ShootableItem
         }
     }
 
-    /**
-     * Called when the player stops using an Item (stops holding the right mouse button).
-     */
+    @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft)
     {
         if (entityLiving instanceof PlayerEntity)
@@ -143,26 +142,19 @@ public class GoldenBowItem extends ShootableItem
         return f;
     }
 
-    /**
-     * How long it takes to use or consume an item
-     */
+    @Override
     public int getUseDuration(ItemStack stack)
     {
         return 72000;
     }
 
-    /**
-     * returns the action that specifies what animation to play when the items is being used
-     */
+    @Override
     public UseAction getUseAction(ItemStack stack)
     {
         return UseAction.BOW;
     }
 
-    /**
-     * Called to trigger the item's "innate" right click behavior. To handle when this item is used on a Block, see
-     * {@link #onItemUse}.
-     */
+    @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
     {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
@@ -181,9 +173,7 @@ public class GoldenBowItem extends ShootableItem
         }
     }
 
-    /**
-     * Get the predicate to match ammunition when searching the player's inventory, not their main/offhand
-     */
+    @Override
     public Predicate<ItemStack> getInventoryAmmoPredicate()
     {
         return itemStack -> itemStack.getItem() instanceof GoldenArrowItem;
@@ -194,6 +184,7 @@ public class GoldenBowItem extends ShootableItem
         return arrow;
     }
 
+    @Override
     public Rarity getRarity(ItemStack stack)
     {
         return Rarity.UNCOMMON;

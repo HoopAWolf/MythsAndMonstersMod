@@ -6,10 +6,8 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
+
 public class DendroidModel extends EntityModel<DendroidEntity>
 {
     private final ModelRenderer Jaw;
@@ -74,6 +72,7 @@ public class DendroidModel extends EntityModel<DendroidEntity>
         Hip.render(matrixStack, iVertexBuilder, packedLightIn, packedOverlayIn);
     }
 
+    @Override
     public void setRotationAngles(DendroidEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         float f3 = -(MathHelper.cos(limbSwing * 0.6662F * 2.0F + 0.0F) * 0.2F) * limbSwingAmount;

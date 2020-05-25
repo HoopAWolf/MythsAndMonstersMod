@@ -11,8 +11,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Random;
@@ -24,7 +22,7 @@ public class FairyMushroomBlock extends MushroomBlock
         super(properties);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Override
     public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
     {
         super.animateTick(stateIn, worldIn, pos, rand);
@@ -38,16 +36,19 @@ public class FairyMushroomBlock extends MushroomBlock
         }
     }
 
+    @Override
     public boolean canUseBonemeal(World worldIn, Random rand, BlockPos pos, BlockState state)
     {
         return false;
     }
 
+    @Override
     public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
     {
         return false;
     }
 
+    @Override
     public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
         BlockPos blockpos = pos.down();

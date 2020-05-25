@@ -7,10 +7,8 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
+
 public class KitsuneModel extends EntityModel<KitsuneEntity>
 {
     private final ModelRenderer Body;
@@ -143,6 +141,7 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
         leftVillagerLeg.render(matrixStack, iVertexBuilder, packedLightIn, packedOverlayIn);
     }
 
+    @Override
     public void setLivingAnimations(KitsuneEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
     {
         if (entityIn.isVillagerForm())

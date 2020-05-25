@@ -16,8 +16,6 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -87,7 +85,7 @@ public class EntityRegistryHandler
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+
     public static void registerEntityRenderer()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FAIRY_ENTITY.get(), FairyRenderer::new);
