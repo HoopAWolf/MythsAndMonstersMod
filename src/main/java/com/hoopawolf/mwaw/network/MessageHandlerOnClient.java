@@ -23,12 +23,13 @@ import java.util.function.Supplier;
 
 public class MessageHandlerOnClient
 {
-    static BasicParticleType[] types = //0 - FIREWORKS, 1 - HEART, 2 - BLOCK TYPE, 3 - VILLAGER ANGRY
+    static BasicParticleType[] types = //0 - FIREWORKS, 1 - HEART, 2 - BLOCK TYPE, 3 - VILLAGER ANGRY, 4 - CLOUD
             {
                     ParticleTypes.FIREWORK,
                     ParticleTypes.HEART,
                     ParticleTypes.ITEM_SLIME, // PLACE HOLDER FOR BLOCK
-                    ParticleTypes.ANGRY_VILLAGER
+                    ParticleTypes.ANGRY_VILLAGER,
+                    ParticleTypes.CLOUD
             };
 
     static BasicParticleType[] orbiting_types = //0 - YELLOW ENCHANTMENT

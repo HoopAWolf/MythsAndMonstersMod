@@ -2,6 +2,7 @@ package com.hoopawolf.mwaw.entities.renderer;
 
 import com.hoopawolf.mwaw.entities.KitsuneEntity;
 import com.hoopawolf.mwaw.entities.model.KitsuneModel;
+import com.hoopawolf.mwaw.entities.renderer.layer.KitsuneHeldItemLayer;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -16,6 +17,7 @@ public class KitsuneRenderer extends MobRenderer<KitsuneEntity, KitsuneModel>
     public KitsuneRenderer(EntityRendererManager _manager)
     {
         super(_manager, new KitsuneModel(), 0.6f);
+        this.addLayer(new KitsuneHeldItemLayer(this));
     }
 
     @Override

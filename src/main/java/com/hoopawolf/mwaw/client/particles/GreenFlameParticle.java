@@ -13,9 +13,9 @@ public class GreenFlameParticle extends SpriteTexturedParticle
         this.motionX = this.motionX * (double) 0.01F + xSpeedIn;
         this.motionY = this.motionY * (double) 0.01F + ySpeedIn;
         this.motionZ = this.motionZ * (double) 0.01F + zSpeedIn;
-        this.posX += (double) ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.05F);
-        this.posY += (double) ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.05F);
-        this.posZ += (double) ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.05F);
+        this.posX += (this.rand.nextFloat() - this.rand.nextFloat()) * 0.05F;
+        this.posY += (this.rand.nextFloat() - this.rand.nextFloat()) * 0.05F;
+        this.posZ += (this.rand.nextFloat() - this.rand.nextFloat()) * 0.05F;
         this.maxAge = (int) (8.0D / (Math.random() * 0.8D + 0.2D)) + 4;
         float f = this.rand.nextFloat() * 0.6F + 0.4F;
         this.particleRed = 0.4F;
@@ -72,13 +72,13 @@ public class GreenFlameParticle extends SpriteTexturedParticle
         } else
         {
             this.move(this.motionX, this.motionY, this.motionZ);
-            this.motionX *= (double) 0.96F;
-            this.motionY *= (double) 0.96F;
-            this.motionZ *= (double) 0.96F;
+            this.motionX *= 0.96F;
+            this.motionY *= 0.96F;
+            this.motionZ *= 0.96F;
             if (this.onGround)
             {
-                this.motionX *= (double) 0.7F;
-                this.motionZ *= (double) 0.7F;
+                this.motionX *= 0.7F;
+                this.motionZ *= 0.7F;
             }
 
         }

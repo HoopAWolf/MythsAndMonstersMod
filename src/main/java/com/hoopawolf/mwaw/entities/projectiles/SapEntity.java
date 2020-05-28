@@ -46,7 +46,7 @@ public class SapEntity extends ProjectileItemEntity
     private IParticleData makeParticle()
     {
         ItemStack itemstack = this.func_213882_k();
-        return (IParticleData) (itemstack.isEmpty() ? ParticleTypes.ITEM_SLIME : new ItemParticleData(ParticleTypes.ITEM, itemstack));
+        return itemstack.isEmpty() ? ParticleTypes.ITEM_SLIME : new ItemParticleData(ParticleTypes.ITEM, itemstack);
     }
 
     @Override

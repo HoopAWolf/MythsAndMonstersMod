@@ -51,7 +51,12 @@ public class EntityRegistryHandler
     public static final RegistryObject<EntityType<KitsuneEntity>> KITSUNE_ENTITY = ENTITIES.register("kitsune", () -> EntityType.Builder.create(KitsuneEntity::new, EntityClassification.CREATURE)
             .size(1.0F, 0.9F)
             .setShouldReceiveVelocityUpdates(false)
-            .build("wolpertinger"));
+            .build("kitsune"));
+
+    public static final RegistryObject<EntityType<HunterEntity>> HUNTER_ENTITY = ENTITIES.register("hunter", () -> EntityType.Builder.create(HunterEntity::new, EntityClassification.CREATURE)
+            .size(0.7F, 1.85F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("hunter"));
 
     public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
             .size(0.5F, 0.5F)
@@ -93,11 +98,12 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.DENDROID_ENTITY.get(), DendroidRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), WolpertingerRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.KITSUNE_ENTITY.get(), KitsuneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.HUNTER_ENTITY.get(), HunterRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
 
         RenderTypeLookup.setRenderLayer(RegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
-    }
+    }//TODO ADD KITSUNE SPAWN, HUTNER SPAWN
 }

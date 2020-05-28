@@ -22,8 +22,8 @@ import net.minecraft.world.World;
 
 public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
 {
-    float shootRenderTimer;
     private static final DataParameter<Boolean> SHOOTING = EntityDataManager.createKey(DendroidEntity.class, DataSerializers.BOOLEAN);
+    float shootRenderTimer;
 
     public DendroidEntity(EntityType<? extends DendroidEntity> type, World worldIn)
     {

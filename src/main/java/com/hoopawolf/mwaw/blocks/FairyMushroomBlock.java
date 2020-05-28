@@ -11,7 +11,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Random;
 
@@ -32,7 +31,7 @@ public class FairyMushroomBlock extends MushroomBlock
             int _iteration = worldIn.rand.nextInt(10);
             Vec3d _vec = new Vec3d(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
             SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, -0.1f, 0), _iteration, 0, 0.5F);
-            MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> worldIn.getDimension().getType()), spawnParticleMessage);
+            MWAWPacketHandler.packetHandler.sendToDimension(worldIn.getDimension().getType(), spawnParticleMessage);
         }
     }
 
@@ -54,11 +53,6 @@ public class FairyMushroomBlock extends MushroomBlock
         BlockPos blockpos = pos.down();
         BlockState blockstate = worldIn.getBlockState(blockpos);
         Block block = blockstate.getBlock();
-        if (block == Blocks.DIRT || block == Blocks.GRASS_BLOCK)
-        {
-            return true;
-        }
-
-        return false;
+        return block == Blocks.DIRT || block == Blocks.GRASS_BLOCK;
     }
 }

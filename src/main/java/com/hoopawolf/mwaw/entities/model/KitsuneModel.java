@@ -11,19 +11,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class KitsuneModel extends EntityModel<KitsuneEntity>
 {
-    private final ModelRenderer Body;
-    private final ModelRenderer RightTail;
-    private final ModelRenderer LeftTail;
-    private final ModelRenderer CenterTail;
-    private final ModelRenderer Head;
-    private final ModelRenderer FrontRightLeg;
-    private final ModelRenderer FrontLeftLeg;
-    private final ModelRenderer BackLeftLeg;
-    private final ModelRenderer BackRightLeg;
-
-    //Villager
-    protected ModelRenderer villagerHead;
-    protected ModelRenderer field_217151_b;
+    public final ModelRenderer Head;
     protected final ModelRenderer field_217152_f;
     protected final ModelRenderer villagerBody;
     protected final ModelRenderer field_217153_h;
@@ -31,6 +19,17 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
     protected final ModelRenderer rightVillagerLeg;
     protected final ModelRenderer leftVillagerLeg;
     protected final ModelRenderer villagerNose;
+    private final ModelRenderer Body;
+    private final ModelRenderer RightTail;
+    private final ModelRenderer LeftTail;
+    private final ModelRenderer CenterTail;
+    private final ModelRenderer FrontRightLeg;
+    private final ModelRenderer FrontLeftLeg;
+    private final ModelRenderer BackLeftLeg;
+    private final ModelRenderer BackRightLeg;
+    //Villager
+    protected ModelRenderer villagerHead;
+    protected ModelRenderer field_217151_b;
 
     public KitsuneModel()
     {
@@ -158,8 +157,14 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
     @Override
     public void setRotationAngles(KitsuneEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
-        this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
+        if (entityIn.isShouting())
+        {
+            this.Head.rotateAngleX = -45.0F;
+        } else
+        {
+            this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
+            this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
+        }
 
         this.FrontRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
         this.FrontLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
@@ -197,12 +202,18 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
         //villager
         this.villagerHead.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
         this.villagerHead.rotateAngleX = headPitch * ((float) Math.PI / 180F);
-//        if (flag) {
-//            this.villagerHead.rotateAngleZ = 0.3F * MathHelper.sin(0.45F * ageInTicks);
-//            this.villagerHead.rotateAngleX = 0.4F;
-//        } else {
-//            this.villagerHead.rotateAngleZ = 0.0F;
-//        }
+
+
+        boolean flag = entityIn.getShakeHeadTicks() > 0;
+
+        if (flag)
+        {
+            this.villagerHead.rotateAngleZ = 0.3F * MathHelper.sin(0.45F * ageInTicks);
+            this.villagerHead.rotateAngleX = 0.4F;
+        } else
+        {
+            this.villagerHead.rotateAngleZ = 0.0F;
+        }
 
         this.villagerArms.rotationPointY = 3.0F;
         this.villagerArms.rotationPointZ = -1.0F;
@@ -216,9 +227,9 @@ public class KitsuneModel extends EntityModel<KitsuneEntity>
     private void showFoxModel(boolean _isShowing, int foxPhase)
     {
         Body.showModel = _isShowing;
-        RightTail.showModel = (foxPhase > 2) ? _isShowing : false;
-        LeftTail.showModel = (foxPhase > 1) ? _isShowing : false;
-        CenterTail.showModel = (foxPhase > 0) ? _isShowing : false;
+        RightTail.showModel = (foxPhase > 2) && _isShowing;
+        LeftTail.showModel = (foxPhase > 1) && _isShowing;
+        CenterTail.showModel = (foxPhase > 0) && _isShowing;
         Head.showModel = _isShowing;
         FrontRightLeg.showModel = _isShowing;
         FrontLeftLeg.showModel = _isShowing;

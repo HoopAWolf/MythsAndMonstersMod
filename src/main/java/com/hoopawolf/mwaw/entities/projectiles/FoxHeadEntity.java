@@ -20,19 +20,13 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.util.UUID;
-
-public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND DROP PLAYER MAIN HAND ITEM, MAYBE HAVE SOME HEALTH
+public class FoxHeadEntity extends DamagingProjectileEntity
 {
     private LivingEntity owner;
     private Entity target;
@@ -40,16 +34,15 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
     private double targetDeltaX;
     private double targetDeltaY;
     private double targetDeltaZ;
-    private UUID ownerUniqueId;
-    private UUID targetUniqueId;
+    private float startTimer;
 
     public FoxHeadEntity(EntityType<? extends FoxHeadEntity> p_i50161_1_, World p_i50161_2_)
     {
         super(p_i50161_1_, p_i50161_2_);
         this.noClip = true;
         this.setNoGravity(true);
+        startTimer = 20.0F;
     }
-
 
     public FoxHeadEntity(World worldIn, double x, double y, double z, double motionXIn, double motionYIn, double motionZIn)
     {
@@ -58,7 +51,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         this.setMotion(motionXIn, motionYIn, motionZIn);
     }
 
-    public FoxHeadEntity(World worldIn, LivingEntity ownerIn, Entity targetIn, Direction.Axis p_i46772_4_)
+    public FoxHeadEntity(World worldIn, LivingEntity ownerIn, Entity targetIn)
     {
         this(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
         this.owner = ownerIn;
@@ -119,19 +112,6 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         {
             this.direction = Direction.byIndex(compound.getInt("Dir"));
         }
-
-        if (compound.contains("Owner", 10))
-        {
-            CompoundNBT compoundnbt = compound.getCompound("Owner");
-            this.ownerUniqueId = NBTUtil.readUniqueId(compoundnbt);
-        }
-
-        if (compound.contains("Target", 10))
-        {
-            CompoundNBT compoundnbt1 = compound.getCompound("Target");
-            this.targetUniqueId = NBTUtil.readUniqueId(compoundnbt1);
-        }
-
     }
 
     @Override
@@ -147,21 +127,39 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
     public void tick()
     {
         super.tick();
-
-        if (target != null)
+        if (startTimer <= 0)
         {
-            Vec3d _dir = target.getPositionVec().subtract(this.getPositionVec()).normalize();
-            this.setMotion(_dir.getX(), _dir.getY(), _dir.getZ());
+            startTimer = 0;
+
+            if (!world.isRemote)
+            {
+                if (target != null && target.isAlive())
+                {
+                    Vec3d _dir = new Vec3d(target.getPositionVec().getX(), target.getPositionVec().getY() + 0.25F, target.getPositionVec().getZ()).subtract(this.getPositionVec());
+                    this.setMotion(MathHelper.signum(_dir.getX()) * 0.25F, MathHelper.signum(_dir.getY()) * 0.25F, MathHelper.signum(_dir.getZ()) * 0.25F);
+                } else
+                {
+                    setDead();
+                }
+            }
         } else
         {
-            setDead();
+            if (ticksExisted % 2 == 0)
+                --startTimer;
+
+            if (!world.isRemote)
+            {
+                SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(getPosX(), getPosY() + 0.5F, getPosZ()), new Vec3d(0.1D, 0.1D, 0.1D), 10, 0, 0.5F);
+                MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+            }
         }
+
     }
 
     @Override
     protected float getMotionFactor()
     {
-        return super.getMotionFactor();
+        return 1.0F;
     }
 
     @Override
@@ -192,42 +190,35 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
     protected void onImpact(RayTraceResult result)
     {
         super.onImpact(result);
-        if (!this.world.isRemote)
+        if (!this.world.isRemote && startTimer <= 0)
         {
             if (result.getType() == RayTraceResult.Type.ENTITY)
             {
                 Entity entity = ((EntityRayTraceResult) result).getEntity();
-                if (!(entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()))
+                if (entity != this.owner)
                 {
-                    this.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1.0F, 1.0F);
-
-
-                    if (this.shootingEntity != null)
+                    if (entity instanceof PlayerEntity && !((PlayerEntity) entity).isCreative())
                     {
-                        if (entity.attackEntityFrom(DamageSource.causeMobDamage(this.shootingEntity), 8.0F))
-                        {
-                            if (entity.isAlive())
-                            {
-                                this.applyEnchantments(this.shootingEntity, entity);
-                            }
-                        }
+                        ((PlayerEntity) entity).dropItem(((PlayerEntity) entity).inventory.getStackInSlot(((PlayerEntity) entity).inventory.currentItem), true, false);
+                        ((PlayerEntity) entity).inventory.removeStackFromSlot(((PlayerEntity) entity).inventory.currentItem);
                     }
 
-                    if (entity instanceof LivingEntity)
-                    {
-                        int i = 0;
-                        if (this.world.getDifficulty() == Difficulty.NORMAL)
-                        {
-                            i = 10;
-                        } else if (this.world.getDifficulty() == Difficulty.HARD)
-                        {
-                            i = 40;
-                        }
+                    this.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1.0F, 1.0F);
 
-                        if (i > 0)
-                        {
-                            ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20 * i, 1));
-                        }
+                    entity.attackEntityFrom(DamageSource.causeMobDamage(this.owner), 8.0F);
+
+                    int i = 0;
+                    if (this.world.getDifficulty() == Difficulty.NORMAL)
+                    {
+                        i = 10;
+                    } else if (this.world.getDifficulty() == Difficulty.HARD)
+                    {
+                        i = 40;
+                    }
+
+                    if (i > 0)
+                    {
+                        ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20 * i, 1));
                     }
 
                     this.setDead();
@@ -255,10 +246,15 @@ public class FoxHeadEntity extends DamagingProjectileEntity //TODO BLINDNESS AND
         {
             this.playSound(SoundEvents.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 1.0F, 1.0F);
             SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(this.getPositionVec(), new Vec3d(0.1D, 0.1D, 0.1D), 10, 0, 0.5F);
-            MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> this.dimension), spawnParticleMessage);
+            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
         }
 
         this.remove();
+    }
+
+    public float getSpawnPercentage()
+    {
+        return (100.0F - ((startTimer / 20.0F) * 100.0F)) * 0.01F;
     }
 
     @Override

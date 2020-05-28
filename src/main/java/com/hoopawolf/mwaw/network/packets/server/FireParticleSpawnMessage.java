@@ -24,21 +24,6 @@ public class FireParticleSpawnMessage extends MessageToServer
         messageIsValid = false;
     }
 
-    public Vec3d getTargetCoordinates()
-    {
-        return targetCoordinates;
-    }
-
-    public Vec3d getTargetSpeed()
-    {
-        return targetSpeed;
-    }
-
-    public int getIteration()
-    {
-        return iteration;
-    }
-
     public static FireParticleSpawnMessage decode(PacketBuffer buf)
     {
         int iterationAmount;
@@ -74,6 +59,21 @@ public class FireParticleSpawnMessage extends MessageToServer
         return new FireParticleSpawnMessage(new Vec3d(x, y, z), new Vec3d(speedx, speedy, speedz), iterationAmount);
     }
 
+    public Vec3d getTargetCoordinates()
+    {
+        return targetCoordinates;
+    }
+
+    public Vec3d getTargetSpeed()
+    {
+        return targetSpeed;
+    }
+
+    public int getIteration()
+    {
+        return iteration;
+    }
+
     @Override
     public void encode(PacketBuffer buf)
     {
@@ -90,6 +90,6 @@ public class FireParticleSpawnMessage extends MessageToServer
     @Override
     public String toString()
     {
-        return "FireParticleSpawnMessageToServer[targetCoordinates=" + String.valueOf(targetCoordinates) + "]";
+        return "FireParticleSpawnMessageToServer[targetCoordinates=" + targetCoordinates + "]";
     }
 }

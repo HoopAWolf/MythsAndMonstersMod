@@ -29,7 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -38,14 +37,14 @@ import java.util.UUID;
 
 public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 {
-    LinkedList<BlockPos> prevAttraction = new LinkedList<BlockPos>();
     private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(FairyEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> RESTING = EntityDataManager.createKey(FairyEntity.class, DataSerializers.BOOLEAN);
+    private final float maxStamina = 1000;
+    LinkedList<BlockPos> prevAttraction = new LinkedList<BlockPos>();
     private UUID revengeTargetUUID;
     private BlockPos flowerPos = null;
     private int inWaterTick;
     private float staminaRemaining;
-    private final float maxStamina = 1000;
 
     public FairyEntity(EntityType<? extends FairyEntity> p_i225714_1_, World p_i225714_2_)
     {
@@ -74,7 +73,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     @Override
     protected void registerGoals()
     {
-        this.goalSelector.addGoal(0, new FairyEntity.AttackGoal(this, (double) 1.4F, true));
+        this.goalSelector.addGoal(0, new FairyEntity.AttackGoal(this, 1.4F, true));
         this.goalSelector.addGoal(1, new FairyEntity.RestingGoal());
         this.goalSelector.addGoal(6, new FairyEntity.GoToFlowerGoal());
         this.goalSelector.addGoal(8, new FairyEntity.WanderGoal());
@@ -83,7 +82,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
 
         this.targetSelector.addGoal(1, new FairyEntity.AttackDendroidGoal(this));
-        this.targetSelector.addGoal(2, (new FairyEntity.AngerGoal(this)).setCallsForHelp(new Class[0]));
+        this.targetSelector.addGoal(2, (new FairyEntity.AngerGoal(this)).setCallsForHelp());
     }
 
     public boolean isAngry()
@@ -187,7 +186,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             int _iteration = this.rand.nextInt(2);
             Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
             SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, -0.1f, 0), _iteration, 0, 0.5F);
-            MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> this.dimension), spawnParticleMessage);
+            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
         }
     }
 
@@ -222,7 +221,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
                 l = i1 / 2;
             }
 
-            Vec3d vec3d1 = RandomPositionGenerator.func_226344_b_(this, k, l, i, vec3d, (double) ((float) Math.PI / 15F));
+            Vec3d vec3d1 = RandomPositionGenerator.func_226344_b_(this, k, l, i, vec3d, (float) Math.PI / 15F);
             if (vec3d1 != null)
             {
                 this.navigator.setRangeMultiplier(0.5F);
@@ -233,7 +232,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
                 {
                     Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
                     SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 1, 0.5F);
-                    MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> this.dimension), spawnParticleMessage);
+                    MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
                 }
             }
         }
@@ -440,7 +439,23 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
     private boolean IsWithinDistance(BlockPos p_226401_1_, int p_226401_2_)
     {
-        return p_226401_1_.withinDistance(new BlockPos(this), (double) p_226401_2_);
+        return p_226401_1_.withinDistance(new BlockPos(this), p_226401_2_);
+    }
+
+    protected void DecreaseStamina()
+    {
+        if (rand.nextInt(50) < 20)
+            --staminaRemaining;
+    }
+
+    protected void IncreaseStamina()
+    {
+        ++staminaRemaining;
+    }
+
+    protected void ResetStamina()
+    {
+        staminaRemaining = maxStamina;
     }
 
     class AngerGoal extends HurtByTargetGoal
@@ -734,7 +749,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             Vec3d vec3d = FairyEntity.this.getLook(0.0F);
 
             Vec3d vec3d2 = RandomPositionGenerator.findAirTarget(FairyEntity.this, 8, 7, FairyEntity.this.getLook(0.0F), ((float) Math.PI / 2F), 2, 1);
-            return vec3d2 != null ? vec3d2 : RandomPositionGenerator.findGroundTarget(FairyEntity.this, 8, 4, -2, vec3d, (double) ((float) Math.PI / 2F));
+            return vec3d2 != null ? vec3d2 : RandomPositionGenerator.findGroundTarget(FairyEntity.this, 8, 4, -2, vec3d, (float) Math.PI / 2F);
         }
     }
 
@@ -765,22 +780,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         {
             FairyEntity.this.IncreaseStamina();
         }
-    }
-
-    protected void DecreaseStamina()
-    {
-        if (rand.nextInt(50) < 20)
-            --staminaRemaining;
-    }
-
-    protected void IncreaseStamina()
-    {
-        ++staminaRemaining;
-    }
-
-    protected void ResetStamina()
-    {
-        staminaRemaining = maxStamina;
     }
 }
 //TODO Ride fairy jar entity. Have a hunger state if is riding jar. if hungry, becoe ANGERY. try to break jar. get riding on and damage. right click jar to get item. right click jar with sugar to calm the fairy hunger. Fairy pet maybe

@@ -13,14 +13,14 @@ public class RangedAttackWithStrafeGoal extends Goal
 {
     private final MobEntity entityHost;
     private final IRangedAttackMob rangedAttackEntityHost;
-    private LivingEntity attackTarget;
-    private int rangedAttackTime = -1;
     private final double entityMoveSpeed;
-    private int seeTime;
     private final int attackIntervalMin;
     private final int maxRangedAttackTime;
     private final float attackRadius;
     private final float maxAttackDistance;
+    private LivingEntity attackTarget;
+    private int rangedAttackTime = -1;
+    private int seeTime;
     private boolean strafingClockwise;
     private boolean strafingBackwards;
     private int strafingTime = -1;
@@ -48,7 +48,7 @@ public class RangedAttackWithStrafeGoal extends Goal
         }
     }
 
-   @Override
+    @Override
     public boolean shouldExecute()
     {
         LivingEntity livingentity = this.entityHost.getAttackTarget();

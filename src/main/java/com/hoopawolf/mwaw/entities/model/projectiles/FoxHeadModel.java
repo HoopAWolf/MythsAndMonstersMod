@@ -33,8 +33,7 @@ public class FoxHeadModel<T extends Entity> extends SegmentedModel<T>
     @Override
     public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
-        this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
-
+        Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
+        Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
     }
 }

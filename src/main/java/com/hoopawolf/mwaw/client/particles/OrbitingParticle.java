@@ -10,10 +10,10 @@ public class OrbitingParticle extends SpriteTexturedParticle
     private final double coordX;
     private final double coordY;
     private final double coordZ;
+    private final double
+            orbitSpeed;
     private double spread;
-    private double
-            orbitSpeed,
-            orbitAngle;
+    private double orbitAngle;
 
     protected OrbitingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
     {

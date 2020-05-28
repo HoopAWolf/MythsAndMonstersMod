@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import net.minecraft.block.BlockState;
@@ -20,7 +21,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -28,11 +28,9 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
 public class SandWyrmEntity extends CreatureEntity implements IMob
@@ -40,17 +38,15 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     private static final DataParameter<Boolean> TIRED = EntityDataManager.createKey(SandWyrmEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(SandWyrmEntity.class, DataSerializers.VARINT); //0 - NORMAL SAND, 1 - RED SAND
     private static final DataParameter<Integer> ROTATION = EntityDataManager.createKey(SandWyrmEntity.class, DataSerializers.VARINT); // 0 - normal, 1 - dive up, 2 - dive down
-
-    private int jumpRemaining;
     private final int maxJump = 5;
-    private float[] modelRotateX = new float[6];
-    private float lastRotateX, newRotateX;
+    private final float[] modelRotateX = new float[6];
     boolean _flag = false;
     boolean dived = false;
     int recoveryTimer = 0;
-
     MovementController land_controller = new MovementController(this);
     MovementController underground_controller = new SandWyrmEntity.MoveHelperController(this);
+    private int jumpRemaining;
+    private float lastRotateX, newRotateX;
 
     public SandWyrmEntity(EntityType<? extends SandWyrmEntity> type, World worldIn)
     {
@@ -153,7 +149,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
 
         if (!isTired())
         {
-            if (getBlockUnder(2).isIn(BlockTags.SAND))
+            if (getBlockUnder(0).isIn(BlockTags.SAND))
             {
                 for (int i = 0; i < modelRotateX.length; ++i)
                 {
@@ -189,26 +185,17 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                     if (!world.isRemote)
                     {
                         SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(this.getPositionVec(), new Vec3d(world.rand.nextInt(2), world.rand.nextInt(2), world.rand.nextInt(2)), 5, 2, 1.5F);
-                        MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> this.dimension), spawnParticleMessage);
+                        MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
                     }
                     this.playSound(SoundEvents.BLOCK_SAND_BREAK, 1.0F, 1.0F);
                 }
             } else
             {
-                if (getBlockUnder(0).isIn(BlockTags.SAND))
-                {
-                    this.setMotion(this.getMotion().add(0.0D, 0.5F, 0.0D));
-                } else
+                if (world.isAirBlock(this.getPosition()))
                 {
                     this.moveController = land_controller;
                     this.noClip = false;
                     this.setNoGravity(false);
-
-                    if (onGround)
-                    {
-                        setTired(true);
-                        jumpRemaining = 0;
-                    }
                 }
             }
         } else
@@ -240,21 +227,12 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         if (getAttackTarget() == null)
         {
             double d0 = this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getBaseValue();
-            List<LivingEntity> list = this.world.getEntitiesWithinAABB(PlayerEntity.class, (new AxisAlignedBB(this.getPosX(), this.getPosY(), this.getPosZ(), this.getPosX() + 1.0D, this.getPosY() + 1.0D, this.getPosZ() + 1.0D)).grow(d0, 10.0D, d0));
-            Iterator iterator = list.iterator();
-
-            while (true)
+            List<PlayerEntity> entities = EntityHelper.INSTANCE.getPlayersNearby(this, d0, d0, d0, d0 * 2);
+            for (PlayerEntity entity : entities)
             {
-                if (!iterator.hasNext())
+                if (!entity.isCreative() && !entity.isCrouching())
                 {
-                    return;
-                }
-
-                LivingEntity _ent = (LivingEntity) iterator.next();
-
-                if (_ent instanceof PlayerEntity && !((PlayerEntity) _ent).isCreative() && !((PlayerEntity) _ent).isCrouching())
-                {
-                    this.setAttackTarget(_ent);
+                    this.setAttackTarget(entity);
                     break;
                 }
             }
@@ -273,7 +251,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     {
         if (!this.isTired())
         {
-            if (getBlockAbove(2).isIn(BlockTags.SAND))
+            if (getBlockAbove(1).isIn(BlockTags.SAND))
             {
                 if (!(getAttackTarget() != null && this.getMotion().getY() > 0.0F))
                     this.setMotion(this.getMotion().add(0.0D, -this.getMotion().getY(), 0.0D));
@@ -388,6 +366,57 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.dataManager.set(ROTATION, _rotation);
     }
 
+    protected void DecreaseStamina()
+    {
+        if (rand.nextInt(100) < 60)
+            --jumpRemaining;
+    }
+
+    protected void IncreaseStamina()
+    {
+        if (rand.nextInt(100) < 40)
+        {
+            ++recoveryTimer;
+
+            if (recoveryTimer >= 100)
+            {
+                ++jumpRemaining;
+                recoveryTimer = 0;
+            }
+        }
+    }
+
+    protected void ResetStamina()
+    {
+        jumpRemaining = maxJump;
+    }
+
+    private BlockState getBlockUnder(int _deepness)
+    {
+        for (int i = 0; i <= _deepness; ++i)
+        {
+            if (!this.world.isAirBlock(new BlockPos(this.getPosX(), this.getPosY() - (1 + i), this.getPosZ())))
+            {
+                return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() - (1 + i), this.getPosZ()));
+            }
+        }
+
+        return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() - 1, this.getPosZ()));
+    }
+
+    private BlockState getBlockAbove(int _highness)
+    {
+        for (int i = _highness; i > 0; --i)
+        {
+            if (!this.world.isAirBlock(new BlockPos(this.getPosX(), this.getPosY() + (1 + i), this.getPosZ())))
+            {
+                return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + (1 + i), this.getPosZ()));
+            }
+        }
+
+        return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ()));
+    }
+
     class ChargeAttackGoal extends Goal
     {
         public ChargeAttackGoal()
@@ -422,7 +451,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                 SandWyrmEntity.this.playSound(SoundEvents.BLOCK_SAND_HIT, 1.0F, 1.0F);
                 Direction direction = SandWyrmEntity.this.getAdjustedHorizontalFacing();
                 SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().add((double) direction.getXOffset() * 0.6D, 0.0D, (double) direction.getZOffset() * 0.6D));
-                SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().getX(), 1.0D, SandWyrmEntity.this.getMotion().getZ());
+                SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().getX(), 0.5D, SandWyrmEntity.this.getMotion().getZ());
                 SandWyrmEntity.this.navigator.clearPath();
                 SandWyrmEntity.this.DecreaseStamina();
                 SandWyrmEntity.this.setRotation(2);
@@ -516,7 +545,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                         if (!world.isRemote)
                         {
                             SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(SandWyrmEntity.this.getPositionVec(), new Vec3d(world.rand.nextInt(2), world.rand.nextInt(2), world.rand.nextInt(2)), 5, 2, 1.5F);
-                            MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> SandWyrmEntity.this.dimension), spawnParticleMessage);
+                            MWAWPacketHandler.packetHandler.sendToDimension(SandWyrmEntity.this.dimension, spawnParticleMessage);
                         }
                         SandWyrmEntity.this.playSound(SoundEvents.BLOCK_SAND_BREAK, 1.0F, 1.0F);
 
@@ -524,14 +553,14 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                         {
                             Vec3d vec3d1 = SandWyrmEntity.this.getMotion();
                             SandWyrmEntity.this.rotationYaw = -((float) MathHelper.atan2(vec3d1.x, vec3d1.z)) * (180F / (float) Math.PI);
-                            SandWyrmEntity.this.renderYawOffset = SandWyrmEntity.this.rotationYaw;
                         } else
                         {
                             double d2 = SandWyrmEntity.this.getAttackTarget().getPosX() - SandWyrmEntity.this.getPosX();
                             double d1 = SandWyrmEntity.this.getAttackTarget().getPosZ() - SandWyrmEntity.this.getPosZ();
                             SandWyrmEntity.this.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
-                            SandWyrmEntity.this.renderYawOffset = SandWyrmEntity.this.rotationYaw;
                         }
+                        SandWyrmEntity.this.renderYawOffset = SandWyrmEntity.this.rotationYaw;
+                        SandWyrmEntity.this.setRotation(0);
                     }
                 }
             }
@@ -585,56 +614,5 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         {
             return !noClip && super.shouldContinueExecuting();
         }
-    }
-
-    protected void DecreaseStamina()
-    {
-        if (rand.nextInt(100) < 60)
-            --jumpRemaining;
-    }
-
-    protected void IncreaseStamina()
-    {
-        if (rand.nextInt(100) < 40)
-        {
-            ++recoveryTimer;
-
-            if (recoveryTimer >= 100)
-            {
-                ++jumpRemaining;
-                recoveryTimer = 0;
-            }
-        }
-    }
-
-    protected void ResetStamina()
-    {
-        jumpRemaining = maxJump;
-    }
-
-    private BlockState getBlockUnder(int _deepness)
-    {
-        for (int i = 0; i <= _deepness; ++i)
-        {
-            if (!this.world.isAirBlock(new BlockPos(this.getPosX(), this.getPosY() - (1 + i), this.getPosZ())))
-            {
-                return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() - (1 + i), this.getPosZ()));
-            }
-        }
-
-        return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() - 1, this.getPosZ()));
-    }
-
-    private BlockState getBlockAbove(int _highness)
-    {
-        for (int i = _highness; i > 0; --i)
-        {
-            if (!this.world.isAirBlock(new BlockPos(this.getPosX(), this.getPosY() + (1 + i), this.getPosZ())))
-            {
-                return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + (1 + i), this.getPosZ()));
-            }
-        }
-
-        return this.world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ()));
     }
 }

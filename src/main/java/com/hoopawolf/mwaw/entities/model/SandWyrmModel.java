@@ -27,7 +27,7 @@ public class SandWyrmModel extends EntityModel<SandWyrmEntity>
     private final ModelRenderer RightFrontLeg;
     private final ModelRenderer RightBackLeg;
 
-    private ArrayList<ModelRenderer> modelParts = new ArrayList<ModelRenderer>();
+    private final ArrayList<ModelRenderer> modelParts = new ArrayList<ModelRenderer>();
 
     public SandWyrmModel()
     {

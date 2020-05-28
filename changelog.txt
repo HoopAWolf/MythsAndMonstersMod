@@ -1,3 +1,341 @@
+Build: 1.15.2-31.2.5 - Sun May 24 21:41:17 GMT 2020
+	cpw:
+		Improve the DistExecutor API and introduce some "almost completely" safe mechanisms to handle sided lambdas.
+		
+		In general, use sided lambdas safely by embedding them in a separately loaded class. There's a whole twitch stream
+		dedicated to investigating this problem. See link in DistExecutor if you're interested.
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.2.4 - Sun May 24 01:25:42 GMT 2020
+	tterrag:
+		Fix typo in new registry fields' names
+		
+		Note: this is technically a breaking change. If you for some reason added code referencing these two fields in the last few hours, sorry.
+
+=========
+Build: 1.15.2-31.2.3 - Sat May 23 20:23:05 GMT 2020
+	tterrag:
+		Fix server startup query info not including new text
+
+=========
+Build: 1.15.2-31.2.2 - Sat May 23 20:08:11 GMT 2020
+	tterrag:
+		Improve look of notification GUI, improve StartupQuery API
+
+=========
+Build: 1.15.2-31.2.1 - Sat May 23 17:45:49 GMT 2020
+	tterrag:
+		Add forge registries for applicable new registry types
+		
+		Expose constructors for all forge registry entries
+		Also, remove deprecation on ItemCameraTransforms/TransformType
+
+=========
+Build: 1.15.2-31.2.0 - Fri May 15 19:34:16 GMT 2020
+	lex:
+		Bump version for new RB.
+
+=========
+Build: 1.15.2-31.1.99 - Fri May 15 19:25:51 GMT 2020
+	lex:
+		Update MCP Mappings.
+
+=========
+Build: 1.15.2-31.1.98 - Fri May 15 18:34:16 GMT 2020
+	ichttt:
+		fix test mod and add warning comment to framebuffer (#6698)
+
+=========
+Build: 1.15.2-31.1.97 - Fri May 15 18:00:19 GMT 2020
+	lex:
+		Fix incorrect argument passed in RenderPipeline potentially causing crash. #6677
+
+	lex:
+		Fix FireBlock using flammability instead of spread speed when looking for places to spread. Closes #6646
+
+=========
+Build: 1.15.2-31.1.95 - Fri May 15 17:53:00 GMT 2020
+	FunwayguyEmail:
+		Re-added patch to enable stencil buffer in net.minecraft.client.shader.Framebuffer
+		Add test for the stencil buffer feature. Only tests that it doesn't crash when enabling, for now. - giga
+
+	thesilkminer:
+		Allow Music Discs to be created with SoundEvent delegates. (#6523)
+
+=========
+Build: 1.15.2-31.1.93 - Fri May 15 17:32:12 GMT 2020
+	Edwin.mindcraft:
+		Use IProperty#getName when generating blockstate jsons (#6582)
+		
+		Close #6520 
+
+=========
+Build: 1.15.2-31.1.92 - Fri May 15 17:26:19 GMT 2020
+	David Quintana:
+		Model system fixes:
+		- Add "origin" key to determine what origin to use. This will default to the existing (broken) behaviour to avoid breaking changes.
+		- Fix interaction of transforms with variant transforms (transformation ordering).
+		- Fix OBJ loader ignoring "diffuseLighting" attribute from the json.
+		  This attribute will continue not being used if "ambientToFullbright" is on (default) to avoid breaking changes.
+
+=========
+Build: 1.15.2-31.1.91 - Fri May 15 16:38:42 GMT 2020
+	lex:
+		Fixed Partivle.onGround not updating correctly due to decompile error. Closes #6595
+
+	lex:
+		Fixed typo in registry alias writing causing infinite loop. Closes #6689
+
+=========
+Build: 1.15.2-31.1.89 - Fri May 15 14:45:46 GMT 2020
+	laughlan.cov:
+		Remove duplicate post of ChunkEvent.Load. (#6697)
+
+=========
+Build: 1.15.2-31.1.88 - Thu May 14 20:22:21 GMT 2020
+	thpetuaudletang:
+		Fix LevelChange event not firing after enchanting (#6693)
+
+=========
+Build: 1.15.2-31.1.87 - Tue May 12 22:11:53 GMT 2020
+	ichttt:
+		Fix server config directory remaining locked when integrated server is shut down. (#6644)
+
+=========
+Build: 1.15.2-31.1.86 - Tue May 12 22:02:09 GMT 2020
+	LXGaming:
+		Fix exclusion of coremods not filtering correctly when the mods directory is a symbolic link. (#6600)
+
+=========
+Build: 1.15.2-31.1.85 - Tue May 12 21:29:40 GMT 2020
+	jdk:
+		Allow Bees to use custom hives. (#6656)
+
+=========
+Build: 1.15.2-31.1.84 - Tue May 12 21:23:13 GMT 2020
+	jmansfield:
+		Fix vanilla screens escape key not matching done button behavior (#6682)
+
+	jmansfield:
+		Fixed CropGrowEvents not firing for Bamboo (#6680)
+
+	tomboshoven:
+		Fixed tile entities persisting when switching between states that don't have TEs without changing the block. (#6674)
+
+=========
+Build: 1.15.2-31.1.81 - Tue May 12 21:17:26 GMT 2020
+	ShetiPhian:
+		Fixed FluidTank.drain calling onContentsChanged when simulating (#6684)
+
+=========
+Build: 1.15.2-31.1.80 - Tue May 12 21:08:20 GMT 2020
+	lex:
+		Fix infinite loading screen when resources error. Closes #6592 & #6593
+
+=========
+Build: 1.15.2-31.1.79 - Mon May 11 22:28:50 GMT 2020
+	laughlan.cov:
+		Fix IForgeBlock.removedByPlayer not firing on the client. (#6638)
+
+=========
+Build: 1.15.2-31.1.78 - Mon May 11 00:35:20 GMT 2020
+	cpw:
+		Update to newer eventbus, with typetools compatibility with jvms up to j14. No guarantees on actual game compatibility however.
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.1.77 - Wed May 06 20:49:23 GMT 2020
+	jmansfield:
+		Fixed informational /forge commands being repeated to all ops when logging is enabled. Closes #6330
+
+=========
+Build: 1.15.2-31.1.76 - Wed May 06 20:41:52 GMT 2020
+	jmansfield:
+		Fix ModListScreen escape key not matching done button behavior. Closes #6672
+
+=========
+Build: 1.15.2-31.1.75 - Wed May 06 11:31:06 GMT 2020
+	David Quintana:
+		Patch the bucket logic to not hardcode some checks to WATER. Fixes not being able to place custom fluids into modded fluid-loggable blocks that accept fluids other than water.
+
+=========
+Build: 1.15.2-31.1.74 - Sun May 03 23:13:58 GMT 2020
+	David Quintana:
+		Avoid discarding the bottom 4 bits of the lightmap coords. It turns out vanilla relies on those bits. Fixes some blocks being darker than they should be in certain circumstances.
+
+=========
+Build: 1.15.2-31.1.73 - Sun May 03 20:48:25 GMT 2020
+	jacob101607:
+		Fix issue with providing a null ItemStack to onPlayerDestroyItem (#6633)
+
+=========
+Build: 1.15.2-31.1.72 - Sun May 03 20:40:43 GMT 2020
+	Bward7864:
+		Allow overriding of tool level requirements when harvesting a block, via the HarvestCheck event.  (#6632)
+
+=========
+Build: 1.15.2-31.1.71 - Sun May 03 20:34:34 GMT 2020
+	richard:
+		Fixed Hoppers not inserting fully into custom contains with slots that can hold more then max stack (#6631)
+
+=========
+Build: 1.15.2-31.1.70 - Sun May 03 20:27:39 GMT 2020
+	darklime:
+		Change recipe condition log level to debug. (#6621)
+
+	darklime:
+		Fix vanilla loot table resource leak. (#6622)
+
+	LordMonoxide:
+		Fixed ChunkDataEvent.Save being fired with a null world if chunk isn't fully generated when unloaded. (#6628)
+
+=========
+Build: 1.15.2-31.1.67 - Sun May 03 20:21:40 GMT 2020
+	41904979+CAS-ual-TY:
+		Fix milk buckets removing potion effects without filters. (#6609)
+
+=========
+Build: 1.15.2-31.1.66 - Sun May 03 20:15:40 GMT 2020
+	dion:
+		Added missing localization for swim speed, and reach distance attributes (#6585)
+
+=========
+Build: 1.15.2-31.1.65 - Sun May 03 20:09:37 GMT 2020
+	williewillus:
+		Allow colors of tooltip to be specified in GuiUtils.drawHoveringText tooltip methods (#6579)
+
+=========
+Build: 1.15.2-31.1.64 - Sun May 03 19:56:55 GMT 2020
+	ichttt:
+		Fix config comments referencing disallowed enum values. (#6542)
+
+=========
+Build: 1.15.2-31.1.63 - Tue Apr 28 17:23:47 GMT 2020
+	David Quintana:
+		Remove redundant call to modifyLoot. Closes #6657
+
+=========
+Build: 1.15.2-31.1.62 - Tue Apr 28 04:02:06 GMT 2020
+	tterrag:
+		Fix various issues with the loading screen and datagen
+		
+		Fix NPE on datagen startup
+		Fix early loading GUI hanging and never terminating after datagen
+		Add loading GUI messages for datagen
+
+=========
+Build: 1.15.2-31.1.61 - Mon Apr 27 18:06:44 GMT 2020
+	weiland:
+		Fix BackgroundScanHandler crashing on servers (#6660)
+
+=========
+Build: 1.15.2-31.1.60 - Mon Apr 27 13:55:33 GMT 2020
+	cpw:
+		Remove silly icon override. Squirrels are fun y'all..
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.1.59 - Mon Apr 27 05:10:06 GMT 2020
+	tterrag:
+		Fix VariantList calling deprecated bake method
+
+	tterrag:
+		Rename window icon image to avoid conflict, fix not using vanilla icon
+
+=========
+Build: 1.15.2-31.1.57 - Mon Apr 27 03:06:13 GMT 2020
+	lex:
+		Fix Automatic Event Subscriber not detecting mod id defaults, and fix test mods.
+
+	lex:
+		Fix resource packs not being sorted properly. Closes #6287
+
+=========
+Build: 1.15.2-31.1.55 - Mon Apr 27 01:42:42 GMT 2020
+	roguelogix:
+		move handOffWindow down near start()
+
+	roguelogix:
+		Move ClientVisualization to secondary thread
+
+	cpw:
+		Handle message display a bit better, try to make the UI tick a bit better.. Still a problem with
+		a modelbake right at the end, happening on the window flip.
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+	cpw:
+		Use forge logo as short term window Icon, fix Buffer cast problems for new JDK stupid.
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.1.51 - Sun Apr 26 22:25:05 GMT 2020
+	cpw:
+		merge early startup into main window if used. It seems to work well.. Also ticks window on main thread, so mac compatible now.
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.1.50 - Sat Apr 25 21:55:22 GMT 2020
+	cpw:
+		Update jenkinsfile and gradle for new versions of things..
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.1.49 - Sat Apr 25 02:19:14 GMT 2020
+	lex:
+		Fix potential NPEs in RegistryObject.orElseThrow/isPresent/ifPresent Closes #6647
+
+=========
+Build: 1.15.2-31.1.48 - Thu Apr 23 12:57:42 GMT 2020
+	David Quintana:
+		Add tickRate setter to the ForgeFlowingFluid Properties builder.
+
+=========
+Build: 1.15.2-31.1.47 - Mon Apr 20 01:37:16 GMT 2020
+	cpw:
+		Fix recursion mess in PlayerAdvancement loading, by using an alternative based on a toposorted list of all advancements.
+		It seems to be fully equivalent in testing, but there may be corner cases, so there is a config to disable, though disabling
+		may break servers, especially those chunkloading fake players.
+		
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.15.2-31.1.46 - Wed Apr 15 17:10:05 GMT 2020
+	lex:
+		Revert defualt jvm args.
+
+=========
+Build: 1.15.2-31.1.45 - Wed Apr 15 06:54:47 GMT 2020
+	lex:
+		Fixed dev time compilation using J9+ producing incorrect bytecode.
+
+=========
+Build: 1.15.2-31.1.44 - Sun Apr 12 19:27:19 GMT 2020
+	David Quintana:
+		Add "type" field to global loot modifier jsons. (#6554)
+		
+		* Add "type" field to global loot modifier jsons and fix tests.
+		To avoid binary breaking, "type" defaults to be the same as the filename.
+		* Fix license headers.
+
+=========
+Build: 1.15.2-31.1.43 - Sat Apr 11 06:03:58 GMT 2020
+	tterrag:
+		Fix child annotations not inheriting member name, cleanup
+
+=========
+Build: 1.15.2-31.1.42 - Sat Apr 11 05:20:15 GMT 2020
+	tterrag:
+		Fix element type of scanned child annotations
+
+=========
 Build: 1.15.2-31.1.41 - Thu Apr 09 00:19:35 GMT 2020
 	28677702+patrick-aoc:
 		Fixed PlantType not extending IExtensibleEnum, Closes #6286
@@ -134,7 +472,7 @@ Build: 1.15.2-31.1.18 - Thu Feb 27 06:13:47 GMT 2020
 
 =========
 Build: 1.15.2-31.1.17 - Wed Feb 26 03:45:24 GMT 2020
-	DaemonUmbra:
+	Colby Prince:
 		Updated ForgeDev MCP Mapping Version (#6532)
 
 =========
@@ -155,7 +493,7 @@ Build: 1.15.2-31.1.15 - Sun Feb 23 17:32:42 GMT 2020
 
 =========
 Build: 1.15.2-31.1.14 - Mon Feb 17 19:01:48 GMT 2020
-	DaemonUmbra:
+	Colby Prince:
 		Fixed Conduit and Beacon Activation on Vanilla Servers (#6438)
 
 =========
@@ -252,7 +590,7 @@ Build: 1.15.2-31.0.15 - Sun Feb 02 22:03:15 GMT 2020
 
 =========
 Build: 1.15.2-31.0.14 - Thu Jan 30 06:12:15 GMT 2020
-	DaemonUmbra:
+	Colby Prince:
 		Fixed Attacks/Punches not Registering (#6481)
 		
 		Replaced incorrect magic number with constant
@@ -423,7 +761,7 @@ Build: 1.15.1-30.0.32 - Tue Jan 07 21:22:49 GMT 2020
 
 =========
 Build: 1.15.1-30.0.31 - Tue Jan 07 21:15:19 GMT 2020
-	DaemonUmbra:
+	Colby Prince:
 		Fixed Big Mushrooms not generating (#6390)
 		
 		Removed vanilla negation from Forge logic that negated the vanilla logic it was replacing

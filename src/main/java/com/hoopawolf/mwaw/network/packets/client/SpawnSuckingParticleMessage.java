@@ -27,31 +27,6 @@ public class SpawnSuckingParticleMessage extends MessageToClient
         messageIsValid = false;
     }
 
-    public Vec3d getTargetCoordinates()
-    {
-        return targetCoordinates;
-    }
-
-    public Vec3d getTargetSpeed()
-    {
-        return targetSpeed;
-    }
-
-    public int getIteration()
-    {
-        return iteration;
-    }
-
-    public int getPartcleType()
-    {
-        return particle_type;
-    }
-
-    public double getParticleSpread()
-    {
-        return spread;
-    }
-
     public static SpawnSuckingParticleMessage decode(PacketBuffer buf)
     {
         int iterationAmount, particletype;
@@ -91,6 +66,31 @@ public class SpawnSuckingParticleMessage extends MessageToClient
         return new SpawnSuckingParticleMessage(new Vec3d(x, y, z), new Vec3d(speedx, speedy, speedz), iterationAmount, particletype, spreadDist);
     }
 
+    public Vec3d getTargetCoordinates()
+    {
+        return targetCoordinates;
+    }
+
+    public Vec3d getTargetSpeed()
+    {
+        return targetSpeed;
+    }
+
+    public int getIteration()
+    {
+        return iteration;
+    }
+
+    public int getPartcleType()
+    {
+        return particle_type;
+    }
+
+    public double getParticleSpread()
+    {
+        return spread;
+    }
+
     @Override
     public void encode(PacketBuffer buf)
     {
@@ -109,6 +109,6 @@ public class SpawnSuckingParticleMessage extends MessageToClient
     @Override
     public String toString()
     {
-        return "SpawnSuckingParticleMessageToClient[targetCoordinates=" + String.valueOf(targetCoordinates) + "]";
+        return "SpawnSuckingParticleMessageToClient[targetCoordinates=" + targetCoordinates + "]";
     }
 }

@@ -13,7 +13,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Predicate;
 
@@ -41,13 +40,28 @@ public class GoldenBowItem extends ShootableItem
         });
     }
 
+    /**
+     * Gets the velocity of the arrow entity from the bow's charge
+     */
+    public static float getArrowVelocity(int charge)
+    {
+        float f = (float) charge / 20.0F;
+        f = (f * f + f * 2.0F) / 3.0F;
+        if (f > 1.0F)
+        {
+            f = 1.0F;
+        }
+
+        return f;
+    }
+
     @Override
     public void onUse(World worldIn, LivingEntity livingEntityIn, ItemStack stack, int count)
     {
         if (!worldIn.isRemote)
         {
             SpawnOrbitingParticleMessage spawnParticleMessage = new SpawnOrbitingParticleMessage(livingEntityIn.getPositionVec(), new Vec3d(0.0D, 0.02D, 0.0D), 1, 0, 0.5F);
-            MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> livingEntityIn.dimension), spawnParticleMessage);
+            MWAWPacketHandler.packetHandler.sendToDimension(livingEntityIn.dimension, spawnParticleMessage);
         }
     }
 
@@ -111,7 +125,7 @@ public class GoldenBowItem extends ShootableItem
                         worldIn.addEntity(abstractarrowentity);
                     }
 
-                    worldIn.playSound((PlayerEntity) null, playerentity.getPosX(), playerentity.getPosY(), playerentity.getPosZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+                    worldIn.playSound(null, playerentity.getPosX(), playerentity.getPosY(), playerentity.getPosZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                     if (!flag1 && !playerentity.abilities.isCreativeMode)
                     {
                         itemstack.shrink(1);
@@ -125,21 +139,6 @@ public class GoldenBowItem extends ShootableItem
                 }
             }
         }
-    }
-
-    /**
-     * Gets the velocity of the arrow entity from the bow's charge
-     */
-    public static float getArrowVelocity(int charge)
-    {
-        float f = (float) charge / 20.0F;
-        f = (f * f + f * 2.0F) / 3.0F;
-        if (f > 1.0F)
-        {
-            f = 1.0F;
-        }
-
-        return f;
     }
 
     @Override

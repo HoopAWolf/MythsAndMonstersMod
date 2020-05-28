@@ -34,7 +34,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
@@ -42,6 +41,13 @@ import java.util.List;
 
 public class WolpertingerEntity extends AnimalEntity
 {
+    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(WolpertingerEntity.class, DataSerializers.VARINT);
+    private final Class[] grabTargets = {
+            FairyEntity.class
+    };
+
+    MovementController flyingController = new FlyingMovementController(this, 20, true);
+    MovementController landController = new WolpertingerEntity.MoveHelperController(this);
     private int jumpTicks;
     private int jumpDuration;
     private boolean wasOnGround;
@@ -51,18 +57,8 @@ public class WolpertingerEntity extends AnimalEntity
     private float scared_timer;
     private float drop_timer;
     private float pickup_timer;
-
     private Entity grabbedEntity;
-
-    private Class[] grabTargets = {
-            FairyEntity.class
-    };
-
     private FlyingAvoidEntityGoal flyingavoidgoal;
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(WolpertingerEntity.class, DataSerializers.VARINT);
-
-    MovementController flyingController = new FlyingMovementController(this, 20, true);
-    MovementController landController = new WolpertingerEntity.MoveHelperController(this);
 
     public WolpertingerEntity(EntityType<? extends WolpertingerEntity> type, World worldIn)
     {
@@ -94,9 +90,9 @@ public class WolpertingerEntity extends AnimalEntity
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new SwimGoal(this));
-        this.goalSelector.addGoal(2, new BreedGoal(this, 0.35D));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 0.35D, Ingredient.fromItems(Items.GOLDEN_CARROT), false));
-        this.goalSelector.addGoal(5, new RandomWalkingWithRidden(this, 0.35D));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 0.6D));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 0.6D, Ingredient.fromItems(Items.GOLDEN_CARROT), false));
+        this.goalSelector.addGoal(5, new RandomWalkingWithRidden(this, 0.6D));
         this.goalSelector.addGoal(6, new JumpToGrabGoal(this, 10));
         this.goalSelector.addGoal(8, new LookAtWithPassenger(this, PlayerEntity.class, 4.0F));
         this.goalSelector.addGoal(8, new LookAtWithPassenger(this, CreatureEntity.class, 4.0F));
@@ -108,6 +104,7 @@ public class WolpertingerEntity extends AnimalEntity
         super.registerAttributes();
         this.getAttributes().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
 
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(5.0D);
         this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.2D);
     }
@@ -122,12 +119,11 @@ public class WolpertingerEntity extends AnimalEntity
             {
                 Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
                 SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 3, 0.5F);
-                MWAWPacketHandler.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> this.dimension), spawnParticleMessage);
+                MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
             }
         }
     }
 
-    @Override
     protected float getJumpUpwardsMotion()
     {
         if (!this.collidedHorizontally && (!this.moveController.isUpdating() || !(this.moveController.getY() > this.getPosY() + 0.5D)))
@@ -217,17 +213,6 @@ public class WolpertingerEntity extends AnimalEntity
     {
         this.getNavigator().setSpeed(newSpeed);
         this.moveController.setMoveTo(this.moveController.getX(), this.moveController.getY(), this.moveController.getZ(), newSpeed);
-    }
-
-    @Override
-    public void setJumping(boolean jumping)
-    {
-        super.setJumping(jumping);
-        if (jumping)
-        {
-            this.playSound(this.getJumpSound(), this.getSoundVolume(), ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F) * 0.8F);
-        }
-
     }
 
     public void startJumping()
@@ -451,6 +436,17 @@ public class WolpertingerEntity extends AnimalEntity
     }
 
     @Override
+    public void setJumping(boolean jumping)
+    {
+        super.setJumping(jumping);
+        if (jumping)
+        {
+            this.playSound(this.getJumpSound(), this.getSoundVolume(), ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F) * 0.8F);
+        }
+
+    }
+
+    @Override
     public boolean isBreedingItem(ItemStack stack)
     {
         return stack.getItem() == Items.GOLDEN_CARROT;
@@ -517,43 +513,6 @@ public class WolpertingerEntity extends AnimalEntity
     {
     }
 
-    public class JumpHelperController extends JumpController
-    {
-        private final WolpertingerEntity wolpertinger;
-        private boolean canJump;
-
-        public JumpHelperController(WolpertingerEntity _wolpertinger)
-        {
-            super(_wolpertinger);
-            this.wolpertinger = _wolpertinger;
-        }
-
-        public boolean getIsJumping()
-        {
-            return this.isJumping;
-        }
-
-        public boolean canJump()
-        {
-            return this.canJump;
-        }
-
-        public void setCanJump(boolean canJumpIn)
-        {
-            this.canJump = canJumpIn;
-        }
-
-        @Override
-        public void tick()
-        {
-            if (this.isJumping && !isScared)
-            {
-                this.wolpertinger.startJumping();
-                this.isJumping = false;
-            }
-        }
-    }
-
     static class MoveHelperController extends MovementController
     {
         private final WolpertingerEntity wolpertinger;
@@ -568,7 +527,6 @@ public class WolpertingerEntity extends AnimalEntity
         @Override
         public void tick()
         {
-            super.tick();
             if (this.wolpertinger.onGround && !this.wolpertinger.isJumping && !((WolpertingerEntity.JumpHelperController) this.wolpertinger.jumpController).getIsJumping())
             {
                 this.wolpertinger.setMovementSpeed(0.0D);
@@ -578,6 +536,7 @@ public class WolpertingerEntity extends AnimalEntity
                 this.wolpertinger.moving_timer = 0.0F;
             }
 
+            super.tick();
         }
 
         @Override
@@ -599,8 +558,8 @@ public class WolpertingerEntity extends AnimalEntity
     static class FlyingAvoidEntityGoal extends Goal
     {
         private final WolpertingerEntity wolpertinger;
-        private float avoidDistance;
-        private Entity avoidTarget;
+        private final float avoidDistance;
+        private final Entity avoidTarget;
 
         public FlyingAvoidEntityGoal(WolpertingerEntity _wolpertinger, Entity p_i46403_2_, float p_i46403_3_)
         {
@@ -642,11 +601,10 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
-
     static class JumpToGrabGoal extends Goal
     {
         private final WolpertingerEntity wolpertinger;
-        private float checkDist;
+        private final float checkDist;
         private Entity tryGrabTarget;
 
         public JumpToGrabGoal(WolpertingerEntity _entity, float checkDistIn)
@@ -686,8 +644,7 @@ public class WolpertingerEntity extends AnimalEntity
                     }
                 }
 
-                if (tryGrabTarget != null)
-                    return true;
+                return tryGrabTarget != null;
             }
 
 
@@ -783,6 +740,43 @@ public class WolpertingerEntity extends AnimalEntity
         public boolean shouldExecute()
         {
             return this.entity.getPassengers().isEmpty() && super.shouldExecute();
+        }
+    }
+
+    public class JumpHelperController extends JumpController
+    {
+        private final WolpertingerEntity wolpertinger;
+        private boolean canJump;
+
+        public JumpHelperController(WolpertingerEntity _wolpertinger)
+        {
+            super(_wolpertinger);
+            this.wolpertinger = _wolpertinger;
+        }
+
+        public boolean getIsJumping()
+        {
+            return this.isJumping;
+        }
+
+        public boolean canJump()
+        {
+            return this.canJump;
+        }
+
+        public void setCanJump(boolean canJumpIn)
+        {
+            this.canJump = canJumpIn;
+        }
+
+        @Override
+        public void tick()
+        {
+            if (this.isJumping && !isScared)
+            {
+                this.wolpertinger.startJumping();
+                this.isJumping = false;
+            }
         }
     }
 

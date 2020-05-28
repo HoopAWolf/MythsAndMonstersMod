@@ -41,12 +41,13 @@ public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
         matrixStackIn.push();
         float f = MathHelper.rotLerp(entityIn.prevRotationYaw, entityIn.rotationYaw, partialTicks);
         float f1 = MathHelper.lerp(partialTicks, entityIn.prevRotationPitch, entityIn.rotationPitch);
-        matrixStackIn.translate(0.0D, (double) 0.3F, 0.0D);
+        matrixStackIn.translate(0.0D, 0.3F, 0.0D);
+        matrixStackIn.translate(0.0D, 0.3F + (Math.sin(partialTicks) * 0.05F), 0.0D);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F);
         matrixStackIn.rotate(new Quaternion(180.0F, 180.0F, 0.0F, true));
         this.model.setRotationAngles(entityIn, 0.0F, 0.0F, 0.0F, f, f1);
         IVertexBuilder ivertexbuilder1 = bufferIn.getBuffer(KITSUNE_SPARK_TEXTURE_TRANSPARANCY);
-        this.model.render(matrixStackIn, ivertexbuilder1, packedLightIn, OverlayTexture.NO_OVERLAY, 0.5F, 1.0F, 0.5F, 0.7F);
+        this.model.render(matrixStackIn, ivertexbuilder1, packedLightIn, OverlayTexture.NO_OVERLAY, 0.5F, 1.0F, 0.5F, 0.7F * entityIn.getSpawnPercentage());
         matrixStackIn.pop();
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
