@@ -4,6 +4,7 @@ import com.hoopawolf.mwaw.proxy.ClientProxy;
 import com.hoopawolf.mwaw.proxy.CommonProxy;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
+import com.hoopawolf.mwaw.util.MWAWEventHandler;
 import com.hoopawolf.mwaw.util.ParticleRegistryHandler;
 import com.hoopawolf.mwaw.util.RegistryHandler;
 import net.minecraftforge.common.MinecraftForge;

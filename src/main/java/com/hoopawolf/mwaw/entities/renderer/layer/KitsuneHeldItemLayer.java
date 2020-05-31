@@ -22,20 +22,17 @@ public class KitsuneHeldItemLayer extends LayerRenderer<KitsuneEntity, KitsuneMo
     @Override
     public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, KitsuneEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (!entitylivingbaseIn.isVillagerForm())
-        {
-            matrixStackIn.push();
-            matrixStackIn.translate((this.getEntityModel()).Head.rotationPointX / 16.0F, (this.getEntityModel()).Head.rotationPointY / 16.0F, (this.getEntityModel()).Head.rotationPointZ / 16.0F);
-            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(netHeadYaw));
-            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(headPitch));
+        matrixStackIn.push();
+        matrixStackIn.translate((this.getEntityModel()).Head.rotationPointX / 16.0F, (this.getEntityModel()).Head.rotationPointY / 16.0F, (this.getEntityModel()).Head.rotationPointZ / 16.0F);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(netHeadYaw));
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(headPitch));
 
-            matrixStackIn.translate(0.0F, 0.1F, -0.5D);
-            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90.0F));
+        matrixStackIn.translate(0.0F, 0.1F, -0.5D);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90.0F));
 
-            ItemStack itemstack = entitylivingbaseIn.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-            Minecraft.getInstance().getFirstPersonRenderer().renderItemSide(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.GROUND, false, matrixStackIn, bufferIn, packedLightIn);
-            matrixStackIn.pop();
-        }
+        ItemStack itemstack = entitylivingbaseIn.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        Minecraft.getInstance().getFirstPersonRenderer().renderItemSide(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.GROUND, false, matrixStackIn, bufferIn, packedLightIn);
+        matrixStackIn.pop();
     }
 }

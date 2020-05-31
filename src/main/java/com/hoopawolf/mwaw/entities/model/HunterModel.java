@@ -9,19 +9,17 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 import java.util.List;
-import java.util.Random;
 
 public class HunterModel extends BipedModel<HunterEntity>
 {
-    private final ModelRenderer Head;
-    private final ModelRenderer Backpack;
-
-    private List<ModelRenderer> modelRenderers = Lists.newArrayList();
     public final ModelRenderer bipedLeftArmwear;
     public final ModelRenderer bipedRightArmwear;
     public final ModelRenderer bipedLeftLegwear;
     public final ModelRenderer bipedRightLegwear;
     public final ModelRenderer bipedBodyWear;
+    private final ModelRenderer Head;
+    private final ModelRenderer Backpack;
+    private List<ModelRenderer> modelRenderers = Lists.newArrayList();
 
     public HunterModel(float modelSize)
     {

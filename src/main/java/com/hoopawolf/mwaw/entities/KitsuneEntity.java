@@ -295,6 +295,7 @@ public class KitsuneEntity extends CreatureEntity
             if (!isVillagerForm() && villager_absorb >= 100.0F && world.isDaytime())
             {
                 changingForm(true);
+                spitOutItem(this.getItemStackFromSlot(EquipmentSlotType.MAINHAND));
             } else if (isVillagerForm() && world.isNightTime())
             {
                 changingForm(false);
@@ -382,6 +383,7 @@ public class KitsuneEntity extends CreatureEntity
             itementity.setThrowerId(this.getUniqueID());
             this.playSound(SoundEvents.ENTITY_FOX_SPIT, 1.0F, 1.0F);
             this.world.addEntity(itementity);
+            this.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
         }
     }
 
@@ -403,20 +405,23 @@ public class KitsuneEntity extends CreatureEntity
     @Override
     protected void updateEquipmentIfNeeded(ItemEntity itemEntity)
     {
-        ItemStack itemstack = itemEntity.getItem();
-        if (this.canEquipItem(itemstack))
+        if (!isVillagerForm())
         {
-            int i = itemstack.getCount();
-            if (i > 1)
+            ItemStack itemstack = itemEntity.getItem();
+            if (this.canEquipItem(itemstack))
             {
-                this.spawnItem(itemstack.split(i - 1));
-            }
+                int i = itemstack.getCount();
+                if (i > 1)
+                {
+                    this.spawnItem(itemstack.split(i - 1));
+                }
 
-            this.spitOutItem(this.getItemStackFromSlot(EquipmentSlotType.MAINHAND));
-            this.setItemStackToSlot(EquipmentSlotType.MAINHAND, itemstack.split(1));
-            this.inventoryHandsDropChances[EquipmentSlotType.MAINHAND.getIndex()] = 2.0F;
-            this.onItemPickup(itemEntity, itemstack.getCount());
-            itemEntity.remove();
+                this.spitOutItem(this.getItemStackFromSlot(EquipmentSlotType.MAINHAND));
+                this.setItemStackToSlot(EquipmentSlotType.MAINHAND, itemstack.split(1));
+                this.inventoryHandsDropChances[EquipmentSlotType.MAINHAND.getIndex()] = 2.0F;
+                this.onItemPickup(itemEntity, itemstack.getCount());
+                itemEntity.remove();
+            }
         }
     }
 
