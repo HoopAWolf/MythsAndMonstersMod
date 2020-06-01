@@ -23,13 +23,6 @@ public class EntityHelper
         return listEntityPlayers;
     }
 
-    public List<LivingEntity> getAttackableEntityLivingBaseNearby(Entity ent, double distanceX, double distanceY, double distanceZ, double radius)
-    {
-        List<Entity> nearbyEntities = ent.world.getEntitiesWithinAABBExcludingEntity(ent, ent.getBoundingBox().grow(distanceX, distanceY, distanceZ));
-        List<LivingEntity> listEntityLivingBase = nearbyEntities.stream().filter(entityNeighbor -> entityNeighbor instanceof LivingEntity && ((LivingEntity) entityNeighbor).attackable() && (!(entityNeighbor instanceof PlayerEntity) || !((PlayerEntity) entityNeighbor).isCreative()) && ent.getDistance(entityNeighbor) <= radius).map(entityNeighbor -> (LivingEntity) entityNeighbor).collect(Collectors.toList());
-        return listEntityLivingBase;
-    }
-
     public List<LivingEntity> getEntityLivingBaseNearby(Entity ent, double distanceX, double distanceY, double distanceZ, double radius)
     {
         return getEntitiesNearby(ent, LivingEntity.class, distanceX, distanceY, distanceZ, radius);

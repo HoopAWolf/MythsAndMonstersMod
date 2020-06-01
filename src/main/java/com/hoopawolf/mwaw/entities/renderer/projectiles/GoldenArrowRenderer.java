@@ -5,8 +5,10 @@ import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-
+@OnlyIn(Dist.CLIENT)
 public class GoldenArrowRenderer extends ArrowRenderer<GoldenArrowEntity>
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/goldenarrow.png");

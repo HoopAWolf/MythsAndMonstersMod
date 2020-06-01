@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -139,6 +140,9 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         } else if (source.damageType.equals(DamageSource.DROWN.damageType) || source.damageType.equals(DamageSource.CACTUS.damageType))
         {
             return false;
+        } else if (source.getTrueSource() instanceof LivingEntity && ((LivingEntity) source.getTrueSource()).getHeldItemMainhand().getItem() instanceof AxeItem)
+        {
+            return super.attackEntityFrom(source, amount * 2.0F);
         }
 
         return super.attackEntityFrom(source, amount);

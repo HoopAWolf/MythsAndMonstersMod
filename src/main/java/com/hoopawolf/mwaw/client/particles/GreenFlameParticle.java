@@ -4,7 +4,10 @@ import net.minecraft.client.particle.*;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class GreenFlameParticle extends SpriteTexturedParticle
 {
     private GreenFlameParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
@@ -84,6 +87,7 @@ public class GreenFlameParticle extends SpriteTexturedParticle
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class Factory implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;

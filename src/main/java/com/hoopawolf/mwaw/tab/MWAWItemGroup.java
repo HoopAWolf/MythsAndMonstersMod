@@ -3,6 +3,8 @@ package com.hoopawolf.mwaw.tab;
 import com.hoopawolf.mwaw.util.RegistryHandler;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MWAWItemGroup extends ItemGroup
 {
@@ -13,6 +15,7 @@ public class MWAWItemGroup extends ItemGroup
         super(index, label);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public ItemStack createIcon()
     {

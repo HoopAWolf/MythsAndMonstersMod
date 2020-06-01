@@ -5,8 +5,10 @@ import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-
+@OnlyIn(Dist.CLIENT)
 public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
 {
 
@@ -25,6 +27,7 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
         this.particleAlpha = 0.5F;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class YellowEnchantmentOrbiting implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;
@@ -50,6 +53,7 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class Factory implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;

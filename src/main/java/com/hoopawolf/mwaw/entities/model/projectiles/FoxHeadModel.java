@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class FoxHeadModel<T extends Entity> extends SegmentedModel<T>
 {
 

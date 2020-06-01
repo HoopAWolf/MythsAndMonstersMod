@@ -91,6 +91,7 @@ public class RegistryHandler
     public static final RegistryObject<MWAWSpawnEggItem> WOLPERTINGER_SPAWN_EGG = ITEMS.register("wolpertingerspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.WOLPERTINGER_ENTITY, 0x2A2A00, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> KITSUNE_SPAWN_EGG = ITEMS.register("kitsunespawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.KITSUNE_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> HUNTER_SPAWN_EGG = ITEMS.register("hunterspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.HUNTER_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> CLAY_GOLEM_SPAWN_EGG = ITEMS.register("claygolemspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.CLAY_GOLEM_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
 
     public static void init(IEventBus _iEventBus)
     {

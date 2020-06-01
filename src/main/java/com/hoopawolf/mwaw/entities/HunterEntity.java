@@ -1,19 +1,24 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.google.common.collect.Sets;
+import com.hoopawolf.mwaw.entities.ai.LookAtCustomerHunterGoal;
 import com.hoopawolf.mwaw.entities.ai.RangedBowAttackHunterGoal;
+import com.hoopawolf.mwaw.entities.ai.TradeWithPlayerHunterGoal;
+import com.hoopawolf.mwaw.entities.merchant.Trades;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
@@ -23,9 +28,10 @@ import net.minecraft.world.World;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
-public class HunterEntity extends CreatureEntity implements IRangedAttackMob
+public class HunterEntity extends AbstractVillagerEntity implements IRangedAttackMob
 {
     private static final Predicate<ItemEntity> TRUSTED_TARGET_SELECTOR = (p_213489_0_) ->
     {
@@ -52,6 +58,9 @@ public class HunterEntity extends CreatureEntity implements IRangedAttackMob
             {
                     Items.LEATHER_BOOTS,
             };
+    private final Inventory hunterInventory = new Inventory(8);
+    protected MerchantOffers offers;
+    private PlayerEntity customer;
 
     public HunterEntity(EntityType<? extends HunterEntity> type, World worldIn)
     {
@@ -74,8 +83,10 @@ public class HunterEntity extends CreatureEntity implements IRangedAttackMob
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AnimalEntity.class, true));
 
         this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(1, new TradeWithPlayerHunterGoal(this));
         this.goalSelector.addGoal(4, new RangedBowAttackHunterGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), 20, 15.0F));
         this.goalSelector.addGoal(5, new FindItemsGoal());
+        this.goalSelector.addGoal(6, new LookAtCustomerHunterGoal(this));
         this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
         this.goalSelector.addGoal(10, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
@@ -123,7 +134,79 @@ public class HunterEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     protected void updateAITasks()
     {
+        if (this.getAttackTarget() != null && !this.getAttackTarget().isAlive())
+        {
+            this.setAttackTarget(null);
+        }
+    }
 
+    public boolean processInteract(PlayerEntity player, Hand hand)
+    {
+        ItemStack itemstack = player.getHeldItem(hand);
+        boolean flag = itemstack.getItem() == Items.NAME_TAG;
+        if (flag)
+        {
+            itemstack.interactWithEntity(player, this, hand);
+            return true;
+        } else if (this.isAlive() && !this.hasCustomer() && !this.isChild())
+        {
+            if (this.getOffers().isEmpty() || this.getAttackTarget() != null)
+            {
+                return super.processInteract(player, hand);
+            } else
+            {
+                if (!this.world.isRemote)
+                {
+                    this.setCustomer(player);
+                    this.openMerchantContainer(player, this.getDisplayName(), 0);
+                }
+
+                return true;
+            }
+        } else
+        {
+            return super.processInteract(player, hand);
+        }
+    }
+
+    @Override
+    protected void onVillagerTrade(MerchantOffer offer)
+    {
+    }
+
+    @Override
+    protected void populateTradeData()
+    {
+        Trades.ITrade[] hunter$itrade = Trades.hunter_trade.get(0);
+        if (hunter$itrade != null)
+        {
+            MerchantOffers merchantoffers = this.getOffers();
+            this.addTrades(merchantoffers, hunter$itrade, 5);
+            Trades.ITrade villagertrades$itrade = hunter$itrade[0];
+            MerchantOffer merchantoffer = villagertrades$itrade.getOffer(this, this.rand);
+            if (merchantoffer != null)
+            {
+                merchantoffers.add(merchantoffer);
+            }
+        }
+    }
+
+    @Override
+    public SoundEvent getYesSound()
+    {
+        return SoundEvents.BLOCK_NOTE_BLOCK_BIT;
+    }
+
+    @Override
+    protected SoundEvent getVillagerYesNoSound(boolean getYesSound)
+    {
+        return getYesSound ? SoundEvents.BLOCK_NOTE_BLOCK_BIT : SoundEvents.BLOCK_NOTE_BLOCK_BASS;
+    }
+
+    @Override
+    public void playCelebrateSound()
+    {
+        this.playSound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME, this.getSoundVolume(), this.getSoundPitch());
     }
 
     @Override
@@ -131,6 +214,41 @@ public class HunterEntity extends CreatureEntity implements IRangedAttackMob
     {
         this.setEquipmentBasedOnDifficulty(difficultyIn);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable)
+    {
+        return null;
+    }
+
+    protected void addTrades(MerchantOffers givenMerchantOffers, Trades.ITrade[] newTrades, int maxNumbers)
+    {
+        Set<Integer> set = Sets.newHashSet();
+        if (newTrades.length > maxNumbers)
+        {
+            while (set.size() < maxNumbers)
+            {
+                set.add(this.rand.nextInt(newTrades.length));
+            }
+        } else
+        {
+            for (int i = 0; i < newTrades.length; ++i)
+            {
+                set.add(i);
+            }
+        }
+
+        for (Integer integer : set)
+        {
+            Trades.ITrade huntertrades$itrade = newTrades[integer];
+            MerchantOffer merchantoffer = huntertrades$itrade.getOffer(this, this.rand);
+            if (merchantoffer != null)
+            {
+                givenMerchantOffers.add(merchantoffer);
+            }
+        }
+
     }
 
     @Override
@@ -177,12 +295,6 @@ public class HunterEntity extends CreatureEntity implements IRangedAttackMob
     }
 
 
-    private void spawnItem(ItemStack stackIn)
-    {
-        ItemEntity itementity = new ItemEntity(this.world, this.getPosX(), this.getPosY(), this.getPosZ(), stackIn);
-        this.world.addEntity(itementity);
-    }
-
     @Override
     protected void updateEquipmentIfNeeded(ItemEntity itemEntity)
     {
@@ -207,7 +319,7 @@ public class HunterEntity extends CreatureEntity implements IRangedAttackMob
     {
         if (this.getHeldItemOffhand().isFood())
         {
-            this.heal(healAmount);
+            this.heal(this.getHeldItemOffhand().getItem().getFood().getHealing() * 0.5F);
             ItemStack itemstack = this.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
             ItemStack itemstack1 = itemstack.onItemUseFinish(this.world, this);
             if (!itemstack1.isEmpty())

@@ -11,7 +11,10 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class KitsuneHeldItemLayer extends LayerRenderer<KitsuneEntity, KitsuneModel>
 {
     public KitsuneHeldItemLayer(IEntityRenderer<KitsuneEntity, KitsuneModel> p_i50938_1_)

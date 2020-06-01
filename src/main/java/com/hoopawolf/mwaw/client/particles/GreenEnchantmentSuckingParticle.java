@@ -5,7 +5,10 @@ import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class GreenEnchantmentSuckingParticle extends SuckingParticle
 {
     protected GreenEnchantmentSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
@@ -22,6 +25,7 @@ public class GreenEnchantmentSuckingParticle extends SuckingParticle
         this.particleBlue = 0.4F;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class YellowEnchantmentSucking implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;
@@ -47,6 +51,7 @@ public class GreenEnchantmentSuckingParticle extends SuckingParticle
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static class Factory implements IParticleFactory<BasicParticleType>
     {
         private final IAnimatedSprite spriteSet;

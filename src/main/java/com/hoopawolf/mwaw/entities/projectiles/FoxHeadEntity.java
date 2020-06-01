@@ -24,6 +24,8 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class FoxHeadEntity extends DamagingProjectileEntity
@@ -44,6 +46,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity
         startTimer = 20.0F;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public FoxHeadEntity(World worldIn, double x, double y, double z, double motionXIn, double motionYIn, double motionZIn)
     {
         this(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);

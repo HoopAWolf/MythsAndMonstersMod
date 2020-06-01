@@ -8,8 +8,10 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-
+@OnlyIn(Dist.CLIENT)
 public class SandWyrmRenderer extends MobRenderer<SandWyrmEntity, SandWyrmModel>
 {
     private static final ResourceLocation[] TEXTURE = {

@@ -18,6 +18,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class SapEntity extends ProjectileItemEntity
@@ -49,6 +51,7 @@ public class SapEntity extends ProjectileItemEntity
         return itemstack.isEmpty() ? ParticleTypes.ITEM_SLIME : new ItemParticleData(ParticleTypes.ITEM, itemstack);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void handleStatusUpdate(byte id)
     {

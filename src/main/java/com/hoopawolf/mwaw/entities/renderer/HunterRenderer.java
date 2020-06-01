@@ -16,7 +16,10 @@ import net.minecraft.item.UseAction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class HunterRenderer extends BipedRenderer<HunterEntity, HunterModel>
 {
     private static final ResourceLocation Hunter_Texture = new ResourceLocation(Reference.MOD_ID, "textures/entity/hunter.png");

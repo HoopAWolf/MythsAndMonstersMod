@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class GoldenArrowEntity extends AbstractArrowEntity
@@ -67,6 +69,7 @@ public class GoldenArrowEntity extends AbstractArrowEntity
         return new ItemStack(RegistryHandler.GOLDEN_ARROW.get());
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void handleStatusUpdate(byte id)
     {

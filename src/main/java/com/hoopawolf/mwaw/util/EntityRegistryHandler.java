@@ -16,6 +16,8 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -58,6 +60,12 @@ public class EntityRegistryHandler
             .setShouldReceiveVelocityUpdates(false)
             .build("hunter"));
 
+    public static final RegistryObject<EntityType<ClayGolemEntity>> CLAY_GOLEM_ENTITY = ENTITIES.register("claygolem", () -> EntityType.Builder.create(ClayGolemEntity::new, EntityClassification.CREATURE)
+            .size(1.4F, 2.4F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("claygolem"));
+
+    //PROJECTILE
     public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
             .size(0.5F, 0.5F)
             .build("goldenarrow"));
@@ -78,6 +86,8 @@ public class EntityRegistryHandler
         registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 5, 3, 3, new Biome[]{Biomes.SWAMP});
         registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 10, 1, 3, new Biome[]{Biomes.PLAINS});
         registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 13, 1, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS, Biomes.WOODED_MOUNTAINS, Biomes.GIANT_TREE_TAIGA});
+        registerEntityWorldSpawn(KITSUNE_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 1, new Biome[]{Biomes.TALL_BIRCH_FOREST, Biomes.DARK_FOREST});
+        registerEntityWorldSpawn(HUNTER_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 2, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.TALL_BIRCH_FOREST, Biomes.FLOWER_FOREST, Biomes.BIRCH_FOREST});
 
         registerEntityWorldSpawn(DENDROID_ENTITY.get(), EntityClassification.MONSTER, 5, 3, 3, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS});
     }
@@ -90,7 +100,7 @@ public class EntityRegistryHandler
         }
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenderer()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FAIRY_ENTITY.get(), FairyRenderer::new);
@@ -99,11 +109,12 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), WolpertingerRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.KITSUNE_ENTITY.get(), KitsuneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.HUNTER_ENTITY.get(), HunterRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_GOLEM_ENTITY.get(), ClayGolemRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
 
         RenderTypeLookup.setRenderLayer(RegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
-    }//TODO ADD KITSUNE SPAWN, HUTNER SPAWN
+    }//TODO ADD KITSUNE SPAWN IN VILLAGE, HUNTER CAMP?
 }

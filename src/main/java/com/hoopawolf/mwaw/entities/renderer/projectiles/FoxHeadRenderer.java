@@ -14,10 +14,12 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
-
+@OnlyIn(Dist.CLIENT)
 public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
 {
     private static final RenderType KITSUNE_SPARK_TEXTURE_TRANSPARANCY = RenderType.getEntityTranslucent(new ResourceLocation(Reference.MOD_ID, "textures/entity/kitsune.png"));

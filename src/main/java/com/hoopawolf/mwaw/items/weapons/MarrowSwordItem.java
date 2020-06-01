@@ -13,6 +13,8 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,7 +50,7 @@ public class MarrowSwordItem extends SwordItem
         }
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         tooltip.add(new TranslationTextComponent("\u00A77\u00A7o" + I18n.format("tooltip.mwaw:marrowinfo")));

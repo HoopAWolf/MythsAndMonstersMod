@@ -7,9 +7,12 @@ import com.hoopawolf.mwaw.entities.HunterEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
+@OnlyIn(Dist.CLIENT)
 public class HunterModel extends BipedModel<HunterEntity>
 {
     public final ModelRenderer bipedLeftArmwear;
