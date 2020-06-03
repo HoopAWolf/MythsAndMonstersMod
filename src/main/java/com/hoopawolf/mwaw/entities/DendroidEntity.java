@@ -134,6 +134,9 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
+        if (source.getTrueSource() instanceof DendroidEntity)
+            return false;
+
         if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
         {
             this.setFireTimer(100);

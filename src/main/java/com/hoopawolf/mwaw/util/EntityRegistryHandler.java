@@ -1,6 +1,7 @@
 package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.entities.*;
+import com.hoopawolf.mwaw.entities.projectiles.ClayEntity;
 import com.hoopawolf.mwaw.entities.projectiles.FoxHeadEntity;
 import com.hoopawolf.mwaw.entities.projectiles.GoldenArrowEntity;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
@@ -74,6 +75,10 @@ public class EntityRegistryHandler
             .size(0.25F, 0.25F)
             .build("sap"));
 
+    public static final RegistryObject<EntityType<ClayEntity>> CLAY_ENTITY = ENTITIES.register("clay", () -> EntityType.Builder.<ClayEntity>create(ClayEntity::new, EntityClassification.MISC)
+            .size(0.25F, 0.25F)
+            .build("clay"));
+
     public static final RegistryObject<EntityType<FoxHeadEntity>> FOX_HEAD_ENTITY = ENTITIES.register("foxspirit", () -> EntityType.Builder.<FoxHeadEntity>create(FoxHeadEntity::new, EntityClassification.MISC)
             .size(0.5F, 0.5F)
             .build("foxspirit"));
@@ -113,6 +118,7 @@ public class EntityRegistryHandler
 
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_ENTITY.get(), m -> new SpriteRenderer<ClayEntity>(m, Minecraft.getInstance().getItemRenderer()));
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
 
         RenderTypeLookup.setRenderLayer(RegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());

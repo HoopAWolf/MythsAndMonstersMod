@@ -132,7 +132,7 @@ public class RangedAttackWithStrafeGoal extends Goal
                     this.strafingBackwards = true;
                 }
 
-                this.entityHost.getMoveHelper().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                this.entityHost.getMoveHelper().strafe(this.strafingBackwards ? -(float) entityMoveSpeed : (float) entityMoveSpeed, this.strafingClockwise ? (float) entityMoveSpeed : -(float) entityMoveSpeed);
                 this.entityHost.faceEntity(attackTarget, 30.0F, 30.0F);
             } else
             {

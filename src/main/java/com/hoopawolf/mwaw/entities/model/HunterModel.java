@@ -86,6 +86,17 @@ public class HunterModel extends BipedModel<HunterEntity>
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
         this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
+        if (this.isSneak)
+        {
+            this.Head.rotationPointY = 4.2F;
+            this.Backpack.rotateAngleX = 0.5F;
+            this.Backpack.rotationPointZ = 12.0F;
+        } else
+        {
+            this.Head.rotationPointY = 0.0F;
+            this.Backpack.rotateAngleX = 0.0F;
+            this.Backpack.rotationPointZ = 0.0F;
+        }
 
         this.bipedLeftLegwear.copyModelAngles(this.bipedLeftLeg);
         this.bipedRightLegwear.copyModelAngles(this.bipedRightLeg);

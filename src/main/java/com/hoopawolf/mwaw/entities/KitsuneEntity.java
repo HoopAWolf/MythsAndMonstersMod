@@ -190,20 +190,21 @@ public class KitsuneEntity extends CreatureEntity
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
-
+        compound.putInt("FoxPhase", this.getFoxPhase());
     }
 
     @Override
     public void readAdditional(CompoundNBT compound)
     {
         super.readAdditional(compound);
-
+        this.setFoxPhase(compound.getInt("FoxPhase"));
     }
 
     @Override
     public void tick()
     {
         super.tick();
+
 
         if (this.getShakeHeadTicks() > 0)
         {
@@ -247,6 +248,7 @@ public class KitsuneEntity extends CreatureEntity
                     }
 
                     entity.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20 * i, 1));
+                    entity.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 20 * i, 1));
                 }
             }
 

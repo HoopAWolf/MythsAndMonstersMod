@@ -1,8 +1,10 @@
 package com.hoopawolf.mwaw.entities.ai;
 
+import com.hoopawolf.mwaw.entities.HunterEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.BowItem;
@@ -65,6 +67,7 @@ public class RangedBowAttackHunterGoal<T extends CreatureEntity & IRangedAttackM
         this.attackTime = -1;
         this.entity.resetActiveHand();
         this.entity.getNavigator().clearPath();
+        entity.setSneaking(false);
     }
 
     @Override
@@ -73,6 +76,11 @@ public class RangedBowAttackHunterGoal<T extends CreatureEntity & IRangedAttackM
         LivingEntity livingentity = this.entity.getAttackTarget();
         if (livingentity != null)
         {
+            if (livingentity instanceof MobEntity)
+            {
+                entity.setSneaking(((MobEntity) livingentity).getAttackTarget() == null || !(((MobEntity) livingentity).getAttackTarget() instanceof HunterEntity));
+            }
+
             double d0 = this.entity.getDistanceSq(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ());
             boolean flag = this.entity.getEntitySenses().canSee(livingentity);
             boolean flag1 = this.seeTime > 0;
@@ -95,7 +103,7 @@ public class RangedBowAttackHunterGoal<T extends CreatureEntity & IRangedAttackM
                 ++this.strafingTime;
             } else
             {
-                this.entity.getNavigator().tryMoveToEntityLiving(livingentity, this.moveSpeedAmp);
+                this.entity.getNavigator().tryMoveToEntityLiving(livingentity, entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp);
                 this.strafingTime = -1;
             }
 
@@ -124,7 +132,7 @@ public class RangedBowAttackHunterGoal<T extends CreatureEntity & IRangedAttackM
                     this.strafingBackwards = true;
                 }
 
-                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -(float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp) : (float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp), this.strafingClockwise ? (float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp) : -(float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp));
                 this.entity.faceEntity(livingentity, 30.0F, 30.0F);
             } else
             {

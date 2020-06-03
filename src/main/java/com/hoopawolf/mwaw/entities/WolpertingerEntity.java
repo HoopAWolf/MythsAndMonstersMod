@@ -118,7 +118,7 @@ public class WolpertingerEntity extends AnimalEntity
             if (ticksExisted % 5 == 0 && !this.world.isRemote)
             {
                 Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
-                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 3, 0.5F);
+                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 3, getWidth());
                 MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
             }
         }

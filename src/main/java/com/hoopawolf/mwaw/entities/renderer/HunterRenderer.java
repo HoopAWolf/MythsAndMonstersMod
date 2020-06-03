@@ -55,6 +55,8 @@ public class HunterRenderer extends BipedRenderer<HunterEntity, HunterModel>
             playermodel.rightArmPose = bipedmodel$armpose1;
             playermodel.leftArmPose = bipedmodel$armpose;
         }
+
+        playermodel.isSneak = clientPlayer.isSneaking();
     }
 
     private BipedModel.ArmPose getArmPose(HunterEntity playerIn, ItemStack itemStackMain, ItemStack itemStackOff, Hand handIn)

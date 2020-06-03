@@ -5,6 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -63,10 +64,32 @@ public class ClayGolemModel extends EntityModel<ClayGolemEntity>
     }
 
     @Override
+    public void setLivingAnimations(ClayGolemEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
+    {
+        int i = entityIn.getAttackTimer();
+        if (i > 0)
+        {
+            this.RightArm.rotateAngleX = -2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F);
+            this.LeftArm.rotateAngleX = -2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F);
+        } else
+        {
+            this.RightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
+            this.LeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
+        }
+    }
+
+    @Override
     public void setRotationAngles(ClayGolemEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         this.bb_main.rotateAngleY = netHeadYaw * ((float) Math.PI / 450F);
         this.bb_main.rotateAngleX = headPitch * ((float) Math.PI / 450F);
+
+        this.RightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.LeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
     }
 
+    private float triangleWave(float p_78172_1_, float p_78172_2_)
+    {
+        return (Math.abs(p_78172_1_ % p_78172_2_ - p_78172_2_ * 0.5F) - p_78172_2_ * 0.25F) / (p_78172_2_ * 0.25F);
+    }
 }
