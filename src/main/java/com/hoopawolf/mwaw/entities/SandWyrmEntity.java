@@ -28,6 +28,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -47,6 +49,8 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     MovementController underground_controller = new SandWyrmEntity.MoveHelperController(this);
     private int jumpRemaining;
     private float lastRotateX, newRotateX;
+
+    private int attackTimer;
 
     public SandWyrmEntity(EntityType<? extends SandWyrmEntity> type, World worldIn)
     {
@@ -92,6 +96,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         super.registerAttributes();
         this.getAttributes().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(24.0D);
         this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.7D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
@@ -147,6 +152,11 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     {
         super.tick();
 
+        if (this.attackTimer > 0)
+        {
+            --this.attackTimer;
+        }
+
         if (!isTired())
         {
             if (getBlockUnder(0).isIn(BlockTags.SAND))
@@ -196,6 +206,10 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                     this.moveController = land_controller;
                     this.noClip = false;
                     this.setNoGravity(false);
+                    if (world.isAirBlock(this.getPosition()) && world.getBlockState(getPositionUnderneath()).isSolid())
+                    {
+                        DecreaseStamina();
+                    }
                 }
             }
         } else
@@ -303,8 +317,31 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     }
 
     @Override
+    public boolean attackEntityAsMob(Entity entityIn)
+    {
+        this.attackTimer = 10;
+        this.world.setEntityState(this, (byte) 4);
+
+        return super.attackEntityAsMob(entityIn);
+    }
+
+    @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 4)
+        {
+            this.attackTimer = 10;
+            this.playSound(SoundEvents.ENTITY_PANDA_BITE, 1.0F, 1.0F);
+        } else
+        {
+            super.handleStatusUpdate(id);
+        }
     }
 
     @Override
@@ -366,6 +403,11 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.dataManager.set(ROTATION, _rotation);
     }
 
+    public int getAttackTimer()
+    {
+        return this.attackTimer;
+    }
+
     protected void DecreaseStamina()
     {
         if (rand.nextInt(100) < 60)
@@ -389,6 +431,12 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     protected void ResetStamina()
     {
         jumpRemaining = maxJump;
+    }
+
+    @Override
+    public boolean canBeCollidedWith()
+    {
+        return isTired();
     }
 
     private BlockState getBlockUnder(int _deepness)
@@ -496,10 +544,24 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         public void tick()
         {
             SandWyrmEntity.this.navigator.clearPath();
-            if (hasDived && getBlockUnder(3).isIn(BlockTags.SAND) && SandWyrmEntity.this.getMotion().getY() < 0.0D)
+            if (hasDived)
             {
-                SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().getX(), -0.5D, SandWyrmEntity.this.getMotion().getZ());
-                SandWyrmEntity.this.setRotation(2);
+                if (SandWyrmEntity.this.world.isAirBlock(new BlockPos(SandWyrmEntity.this.getPosX(), SandWyrmEntity.this.getPosY() - 0.75F, SandWyrmEntity.this.getPosZ())))
+                {
+                    LivingEntity livingentity = SandWyrmEntity.this.getAttackTarget();
+                    if (livingentity != null && SandWyrmEntity.this.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)) && getMotion().getY() > 0.1F)
+                    {
+                        SandWyrmEntity.this.attackTimer = 10;
+                        SandWyrmEntity.this.world.setEntityState(SandWyrmEntity.this, (byte) 4);
+                        SandWyrmEntity.this.attackEntityAsMob(livingentity);
+                    }
+                }
+
+                if (getBlockUnder(3).isIn(BlockTags.SAND) && SandWyrmEntity.this.getMotion().getY() < 0.0D)
+                {
+                    SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().getX(), -0.5D, SandWyrmEntity.this.getMotion().getZ());
+                    SandWyrmEntity.this.setRotation(2);
+                }
             }
 
             if (_flag && !hasDived)
@@ -508,12 +570,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                 SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().add((double) direction.getXOffset() * 0.6D, 1.0D, (double) direction.getZOffset() * 0.6D));
                 SandWyrmEntity.this.setRotation(1);
                 hasDived = true;
-            }
-
-            LivingEntity livingentity = SandWyrmEntity.this.getAttackTarget();
-            if (livingentity != null && SandWyrmEntity.this.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)))
-            {
-                SandWyrmEntity.this.attackEntityAsMob(livingentity);
             }
         }
     }
@@ -606,13 +662,13 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         @Override
         public boolean shouldExecute()
         {
-            return !noClip && super.shouldExecute();
+            return isTired() && super.shouldExecute();
         }
 
         @Override
         public boolean shouldContinueExecuting()
         {
-            return !noClip && super.shouldContinueExecuting();
+            return isTired() && super.shouldContinueExecuting();
         }
     }
 }

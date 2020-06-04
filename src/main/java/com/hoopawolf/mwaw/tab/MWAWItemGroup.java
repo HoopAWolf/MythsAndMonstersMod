@@ -1,6 +1,6 @@
 package com.hoopawolf.mwaw.tab;
 
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,6 +19,6 @@ public class MWAWItemGroup extends ItemGroup
     @Override
     public ItemStack createIcon()
     {
-        return new ItemStack(RegistryHandler.GOLDEN_BOW.get());
+        return new ItemStack(ItemBlockRegistryHandler.GOLDEN_BOW.get());
     }
 }

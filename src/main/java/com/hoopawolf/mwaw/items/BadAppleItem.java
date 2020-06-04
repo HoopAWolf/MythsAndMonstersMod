@@ -1,6 +1,6 @@
 package com.hoopawolf.mwaw.items;
 
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,7 +50,7 @@ public class BadAppleItem extends Item
             }
 
             if (worldIn.rand.nextInt(100) < 50)
-                worldIn.addEntity(new ItemEntity(worldIn, entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ(), RegistryHandler.TAINTED_SEED.get().getDefaultInstance()));
+                worldIn.addEntity(new ItemEntity(worldIn, entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ(), ItemBlockRegistryHandler.TAINTED_SEED.get().getDefaultInstance()));
         }
 
         return stack;

@@ -2,7 +2,7 @@ package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -335,7 +335,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
     private boolean IsFlowerBlock(BlockPos p_226439_1_)
     {
-        return this.world.isBlockPresent(p_226439_1_) && (this.world.getBlockState(p_226439_1_).getBlock().isIn(BlockTags.FLOWERS) || this.world.getBlockState(p_226439_1_).getBlock() == RegistryHandler.FAIRY_MUSHROOM_BLOCK.get());
+        return this.world.isBlockPresent(p_226439_1_) && (this.world.getBlockState(p_226439_1_).getBlock().isIn(BlockTags.FLOWERS) || this.world.getBlockState(p_226439_1_).getBlock() == ItemBlockRegistryHandler.FAIRY_MUSHROOM_BLOCK.get());
     }
 
     @Override

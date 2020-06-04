@@ -58,6 +58,7 @@
   "item.mwaw.hunterspawnegg": "Hunter Spawn Egg",
   "item.mwaw.claygolemspawnegg": "Clay Golem Spawn Egg",
   "block.mwaw.fairymushroom": "Fairy Mushroom",
+  "effect.mwaw.claysloweffect": "Clay Slug Effect",
   "itemGroup.mwawItemGroup": "Myths & Monsters",
   "tooltip.mwaw:dendroidinfo": "Hold Logs in your offhand to repair this weapon",
   "tooltip.mwaw:marrowinfo": "Turns hunger into health upon taking damage",

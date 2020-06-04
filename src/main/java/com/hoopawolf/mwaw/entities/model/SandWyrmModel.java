@@ -123,6 +123,19 @@ public class SandWyrmModel extends EntityModel<SandWyrmEntity>
     }
 
     @Override
+    public void setLivingAnimations(SandWyrmEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
+    {
+        int i = entityIn.getAttackTimer();
+        if (i > 0)
+        {
+            this.Mouth.rotateAngleX = 0.2618F - (-2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F));
+        } else
+        {
+            this.Mouth.rotateAngleX = -0.2618F;
+        }
+    }
+
+    @Override
     public void setRotationAngles(SandWyrmEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         float rotation;
@@ -143,9 +156,6 @@ public class SandWyrmModel extends EntityModel<SandWyrmEntity>
         Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
         Head.rotateAngleX = (headPitch * ((float) Math.PI / 180F)) + rotation;
 
-        if (entityIn.getAttackTarget() != null)
-            this.Mouth.rotateAngleX = 0.2618F;
-
         for (int i = 0; i < entityIn.getAllRotateX().length; ++i)
         {
             this.modelParts.get(i).rotateAngleX = entityIn.getAllRotateX()[i] + ((i == 0) ? rotation : 0.0F);
@@ -153,5 +163,10 @@ public class SandWyrmModel extends EntityModel<SandWyrmEntity>
 
         this.LeftFrontLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.4F * limbSwingAmount;
         this.RightFrontLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.4F * limbSwingAmount;
+    }
+
+    private float triangleWave(float p_78172_1_, float p_78172_2_)
+    {
+        return (Math.abs(p_78172_1_ % p_78172_2_ - p_78172_2_ * 0.5F) - p_78172_2_ * 0.25F) / (p_78172_2_ * 0.25F);
     }
 }

@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities.projectiles;
 
+import com.hoopawolf.mwaw.entities.ClayGolemEntity;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -74,7 +75,7 @@ public class ClayEntity extends ProjectileItemEntity
         {
             Entity entity = ((EntityRayTraceResult) result).getEntity();
             entity.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 1.0F);
-            if (entity instanceof LivingEntity)
+            if (entity instanceof LivingEntity && !(entity instanceof ClayGolemEntity))
             {
                 EffectInstance effectinstance = new EffectInstance(Effects.SLOWNESS, 200); //TODO DO CLAY HARDEN
                 ((LivingEntity) entity).addPotionEffect(effectinstance);

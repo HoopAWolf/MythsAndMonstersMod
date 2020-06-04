@@ -2,7 +2,7 @@ package com.hoopawolf.mwaw.items.weapons;
 
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnOrbitingParticleMessage;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -82,7 +82,7 @@ public class GoldenBowItem extends ShootableItem
             {
                 if (itemstack.isEmpty())
                 {
-                    itemstack = new ItemStack(RegistryHandler.GOLDEN_ARROW.get());
+                    itemstack = new ItemStack(ItemBlockRegistryHandler.GOLDEN_ARROW.get());
                 }
 
                 float f = getArrowVelocity(i);
@@ -91,7 +91,7 @@ public class GoldenBowItem extends ShootableItem
                     boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof GoldenArrowItem && ((GoldenArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote)
                     {
-                        GoldenArrowItem arrowitem = (GoldenArrowItem) (itemstack.getItem() instanceof GoldenArrowItem ? itemstack.getItem() : RegistryHandler.GOLDEN_ARROW.get());
+                        GoldenArrowItem arrowitem = (GoldenArrowItem) (itemstack.getItem() instanceof GoldenArrowItem ? itemstack.getItem() : ItemBlockRegistryHandler.GOLDEN_ARROW.get());
                         AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, playerentity);
                         abstractarrowentity = customeArrow(abstractarrowentity);
                         abstractarrowentity.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);

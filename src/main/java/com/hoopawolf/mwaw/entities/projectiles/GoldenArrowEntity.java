@@ -1,7 +1,7 @@
 package com.hoopawolf.mwaw.entities.projectiles;
 
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -66,7 +66,7 @@ public class GoldenArrowEntity extends AbstractArrowEntity
     @Override
     protected ItemStack getArrowStack()
     {
-        return new ItemStack(RegistryHandler.GOLDEN_ARROW.get());
+        return new ItemStack(ItemBlockRegistryHandler.GOLDEN_ARROW.get());
     }
 
     @OnlyIn(Dist.CLIENT)

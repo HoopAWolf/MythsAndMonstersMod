@@ -1,7 +1,7 @@
 package com.hoopawolf.mwaw.entities.merchant;
 
 import com.google.common.collect.ImmutableMap;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import com.mojang.datafixers.schemas.Schema;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -24,7 +24,7 @@ public class Trades extends VillagerTrades
                     new ItemsForEmeraldsTrade(Items.CHICKEN, 1, 12, 5, 0),
                     new ItemsForEmeraldsTrade(Items.PORKCHOP, 2, 12, 3, 0),
                     new ItemsForEmeraldsTrade(Items.MUTTON, 2, 12, 3, 0),
-                    new ItemsForEmeraldsTrade(RegistryHandler.HARDENED_LEATHER.get(), 1, 5, 12, 0),
+                    new ItemsForEmeraldsTrade(ItemBlockRegistryHandler.HARDENED_LEATHER.get(), 1, 5, 12, 0),
                     new ItemsForEmeraldsTrade(Items.COOKED_BEEF, 3, 12, 2, 0),
                     new ItemsForEmeraldsTrade(Items.COOKED_CHICKEN, 1, 12, 5, 0),
                     new ItemsForEmeraldsTrade(Items.COOKED_PORKCHOP, 2, 12, 3, 0),

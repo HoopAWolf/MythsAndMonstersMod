@@ -69,8 +69,8 @@ public class ClayGolemModel extends EntityModel<ClayGolemEntity>
         int i = entityIn.getAttackTimer();
         if (i > 0)
         {
-            this.RightArm.rotateAngleX = -2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F);
-            this.LeftArm.rotateAngleX = -2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F);
+            this.RightArm.rotateAngleX = -4.0618F - (-2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F));
+            this.LeftArm.rotateAngleX = -4.0618F - (-2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F));
         } else
         {
             this.RightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;

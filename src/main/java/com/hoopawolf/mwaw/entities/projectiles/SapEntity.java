@@ -1,7 +1,7 @@
 package com.hoopawolf.mwaw.entities.projectiles;
 
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -42,7 +42,7 @@ public class SapEntity extends ProjectileItemEntity
     @Override
     protected Item getDefaultItem()
     {
-        return RegistryHandler.SAP.get();
+        return ItemBlockRegistryHandler.SAP.get();
     }
 
     private IParticleData makeParticle()

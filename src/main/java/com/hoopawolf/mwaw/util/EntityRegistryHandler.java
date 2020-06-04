@@ -121,6 +121,6 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_ENTITY.get(), m -> new SpriteRenderer<ClayEntity>(m, Minecraft.getInstance().getItemRenderer()));
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
 
-        RenderTypeLookup.setRenderLayer(RegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ItemBlockRegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
     }//TODO ADD KITSUNE SPAWN IN VILLAGE, HUNTER CAMP?
 }

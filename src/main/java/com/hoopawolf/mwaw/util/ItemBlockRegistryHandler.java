@@ -30,7 +30,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 
-public class RegistryHandler
+public class ItemBlockRegistryHandler
 {
     public static final Food BAD_APPLE_STAT = (new Food.Builder()).hunger(4).saturation(1.2F).setAlwaysEdible().build();
 

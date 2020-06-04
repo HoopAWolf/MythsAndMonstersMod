@@ -4,8 +4,9 @@ import com.hoopawolf.mwaw.proxy.ClientProxy;
 import com.hoopawolf.mwaw.proxy.CommonProxy;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import com.hoopawolf.mwaw.util.ParticleRegistryHandler;
-import com.hoopawolf.mwaw.util.RegistryHandler;
+import com.hoopawolf.mwaw.util.PotionRegistryHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -21,9 +22,10 @@ public class MythsAndMonsters
         modEventBus.addListener(ClientProxy::onClientSetUp);
         modEventBus.addListener(CommonProxy::onCommonSetupEvent);
 
-        RegistryHandler.init(modEventBus);
+        ItemBlockRegistryHandler.init(modEventBus);
         EntityRegistryHandler.ENTITIES.register(modEventBus);
         ParticleRegistryHandler.PARTICLES.register(modEventBus);
+        PotionRegistryHandler.init(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
     }

@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "mwaw:block/fairymushroom" }
+    "": {
+      "model": "mwaw:block/fairymushroom"
+    }
   }
 }
