@@ -90,7 +90,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 
         this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(250.0D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
     }
@@ -124,6 +124,11 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
 
     public void setHardenForm(boolean _isHardenForm)
     {
+        if (!world.isRemote && _isHardenForm)
+        {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 0.7D);
+        }
+
         this.dataManager.set(HARDEN_FORM, _isHardenForm);
     }
 

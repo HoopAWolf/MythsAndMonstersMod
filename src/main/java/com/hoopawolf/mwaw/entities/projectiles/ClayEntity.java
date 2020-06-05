@@ -2,6 +2,7 @@ package com.hoopawolf.mwaw.entities.projectiles;
 
 import com.hoopawolf.mwaw.entities.ClayGolemEntity;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
+import com.hoopawolf.mwaw.util.PotionRegistryHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -14,7 +15,6 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -75,9 +75,9 @@ public class ClayEntity extends ProjectileItemEntity
         {
             Entity entity = ((EntityRayTraceResult) result).getEntity();
             entity.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 1.0F);
-            if (entity instanceof LivingEntity && !(entity instanceof ClayGolemEntity))
+            if (entity instanceof LivingEntity && !(entity instanceof ClayGolemEntity) && !((LivingEntity) entity).isPotionActive(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()))
             {
-                EffectInstance effectinstance = new EffectInstance(Effects.SLOWNESS, 200); //TODO DO CLAY HARDEN
+                EffectInstance effectinstance = new EffectInstance(PotionRegistryHandler.CLAY_SLOW_EFFECT.get(), 2000);
                 ((LivingEntity) entity).addPotionEffect(effectinstance);
             }
         }

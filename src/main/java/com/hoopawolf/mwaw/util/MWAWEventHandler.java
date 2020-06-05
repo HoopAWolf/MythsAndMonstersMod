@@ -12,6 +12,7 @@ import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -43,6 +44,19 @@ public class MWAWEventHandler
                 if (player.isCrouching())
                     entity.stopRiding();
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event)
+    {
+        LivingEntity entity = event.getEntityLiving();
+
+        if (entity.isPotionActive(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()))
+        {
+            entity.addPotionEffect(new EffectInstance(PotionRegistryHandler.CLAY_SLOW_EFFECT.get(), entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getDuration(),
+                    (int) (6.0F * (1.0F - ((float) entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getDuration() / 2000.0F))),
+                    false, true));
         }
     }
 
