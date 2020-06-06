@@ -433,12 +433,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         jumpRemaining = maxJump;
     }
 
-    @Override
-    public boolean canBeCollidedWith()
-    {
-        return isTired();
-    }
-
     private BlockState getBlockUnder(int _deepness)
     {
         for (int i = 0; i <= _deepness; ++i)

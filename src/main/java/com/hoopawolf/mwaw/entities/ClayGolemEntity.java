@@ -145,8 +145,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
             {
                 this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
                 this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.55D);
-                this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
-                this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
+                this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
 
                 this.goalSelector.removeGoal(meleeGoal);
                 this.goalSelector.removeGoal(rangedGoal);
