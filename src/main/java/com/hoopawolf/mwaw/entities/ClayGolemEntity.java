@@ -298,7 +298,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
 
                     for (int i = 0; i < 5; ++i)
                     {
-                        ClayGolemEntity golemMinion = new ClayGolemEntity(EntityRegistryHandler.CLAY_GOLEM_ENTITY.get(), world);
+                        ClayGolemEntity golemMinion = EntityRegistryHandler.CLAY_GOLEM_ENTITY.get().create(world);
                         golemMinion.setMinion(true);
                         golemMinion.setLocationAndAngles(this.getPosX(), this.getPosY() + 1.5D, this.getPosZ(), 0.0F, 0.0F);
                         golemMinion.setMotion(rand.nextDouble() - rand.nextDouble(), rand.nextDouble(), rand.nextDouble() - rand.nextDouble());

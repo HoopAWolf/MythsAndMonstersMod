@@ -23,6 +23,7 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel>
         super(_manager, new FairyModel(), 0.3f);
     }
 
+    @Override
     protected int getBlockLight(FairyEntity entityIn, float partialTicks)
     {
         return 15;
@@ -34,11 +35,13 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel>
         return _entity.isAngry() ? ANGRY_TEXTURE : TEXTURE;
     }
 
+    @Override
     public Vec3d getRenderOffset(FairyEntity entityIn, float partialTicks)
     {
         return entityIn.isResting() ? new Vec3d(0.0D, -0.2D, 0.0D) : ((entityIn.isPassenger() && entityIn.getRidingEntity() instanceof WolpertingerEntity) ? new Vec3d(entityIn.getRidingEntity().getForward().getX() * 0.7F, -0.9D, entityIn.getRidingEntity().getForward().getZ() * 0.7F) : super.getRenderOffset(entityIn, partialTicks));
     }
 
+    @Override
     protected void preRenderCallback(FairyEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime)
     {
         matrixStackIn.scale(0.4F, 0.4F, 0.4F);

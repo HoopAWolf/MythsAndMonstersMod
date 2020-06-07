@@ -263,19 +263,19 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         int random_weapon = rand.nextInt(WEAPON.length);
         weapon = new ItemStack(WEAPON[random_weapon]);
 
-        if (this.rand.nextInt(50) < 25)
+        if (this.rand.nextInt(100) < 15)
         {
             int random = rand.nextInt(BODY_ARMOR.length);
             chest = new ItemStack(BODY_ARMOR[random]);
         }
 
-        if (this.rand.nextInt(50) < 25)
+        if (this.rand.nextInt(100) < 15)
         {
             int random = rand.nextInt(LEGGING_ARMOR.length);
             legging = new ItemStack(LEGGING_ARMOR[random]);
         }
 
-        if (this.rand.nextInt(50) < 25)
+        if (this.rand.nextInt(100) < 15)
         {
             int random = rand.nextInt(BOOTS_ARMOR.length);
             boot = new ItemStack(BOOTS_ARMOR[random]);

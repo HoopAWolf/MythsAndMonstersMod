@@ -4,6 +4,7 @@ import com.hoopawolf.mwaw.entities.HunterEntity;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import com.hoopawolf.mwaw.util.StructureRegistryHandler;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -48,6 +49,7 @@ public class CampPiece
     {
         private final ResourceLocation resourceLocation;
         private final Rotation rotation;
+        private boolean isSpawned;
 
         public Piece(TemplateManager templateManagerIn, ResourceLocation resourceLocationIn, BlockPos pos, Rotation rotationIn)
         {
@@ -65,6 +67,7 @@ public class CampPiece
             super(StructureRegistryHandler.HUNTER_CAMP_FEATURE, tagCompound);
             this.resourceLocation = new ResourceLocation(tagCompound.getString("Template"));
             this.rotation = Rotation.valueOf(tagCompound.getString("Rot"));
+            this.isSpawned = tagCompound.getBoolean("Spawned");
             this.setupPiece(templateManagerIn);
         }
 
@@ -76,38 +79,18 @@ public class CampPiece
             this.setup(template, this.templatePosition, placementsettings);
         }
 
-
-        /**
-         * (abstract) Helper method to read subclass data from NBT
-         */
         @Override
         protected void readAdditional(CompoundNBT tagCompound)
         {
             super.readAdditional(tagCompound);
             tagCompound.putString("Template", this.resourceLocation.toString());
             tagCompound.putString("Rot", this.rotation.name());
+            tagCompound.putBoolean("Spawned", this.isSpawned);
         }
 
-
-        /*
-         * If you added any data marker structure blocks to your structure, you can access and modify them here. In this case,
-         * our structure has a data maker with the string "chest" put into it. So we check to see if the incoming function is
-         * "chest" and if it is, we now have that exact position.
-         *
-         * So what is done here is we replace the structure block with a chest and we can then set the loottable for it.
-         *
-         * You can set other data markers to do other behaviors such as spawn a random mob in a certain spot, randomize what
-         * rare block spawns under the floor, or what item an Item Frame will have.
-         */
         @Override
         protected void handleDataMarker(String function, BlockPos pos, IWorld worldIn, Random rand, MutableBoundingBox sbb)
         {
-            if (!worldIn.isRemote())
-            {
-                HunterEntity hunter = new HunterEntity(EntityRegistryHandler.HUNTER_ENTITY.get(), worldIn.getWorld());
-                hunter.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
-                worldIn.addEntity(hunter);
-            }
         }
 
         @Override
@@ -116,6 +99,29 @@ public class CampPiece
             PlacementSettings placementsettings = (new PlacementSettings()).setRotation(this.rotation).setMirror(Mirror.NONE);
             BlockPos blockpos = new BlockPos(0, 1, 0);
             this.templatePosition.add(Template.transformedBlockPos(placementsettings, new BlockPos(0 - blockpos.getX(), 0, 0 - blockpos.getZ())));
+
+            if (!isSpawned)
+            {
+                int i = randomIn.nextInt(2) + 1;
+
+                for (int j = 0; j < i; ++j)
+                {
+                    int l = this.getXWithOffset(2, 2);
+                    int i1 = this.getYWithOffset(1);
+                    int k = this.getZWithOffset(2, 2);
+
+                    if (structureBoundingBoxIn.isVecInside(new BlockPos(l, i1, k)) && !worldIn.getBlockState(new BlockPos(l, i1, k)).isSolid())
+                    {
+                        HunterEntity hunter = EntityRegistryHandler.HUNTER_ENTITY.get().create(worldIn.getWorld());
+                        hunter.enablePersistence();
+                        hunter.setLocationAndAngles((double) l + 0.5D, i1, (double) k + 0.5D, 0.0F, 0.0F);
+                        hunter.onInitialSpawn(worldIn, worldIn.getDifficultyForLocation(new BlockPos(l, i1, k)), SpawnReason.STRUCTURE, null, null);
+                        worldIn.addEntity(hunter);
+                    }
+                }
+
+                this.isSpawned = true;
+            }
 
             return super.create(worldIn, p_225577_2_, randomIn, structureBoundingBoxIn, chunkPos);
         }

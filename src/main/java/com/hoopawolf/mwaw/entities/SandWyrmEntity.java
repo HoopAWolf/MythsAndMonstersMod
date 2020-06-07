@@ -51,6 +51,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     private float lastRotateX, newRotateX;
 
     private int attackTimer;
+    private float timer;
 
     public SandWyrmEntity(EntityType<? extends SandWyrmEntity> type, World worldIn)
     {
@@ -142,12 +143,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     }
 
     @Override
-    public float getBrightness()
-    {
-        return 1.0F;
-    }
-
-    @Override
     public void tick()
     {
         super.tick();
@@ -161,6 +156,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         {
             if (getBlockUnder(0).isIn(BlockTags.SAND))
             {
+                timer = 0;
                 for (int i = 0; i < modelRotateX.length; ++i)
                 {
                     if (i == 0)
@@ -181,9 +177,9 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                 this.noClip = true;
                 this.setNoGravity(true);
 
-                if (ticksExisted % 20 == 0)
+                if (ticksExisted % 10 == 0)
                 {
-                    if (lastTickPosX == getPosX() && lastTickPosY == getPosY() && lastTickPosZ == getPosZ())
+                    if (lastTickPosX == getPosX() && lastTickPosZ == getPosZ() || !world.getBlockState(this.getPosition()).isSolid())
                     {
                         this.navigator.clearPath();
                         this.setMotion(this.getMotion().add(0.0D, -0.5F, 0.0D));
@@ -206,7 +202,8 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                     this.moveController = land_controller;
                     this.noClip = false;
                     this.setNoGravity(false);
-                    if (world.isAirBlock(this.getPosition()) && world.getBlockState(getPositionUnderneath()).isSolid())
+                    timer += 0.1F;
+                    if (world.isAirBlock(this.getPosition()) && world.getBlockState(getPositionUnderneath()).isSolid() || timer > 50.0F)
                     {
                         DecreaseStamina();
                     }

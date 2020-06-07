@@ -66,6 +66,11 @@ public class EntityRegistryHandler
             .setShouldReceiveVelocityUpdates(false)
             .build("claygolem"));
 
+    public static final RegistryObject<EntityType<GoldenRamEntity>> GOLDEN_RAM_ENTITY = ENTITIES.register("goldenram", () -> EntityType.Builder.create(GoldenRamEntity::new, EntityClassification.CREATURE)
+            .size(1.0F, 1.2F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("goldenram"));
+
     //PROJECTILE
     public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
             .size(0.5F, 0.5F)
@@ -85,17 +90,17 @@ public class EntityRegistryHandler
 
     public static void generateEntityWorldSpawn()
     {
-        registerEntityWorldSpawn(SAND_WYRM_ENTITY.get(), EntityClassification.CREATURE, 5, 2, 2, new Biome[]{Biomes.DESERT, Biomes.DESERT_HILLS, Biomes.DESERT_LAKES});
+        registerEntityWorldSpawn(SAND_WYRM_ENTITY.get(), EntityClassification.CREATURE, 1, 0, 2, new Biome[]{Biomes.DESERT, Biomes.DESERT_HILLS, Biomes.DESERT_LAKES});
         registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 10, 3, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 5, 3, 3, new Biome[]{Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.BIRCH_FOREST_HILLS, Biomes.TALL_BIRCH_FOREST});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 2, 3, 3, new Biome[]{Biomes.SWAMP});
-        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 3, new Biome[]{Biomes.PLAINS});
-        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 10, 1, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS, Biomes.WOODED_MOUNTAINS, Biomes.GIANT_TREE_TAIGA});
-        registerEntityWorldSpawn(KITSUNE_ENTITY.get(), EntityClassification.CREATURE, 2, 1, 1, new Biome[]{Biomes.TALL_BIRCH_FOREST, Biomes.DARK_FOREST});
-        registerEntityWorldSpawn(HUNTER_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 2, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.TALL_BIRCH_FOREST, Biomes.FLOWER_FOREST, Biomes.BIRCH_FOREST});
+        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 3, 0, 3, new Biome[]{Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.BIRCH_FOREST_HILLS, Biomes.TALL_BIRCH_FOREST});
+        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 1, 0, 3, new Biome[]{Biomes.SWAMP});
+        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 3, 3, 3, new Biome[]{Biomes.PLAINS});
+        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 10, 3, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS, Biomes.WOODED_MOUNTAINS, Biomes.GIANT_TREE_TAIGA});
+        registerEntityWorldSpawn(KITSUNE_ENTITY.get(), EntityClassification.CREATURE, 1, 0, 1, new Biome[]{Biomes.TALL_BIRCH_FOREST, Biomes.DARK_FOREST});
+        registerEntityWorldSpawn(HUNTER_ENTITY.get(), EntityClassification.CREATURE, 3, 0, 2, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.TALL_BIRCH_FOREST, Biomes.FLOWER_FOREST, Biomes.BIRCH_FOREST});
 
-        registerEntityWorldSpawn(DENDROID_ENTITY.get(), EntityClassification.MONSTER, 2, 3, 3, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS});
-        registerEntityWorldSpawn(CLAY_GOLEM_ENTITY.get(), EntityClassification.MONSTER, 2, 1, 1, new Biome[]{Biomes.BADLANDS, Biomes.SWAMP});
+        registerEntityWorldSpawn(DENDROID_ENTITY.get(), EntityClassification.MONSTER, 1, 0, 3, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS});
+        registerEntityWorldSpawn(CLAY_GOLEM_ENTITY.get(), EntityClassification.MONSTER, 1, 0, 1, new Biome[]{Biomes.BADLANDS, Biomes.SWAMP});
     }
 
     protected static void registerEntityWorldSpawn(EntityType<?> entity, EntityClassification classification, int weight, int minGroup, int maxGroup, Biome[] biomes)
@@ -116,6 +121,7 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.KITSUNE_ENTITY.get(), KitsuneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.HUNTER_ENTITY.get(), HunterRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_GOLEM_ENTITY.get(), ClayGolemRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_RAM_ENTITY.get(), GoldenRamRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
@@ -123,5 +129,5 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
 
         RenderTypeLookup.setRenderLayer(ItemBlockRegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
-    }//TODO ADD KITSUNE SPAWN IN VILLAGE, HUNTER CAMP?
+    }//TODO ADD KITSUNE SPAWN IN VILLAGE, SPAWNING RATE NEED FIX
 }

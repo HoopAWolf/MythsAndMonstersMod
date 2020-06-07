@@ -37,8 +37,6 @@ public class CommonProxy
     public static void registerFeaturesEvent(RegistryEvent.Register<Feature<?>> event)
     {
         IForgeRegistry<Feature<?>> registry = event.getRegistry();
-
-        registry.register(StructureRegistryHandler.HUNTER_CAMP.setRegistryName("huntercamp"));
-        StructureRegistryHandler.registerFeature();
+        StructureRegistryHandler.registerFeature(registry);
     }
 }

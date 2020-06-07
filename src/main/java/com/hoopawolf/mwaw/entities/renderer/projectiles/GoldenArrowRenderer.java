@@ -19,6 +19,12 @@ public class GoldenArrowRenderer extends ArrowRenderer<GoldenArrowEntity>
     }
 
     @Override
+    protected int getBlockLight(GoldenArrowEntity entityIn, float partialTicks)
+    {
+        return 15;
+    }
+
+    @Override
     public ResourceLocation getEntityTexture(GoldenArrowEntity _entity)
     {
         return TEXTURE;

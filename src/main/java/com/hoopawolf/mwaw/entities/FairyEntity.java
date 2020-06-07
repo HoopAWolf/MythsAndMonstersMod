@@ -190,12 +190,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         }
     }
 
-    @Override
-    public float getBrightness()
-    {
-        return 1.0F;
-    }
-
     private void MoveToPos(BlockPos p_226433_1_)
     {
         if (p_226433_1_ != null)

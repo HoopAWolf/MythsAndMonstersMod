@@ -71,7 +71,7 @@ public class CampStructure extends Structure<NoFeatureConfig>
 
     protected int getSeedModifier()
     {
-        return 123456789;
+        return 62353535;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CampStructure extends Structure<NoFeatureConfig>
     {
         ChunkPos chunkpos = this.getStartPositionForPosition(chunkGen, rand, chunkPosX, chunkPosZ, 0, 0);
 
-        if (chunkPosX == chunkpos.x && chunkPosZ == chunkpos.z)
+        if (chunkPosX == chunkpos.x && chunkPosZ == chunkpos.z && rand.nextInt(100) < 10)
         {
             return chunkGen.hasStructure(biome, this);
         }
@@ -93,7 +93,6 @@ public class CampStructure extends Structure<NoFeatureConfig>
         {
             super(structureIn, chunkX, chunkZ, mutableBoundingBox, referenceIn, seedIn);
         }
-
 
         @Override
         public void init(ChunkGenerator<?> generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn)
