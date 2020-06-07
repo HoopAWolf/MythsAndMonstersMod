@@ -1,6 +1,7 @@
 package com.hoopawolf.mwaw.entities.renderer;
 
 import com.hoopawolf.mwaw.entities.FairyEntity;
+import com.hoopawolf.mwaw.entities.WolpertingerEntity;
 import com.hoopawolf.mwaw.entities.model.FairyModel;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -35,7 +36,7 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel>
 
     public Vec3d getRenderOffset(FairyEntity entityIn, float partialTicks)
     {
-        return entityIn.isResting() ? new Vec3d(0.0D, -0.2D, 0.0D) : ((entityIn.isPassenger()) ? new Vec3d(entityIn.getRidingEntity().getForward().getX() * 0.7F, -0.9D, entityIn.getRidingEntity().getForward().getZ() * 0.7F) : super.getRenderOffset(entityIn, partialTicks));
+        return entityIn.isResting() ? new Vec3d(0.0D, -0.2D, 0.0D) : ((entityIn.isPassenger() && entityIn.getRidingEntity() instanceof WolpertingerEntity) ? new Vec3d(entityIn.getRidingEntity().getForward().getX() * 0.7F, -0.9D, entityIn.getRidingEntity().getForward().getZ() * 0.7F) : super.getRenderOffset(entityIn, partialTicks));
     }
 
     protected void preRenderCallback(FairyEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime)

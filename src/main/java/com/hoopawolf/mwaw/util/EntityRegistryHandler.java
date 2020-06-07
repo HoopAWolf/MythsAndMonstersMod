@@ -85,16 +85,17 @@ public class EntityRegistryHandler
 
     public static void generateEntityWorldSpawn()
     {
-        registerEntityWorldSpawn(SAND_WYRM_ENTITY.get(), EntityClassification.CREATURE, 10, 2, 2, new Biome[]{Biomes.DESERT, Biomes.DESERT_HILLS, Biomes.DESERT_LAKES});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 13, 3, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 10, 3, 3, new Biome[]{Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.BIRCH_FOREST_HILLS, Biomes.TALL_BIRCH_FOREST});
-        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 5, 3, 3, new Biome[]{Biomes.SWAMP});
-        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 10, 1, 3, new Biome[]{Biomes.PLAINS});
-        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 13, 1, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS, Biomes.WOODED_MOUNTAINS, Biomes.GIANT_TREE_TAIGA});
-        registerEntityWorldSpawn(KITSUNE_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 1, new Biome[]{Biomes.TALL_BIRCH_FOREST, Biomes.DARK_FOREST});
+        registerEntityWorldSpawn(SAND_WYRM_ENTITY.get(), EntityClassification.CREATURE, 5, 2, 2, new Biome[]{Biomes.DESERT, Biomes.DESERT_HILLS, Biomes.DESERT_LAKES});
+        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 10, 3, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS});
+        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 5, 3, 3, new Biome[]{Biomes.FOREST, Biomes.BIRCH_FOREST, Biomes.BIRCH_FOREST_HILLS, Biomes.TALL_BIRCH_FOREST});
+        registerEntityWorldSpawn(FAIRY_ENTITY.get(), EntityClassification.CREATURE, 2, 3, 3, new Biome[]{Biomes.SWAMP});
+        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 3, new Biome[]{Biomes.PLAINS});
+        registerEntityWorldSpawn(WOLPERTINGER_ENTITY.get(), EntityClassification.CREATURE, 10, 1, 3, new Biome[]{Biomes.FLOWER_FOREST, Biomes.SUNFLOWER_PLAINS, Biomes.WOODED_MOUNTAINS, Biomes.GIANT_TREE_TAIGA});
+        registerEntityWorldSpawn(KITSUNE_ENTITY.get(), EntityClassification.CREATURE, 2, 1, 1, new Biome[]{Biomes.TALL_BIRCH_FOREST, Biomes.DARK_FOREST});
         registerEntityWorldSpawn(HUNTER_ENTITY.get(), EntityClassification.CREATURE, 5, 1, 2, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.TALL_BIRCH_FOREST, Biomes.FLOWER_FOREST, Biomes.BIRCH_FOREST});
 
-        registerEntityWorldSpawn(DENDROID_ENTITY.get(), EntityClassification.MONSTER, 5, 3, 3, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS});
+        registerEntityWorldSpawn(DENDROID_ENTITY.get(), EntityClassification.MONSTER, 2, 3, 3, new Biome[]{Biomes.FOREST, Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS});
+        registerEntityWorldSpawn(CLAY_GOLEM_ENTITY.get(), EntityClassification.MONSTER, 2, 1, 1, new Biome[]{Biomes.BADLANDS, Biomes.SWAMP});
     }
 
     protected static void registerEntityWorldSpawn(EntityType<?> entity, EntityClassification classification, int weight, int minGroup, int maxGroup, Biome[] biomes)

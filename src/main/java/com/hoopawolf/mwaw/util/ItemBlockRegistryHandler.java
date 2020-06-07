@@ -32,10 +32,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemBlockRegistryHandler
 {
-    public static final Food BAD_APPLE_STAT = (new Food.Builder()).hunger(4).saturation(1.2F).setAlwaysEdible().build();
-
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Reference.MOD_ID);
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Reference.MOD_ID);
+
+    public static final Food BAD_APPLE_STAT = (new Food.Builder()).hunger(4).saturation(1.2F).setAlwaysEdible().build();
+
     //ITEMS
     public static final RegistryObject<Item> FIRE_SHARD = ITEMS.register("fireshard", () -> new ShardItem());
     public static final RegistryObject<Item> WATER_SHARD = ITEMS.register("watershard", () -> new ShardItem());

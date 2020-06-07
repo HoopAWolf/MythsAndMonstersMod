@@ -54,9 +54,13 @@ public class MWAWEventHandler
 
         if (entity.isPotionActive(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()))
         {
-            entity.addPotionEffect(new EffectInstance(PotionRegistryHandler.CLAY_SLOW_EFFECT.get(), entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getDuration(),
-                    (int) (6.0F * (1.0F - ((float) entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getDuration() / 2000.0F))),
-                    false, true));
+            int newAmp = (int) (6.0F * (1.0F - ((float) entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getDuration() / 2000.0F)));
+
+            if (newAmp != entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getAmplifier())
+            {
+                entity.addPotionEffect(new EffectInstance(PotionRegistryHandler.CLAY_SLOW_EFFECT.get(), entity.getActivePotionEffect(PotionRegistryHandler.CLAY_SLOW_EFFECT.get()).getDuration(),
+                        newAmp, false, true));
+            }
         }
     }
 
