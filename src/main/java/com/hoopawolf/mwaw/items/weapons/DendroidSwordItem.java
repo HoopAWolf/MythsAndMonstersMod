@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DendroidSwordItem extends SwordItem
 {
-    Item[] log_list =
+    final Item[] log_list =
             {
                     Items.ACACIA_LOG,
                     Items.BIRCH_LOG,

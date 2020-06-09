@@ -37,7 +37,7 @@ public class EntityRegistryHandler
             .build("fairy"));
 
     public static final RegistryObject<EntityType<SandWyrmEntity>> SAND_WYRM_ENTITY = ENTITIES.register("sandwyrm", () -> EntityType.Builder.create(SandWyrmEntity::new, EntityClassification.CREATURE)
-            .size(2.0F, 1.0F)
+            .size(1.5F, 1.0F)
             .setShouldReceiveVelocityUpdates(false)
             .build("sandwyrm"));
 

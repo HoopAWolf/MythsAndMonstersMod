@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class EntityHelper
 {
-    public static EntityHelper INSTANCE = new EntityHelper();
+    public static final EntityHelper INSTANCE = new EntityHelper();
 
     public double getAngleBetweenEntities(Entity first, Entity second)
     {

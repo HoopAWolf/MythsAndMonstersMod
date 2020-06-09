@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 public class MessageHandlerOnClient
 {
-    static BasicParticleType[] types = //0 - FIREWORKS, 1 - HEART, 2 - BLOCK TYPE, 3 - VILLAGER ANGRY, 4 - CLOUD, 5 - HAPPY VILLAGER, 6 - YELLOW ENCHANTMENT
+    static final BasicParticleType[] types = //0 - FIREWORKS, 1 - HEART, 2 - BLOCK TYPE, 3 - VILLAGER ANGRY, 4 - CLOUD, 5 - HAPPY VILLAGER, 6 - YELLOW ENCHANTMENT
             {
                     ParticleTypes.FIREWORK,
                     ParticleTypes.HEART,
@@ -34,12 +34,12 @@ public class MessageHandlerOnClient
                     ParticleRegistryHandler.YELLOW_ENCHANTMENT_PARTICLE.get()
             };
 
-    static BasicParticleType[] orbiting_types = //0 - YELLOW ENCHANTMENT
+    static final BasicParticleType[] orbiting_types = //0 - YELLOW ENCHANTMENT
             {
                     ParticleRegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get()
             };
 
-    static BasicParticleType[] sucking_types = //0 - YELLOW ENCHANTMENT
+    static final BasicParticleType[] sucking_types = //0 - YELLOW ENCHANTMENT
             {
                     ParticleRegistryHandler.GREEN_SUCKING_ENCHANTMENT_PARTICLE.get()
             };

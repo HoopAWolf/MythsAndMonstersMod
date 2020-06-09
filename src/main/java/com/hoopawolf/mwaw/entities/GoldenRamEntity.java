@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
@@ -7,6 +8,7 @@ import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -25,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 public class GoldenRamEntity extends CreatureEntity implements net.minecraftforge.common.IShearable
@@ -122,6 +125,18 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                 moveStrafing = 0.0F;
                 moveForward = 0.0F;
                 navigator.clearPath();
+            }
+        }
+
+        if (getHealth() <= (getMaxHealth() * 0.5F) && ticksExisted % 5 == 0)
+        {
+            List<LivingEntity> entities = EntityHelper.INSTANCE.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
+            for (LivingEntity entity : entities)
+            {
+                if (entity instanceof AnimalEntity && ((AnimalEntity) entity).getAttackTarget() == null)
+                {
+                    ((AnimalEntity) entity).setAttackTarget(this.getAttackTarget());
+                }
             }
         }
     }
@@ -391,7 +406,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         public boolean shouldExecute()
         {
             return rand.nextInt(100) < 20 && shakeCoolDown <= 0 && !entity.isShaking &&
-                    !entity.getSheared() && !entity.isRamming && entity.getAttackTarget() != null;
+                    !entity.getSheared() && !entity.isRamming && entity.getAttackTarget() != null && entity.getHealth() <= (entity.getMaxHealth() * 0.5f);
         }
 
         @Override
@@ -573,7 +588,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                 LivingEntity livingentity = entity.getAttackTarget();
                 if (livingentity != null && entity.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)))
                 {
-                    entity.attackEntityFrom(new DamageSource("goldenram"), (float) entity.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue() * 2);
+                    livingentity.attackEntityFrom(new DamageSource("goldenram"), (float) entity.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue() * 2);
 
                     livingentity.setMotion(livingentity.getMotion().add(motion.mul(2.0D, 2.0D, 2.0D)));
                     entity.setMotion(0.0F, entity.getMotion().getY(), 0.0F);

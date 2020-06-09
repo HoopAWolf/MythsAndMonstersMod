@@ -18,7 +18,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 public class MWAWPacketHandler
 {
     public static final MWAWPacketHandler packetHandler = new MWAWPacketHandler();
-    public static SimpleChannel channel = NetworkRegistry.ChannelBuilder
+    public static final SimpleChannel channel = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(Reference.MOD_ID, "mwaw_main_channel"))
             .clientAcceptedVersions(MessageHandlerOnClient::isThisProtocolAcceptedByClient)
             .serverAcceptedVersions(MessageHandlerOnServer::isThisProtocolAcceptedByServer)

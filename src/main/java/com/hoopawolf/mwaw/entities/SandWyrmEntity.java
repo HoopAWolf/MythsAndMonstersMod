@@ -154,7 +154,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
 
         if (!isTired())
         {
-            if (getBlockUnder(0).isIn(BlockTags.SAND))
+            if (getBlockUnder(0).isIn(BlockTags.SAND) || getBlockUnder(4).isIn(BlockTags.SAND))
             {
                 timer = 0;
                 for (int i = 0; i < modelRotateX.length; ++i)
