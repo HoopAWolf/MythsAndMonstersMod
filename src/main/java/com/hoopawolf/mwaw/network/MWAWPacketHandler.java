@@ -24,11 +24,10 @@ public class MWAWPacketHandler
             .serverAcceptedVersions(MessageHandlerOnServer::isThisProtocolAcceptedByServer)
             .networkProtocolVersion(() -> Reference.MESSAGE_PROTOCOL_VERSION)
             .simpleChannel();
-    private static int id;
 
     public static void init()
     {
-        id = 0;
+        int id = 0;
         channel.messageBuilder(FireParticleSpawnMessage.class, id++).encoder(FireParticleSpawnMessage::encode).decoder(FireParticleSpawnMessage::decode).consumer(MessageHandlerOnServer::onMessageReceived).add();
         channel.messageBuilder(SpawnParticleMessage.class, id++).encoder(SpawnParticleMessage::encode).decoder(SpawnParticleMessage::decode).consumer(MessageHandlerOnClient::onMessageReceived).add();
         channel.messageBuilder(SpawnOrbitingParticleMessage.class, id++).encoder(SpawnOrbitingParticleMessage::encode).decoder(SpawnOrbitingParticleMessage::decode).consumer(MessageHandlerOnClient::onMessageReceived).add();

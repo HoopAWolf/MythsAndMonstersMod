@@ -56,7 +56,6 @@ public class MessageHandlerOnServer
             default:
                 break;
         }
-        return;
     }
 
     public static boolean isThisProtocolAcceptedByServer(String protocolVersion)

@@ -30,6 +30,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     {
         super(type, worldIn);
         shootRenderTimer = 0.0F;
+        this.stepHeight = 1.0F;
     }
 
     @Override
@@ -129,6 +130,12 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
             }
         }
 
+    }
+
+    @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 3;
     }
 
     @Override

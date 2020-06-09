@@ -124,6 +124,7 @@ public class WolpertingerEntity extends AnimalEntity
         }
     }
 
+    @Override
     protected float getJumpUpwardsMotion()
     {
         if (!this.collidedHorizontally && (!this.moveController.isUpdating() || !(this.moveController.getY() > this.getPosY() + 0.5D)))
@@ -184,15 +185,12 @@ public class WolpertingerEntity extends AnimalEntity
         {
             FlyingPathNavigator flyingpathnavigator = new FlyingPathNavigator(this, worldIn)
             {
+                @Override
                 public boolean canEntityStandOnPos(BlockPos pos)
                 {
                     return !this.world.isAirBlock(pos.down());
                 }
 
-                public void tick()
-                {
-                    super.tick();
-                }
             };
             flyingpathnavigator.setCanOpenDoors(false);
             flyingpathnavigator.setCanSwim(false);
@@ -447,6 +445,12 @@ public class WolpertingerEntity extends AnimalEntity
     }
 
     @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 4;
+    }
+
+    @Override
     public boolean isBreedingItem(ItemStack stack)
     {
         return stack.getItem() == Items.GOLDEN_CARROT;
@@ -623,13 +627,8 @@ public class WolpertingerEntity extends AnimalEntity
                     List<LivingEntity> list = this.wolpertinger.world.getEntitiesWithinAABB(entClass, (new AxisAlignedBB(this.wolpertinger.getPosX(), this.wolpertinger.getPosY(), this.wolpertinger.getPosZ(), this.wolpertinger.getPosX() + 1.0D, this.wolpertinger.getPosY() + 1.0D, this.wolpertinger.getPosZ() + 1.0D)).grow(checkDist, checkDist, checkDist));
                     Iterator iterator = list.iterator();
 
-                    while (true)
+                    while (iterator.hasNext())
                     {
-                        if (!iterator.hasNext())
-                        {
-                            break;
-                        }
-
                         LivingEntity _ent = (LivingEntity) iterator.next();
 
                         if (_ent.getRidingEntity() != null)

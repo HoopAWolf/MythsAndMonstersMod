@@ -87,6 +87,7 @@ public class Trades extends VillagerTrades
             this.priceMultiplyer = _priceMultiplyer;
         }
 
+        @Override
         public MerchantOffer getOffer(Entity trader, Random rand)
         {
             return new MerchantOffer(new ItemStack(Items.EMERALD, this.emeraldCount), new ItemStack(this.itemStack.getItem(), this.count), this.maxStock, this.expGiven, this.priceMultiplyer);

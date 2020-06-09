@@ -16,10 +16,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
@@ -208,7 +205,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity
 
                     this.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1.0F, 1.0F);
 
-                    entity.attackEntityFrom(DamageSource.causeMobDamage(this.owner), 8.0F);
+                    entity.attackEntityFrom(new EntityDamageSource("foxhead", this.owner), 8.0F);
 
                     int i = 0;
                     if (this.world.getDifficulty() == Difficulty.NORMAL)

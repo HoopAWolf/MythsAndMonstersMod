@@ -23,12 +23,15 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -45,6 +48,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     private BlockPos flowerPos = null;
     private int inWaterTick;
     private float staminaRemaining;
+    private int attackTimer;
 
     public FairyEntity(EntityType<? extends FairyEntity> p_i225714_1_, World p_i225714_2_)
     {
@@ -105,6 +109,11 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.dataManager.set(RESTING, resting);
     }
 
+    public int getAttackTimer()
+    {
+        return this.attackTimer;
+    }
+
     @Override
     public void writeAdditional(CompoundNBT compound)
     {
@@ -159,15 +168,30 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     }
 
     @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 4;
+    }
+
+    @Override
     public boolean attackEntityAsMob(Entity entityIn)
     {
-        return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), (float) this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue());
+        this.attackTimer = 10;
+        this.world.setEntityState(this, (byte) 4);
+
+        return entityIn.attackEntityFrom(new EntityDamageSource("fairy", this), (float) this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue());
     }
 
     @Override
     public void tick()
     {
         super.tick();
+
+        if (this.attackTimer > 0)
+        {
+            --this.attackTimer;
+        }
+
         if (!this.isResting())
             this.setNoGravity(true);
         else
@@ -187,6 +211,19 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
             SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, -0.1f, 0), _iteration, 0, getWidth());
             MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 4)
+        {
+            this.attackTimer = 10;
+        } else
+        {
+            super.handleStatusUpdate(id);
         }
     }
 
@@ -250,7 +287,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         {
             this.revengeTargetUUID = livingBase.getUniqueID();
         }
-
     }
 
     @Override
@@ -308,11 +344,13 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     {
         FlyingPathNavigator flyingpathnavigator = new FlyingPathNavigator(this, worldIn)
         {
+            @Override
             public boolean canEntityStandOnPos(BlockPos pos)
             {
                 return !this.world.isAirBlock(pos.down());
             }
 
+            @Override
             public void tick()
             {
                 if (!FairyEntity.this.isResting())
@@ -459,6 +497,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             super(p_i225726_2_);
         }
 
+        @Override
         protected void setAttackTarget(MobEntity mobIn, LivingEntity targetIn)
         {
             if (mobIn instanceof FairyEntity && this.goalOwner.canEntityBeSeen(targetIn) && ((FairyEntity) mobIn).SetRevengeTarget(targetIn))
@@ -473,12 +512,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         AttackDendroidGoal(FairyEntity p_i225719_1_)
         {
             super(p_i225719_1_, DendroidEntity.class, true);
-        }
-
-        @Override
-        public boolean shouldExecute()
-        {
-            return super.shouldExecute();
         }
 
         @Override
@@ -521,12 +554,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         public boolean func_225507_h_()
         {
             return this.func_225506_g_();
-        }
-
-        @Override
-        public boolean shouldExecute()
-        {
-            return super.shouldExecute();
         }
 
         @Override
@@ -624,18 +651,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         public void resetTask()
         {
             this.parentEntity.setAngry(false);
-        }
-
-        @Override
-        public boolean shouldExecute()
-        {
-            return super.shouldExecute();
-        }
-
-        @Override
-        public boolean shouldContinueExecuting()
-        {
-            return super.shouldContinueExecuting();
         }
 
         @Override

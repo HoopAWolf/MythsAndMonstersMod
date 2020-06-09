@@ -73,6 +73,7 @@ public class KitsuneEntity extends CreatureEntity
         this.setCanPickUpLoot(true);
         shouting_timer = 0.0F;
         villager_absorb = 0.0F;
+        this.stepHeight = 1.0F;
         summoned = false;
     }
 
@@ -191,6 +192,7 @@ public class KitsuneEntity extends CreatureEntity
     {
         super.writeAdditional(compound);
         compound.putInt("FoxPhase", this.getFoxPhase());
+        compound.putBoolean("VillagerForm", this.isVillagerForm());
     }
 
     @Override
@@ -198,6 +200,7 @@ public class KitsuneEntity extends CreatureEntity
     {
         super.readAdditional(compound);
         this.setFoxPhase(compound.getInt("FoxPhase"));
+        this.setVillagerForm(compound.getBoolean("VillagerForm"));
     }
 
     @Override
@@ -437,6 +440,12 @@ public class KitsuneEntity extends CreatureEntity
         }
 
         return super.attackEntityFrom(source, amount);
+    }
+
+    @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 1;
     }
 
     @Override

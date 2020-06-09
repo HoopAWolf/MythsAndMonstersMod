@@ -35,6 +35,7 @@ public class DendroidSwordItem extends SwordItem
 
     }
 
+    @Override
     public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
         if (isSelected && stack.isDamaged())
@@ -67,6 +68,7 @@ public class DendroidSwordItem extends SwordItem
         }
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {

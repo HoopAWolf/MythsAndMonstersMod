@@ -43,6 +43,7 @@ public class MWAWSpawnEggItem extends SpawnEggItem
         final Map<EntityType<?>, SpawnEggItem> EGGS = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "field_195987_b");
         DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior()
         {
+            @Override
             public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
             {
                 Direction direction = source.getBlockState().get(DispenserBlock.FACING);

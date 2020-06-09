@@ -83,8 +83,8 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new SwimGoal(this));
-        this.goalSelector.addGoal(3, new SandWyrmEntity.ChargeAttackGoal());
-        this.goalSelector.addGoal(4, new SandWyrmEntity.DiveGoal());
+        this.goalSelector.addGoal(3, new SandWyrmEntity.ChargeAttackGoal(this));
+        this.goalSelector.addGoal(4, new SandWyrmEntity.DiveGoal(this));
         this.goalSelector.addGoal(5, new SandWyrmEntity.MoveRandomGoal());
         this.goalSelector.addGoal(6, new SandWyrmEntity.TiredMeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 0.5F, true));
 
@@ -327,6 +327,12 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     {
     }
 
+    @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 1;
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void handleStatusUpdate(byte id)
@@ -458,15 +464,18 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
 
     class ChargeAttackGoal extends Goal
     {
-        public ChargeAttackGoal()
+        SandWyrmEntity entity;
+
+        public ChargeAttackGoal(SandWyrmEntity _entity)
         {
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+            entity = _entity;
         }
 
         @Override
         public boolean shouldExecute()
         {
-            return dived && !_flag && !SandWyrmEntity.this.isTired() && SandWyrmEntity.this.getAttackTarget() != null;
+            return dived && !_flag && !entity.isTired() && entity.getAttackTarget() != null;
         }
 
         @Override
@@ -478,50 +487,52 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         @Override
         public void tick()
         {
-            LivingEntity livingentity = SandWyrmEntity.this.getAttackTarget();
-            if (livingentity != null && SandWyrmEntity.this.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)))
+            LivingEntity livingentity = entity.getAttackTarget();
+            if (livingentity != null && entity.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)))
             {
-                SandWyrmEntity.this.attackEntityAsMob(livingentity);
+                entity.attackEntityAsMob(livingentity);
             }
 
-            double d0 = SandWyrmEntity.this.getDistanceSq(livingentity);
-            if (d0 < 32.0D && SandWyrmEntity.this.rand.nextInt(7) == 0)
+            double d0 = entity.getDistanceSq(livingentity);
+            if (d0 < 32.0D && entity.rand.nextInt(7) == 0)
             {
-                SandWyrmEntity.this.playSound(SoundEvents.BLOCK_SAND_HIT, 1.0F, 1.0F);
-                Direction direction = SandWyrmEntity.this.getAdjustedHorizontalFacing();
-                SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().add((double) direction.getXOffset() * 0.6D, 0.0D, (double) direction.getZOffset() * 0.6D));
-                SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().getX(), 0.5D, SandWyrmEntity.this.getMotion().getZ());
-                SandWyrmEntity.this.navigator.clearPath();
-                SandWyrmEntity.this.DecreaseStamina();
-                SandWyrmEntity.this.setRotation(2);
+                entity.playSound(SoundEvents.BLOCK_SAND_HIT, 1.0F, 1.0F);
+                Direction direction = entity.getAdjustedHorizontalFacing();
+                entity.setMotion(entity.getMotion().add((double) direction.getXOffset() * 0.6D, 0.0D, (double) direction.getZOffset() * 0.6D));
+                entity.setMotion(entity.getMotion().getX(), 0.5D, entity.getMotion().getZ());
+                entity.navigator.clearPath();
+                entity.DecreaseStamina();
+                entity.setRotation(2);
             } else
             {
                 Vec3d vec3d = livingentity.getPositionVec();
-                SandWyrmEntity.this.moveController.setMoveTo(vec3d.x, vec3d.y - 3.0F, vec3d.z, SandWyrmEntity.this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
-                SandWyrmEntity.this.setRotation(0);
+                entity.moveController.setMoveTo(vec3d.x, vec3d.y - 3.0F, vec3d.z, entity.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                entity.setRotation(0);
             }
         }
     }
 
     class DiveGoal extends Goal
     {
+        SandWyrmEntity entity;
         private boolean hasDived = false;
 
-        public DiveGoal()
+        public DiveGoal(SandWyrmEntity _entity)
         {
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+            entity = _entity;
         }
 
         @Override
         public boolean shouldExecute()
         {
-            return !dived && !SandWyrmEntity.this.isTired();
+            return !dived && !entity.isTired();
         }
 
         @Override
         public boolean shouldContinueExecuting()
         {
-            return !dived && _flag && !SandWyrmEntity.this.isTired();
+            return !dived && _flag && !entity.isTired();
         }
 
         @Override
@@ -534,32 +545,32 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         @Override
         public void tick()
         {
-            SandWyrmEntity.this.navigator.clearPath();
+            entity.navigator.clearPath();
             if (hasDived)
             {
-                if (SandWyrmEntity.this.world.isAirBlock(new BlockPos(SandWyrmEntity.this.getPosX(), SandWyrmEntity.this.getPosY() - 0.75F, SandWyrmEntity.this.getPosZ())))
+                if (entity.world.isAirBlock(new BlockPos(entity.getPosX(), entity.getPosY() - 0.75F, entity.getPosZ())))
                 {
-                    LivingEntity livingentity = SandWyrmEntity.this.getAttackTarget();
-                    if (livingentity != null && SandWyrmEntity.this.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)) && getMotion().getY() > 0.1F)
+                    LivingEntity livingentity = entity.getAttackTarget();
+                    if (livingentity != null && entity.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)) && getMotion().getY() > 0.1F)
                     {
-                        SandWyrmEntity.this.attackTimer = 10;
-                        SandWyrmEntity.this.world.setEntityState(SandWyrmEntity.this, (byte) 4);
-                        SandWyrmEntity.this.attackEntityAsMob(livingentity);
+                        entity.attackTimer = 10;
+                        entity.world.setEntityState(entity, (byte) 4);
+                        entity.attackEntityAsMob(livingentity);
                     }
                 }
 
-                if (getBlockUnder(3).isIn(BlockTags.SAND) && SandWyrmEntity.this.getMotion().getY() < 0.0D)
+                if (getBlockUnder(3).isIn(BlockTags.SAND) && entity.getMotion().getY() < 0.0D)
                 {
-                    SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().getX(), -0.5D, SandWyrmEntity.this.getMotion().getZ());
-                    SandWyrmEntity.this.setRotation(2);
+                    entity.setMotion(entity.getMotion().getX(), -0.5D, entity.getMotion().getZ());
+                    entity.setRotation(2);
                 }
             }
 
             if (_flag && !hasDived)
             {
-                Direction direction = SandWyrmEntity.this.getAdjustedHorizontalFacing();
-                SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().add((double) direction.getXOffset() * 0.6D, 1.0D, (double) direction.getZOffset() * 0.6D));
-                SandWyrmEntity.this.setRotation(1);
+                Direction direction = entity.getAdjustedHorizontalFacing();
+                entity.setMotion(entity.getMotion().add((double) direction.getXOffset() * 0.6D, 1.0D, (double) direction.getZOffset() * 0.6D));
+                entity.setRotation(1);
                 hasDived = true;
             }
         }

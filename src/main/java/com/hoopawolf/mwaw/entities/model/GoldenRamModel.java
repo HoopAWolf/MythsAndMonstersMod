@@ -63,8 +63,20 @@ public class GoldenRamModel extends EntityModel<GoldenRamEntity>
     @Override
     public void setLivingAnimations(GoldenRamEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
     {
+        this.Body.rotateAngleX = 0.0F;
         this.Head.rotationPointY = 6.0F + entityIn.getHeadRotationPointY(partialTick) * 9.0F;
         this.headRotationAngleX = entityIn.getHeadRotationAngleX(partialTick);
+
+        this.Head.rotateAngleZ = entityIn.getShakeAngle(partialTick, 0.0F);
+        this.Body.rotateAngleZ = entityIn.getShakeAngle(partialTick, -0.16F);
+
+        float f6 = entityIn.getRearingAmount(partialTick);
+        float f7 = 1.0F - f6;
+
+        this.Head.rotationPointY = f6 + (1.0F - f6) * this.Head.rotationPointY;
+        this.Body.rotateAngleX = f6 * (-(float) Math.PI / 4F) + f7 * this.Body.rotateAngleX;
+        this.FrontLeftLeg.rotationPointY = 2.0F * f6 + 14.0F * f7;
+        this.FrontRightLeg.rotationPointY = 2.0F * f6 + 14.0F * f7;
     }
 
     @Override

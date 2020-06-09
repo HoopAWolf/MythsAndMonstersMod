@@ -31,6 +31,6 @@ public class GoldenRamRenderer extends MobRenderer<GoldenRamEntity, GoldenRamMod
     @Override
     public ResourceLocation getEntityTexture(GoldenRamEntity _entity)
     {
-        return _entity.getSheared() ? ANGRY_TEXTURE : TEXTURE;
+        return _entity.isAngry() ? ANGRY_TEXTURE : TEXTURE;
     }
 }

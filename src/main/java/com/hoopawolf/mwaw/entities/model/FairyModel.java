@@ -67,6 +67,19 @@ public class FairyModel extends EntityModel<FairyEntity>
     }
 
     @Override
+    public void setLivingAnimations(FairyEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
+    {
+        int i = entityIn.getAttackTimer();
+        if (i > 0)
+        {
+            this.ArmRight.rotateAngleX = -4.0618F - (-2.0F + 1.5F * this.triangleWave((float) i - partialTick, 10.0F));
+        } else
+        {
+            this.ArmRight.rotateAngleX = 0.0F;
+        }
+    }
+
+    @Override
     public void render(MatrixStack matrixStack, IVertexBuilder iVertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
         Head.render(matrixStack, iVertexBuilder, packedLightIn, packedOverlayIn);
@@ -99,7 +112,6 @@ public class FairyModel extends EntityModel<FairyEntity>
         this.WingLeft.rotateAngleY = -0.2745F;
         this.WingLeft.rotateAngleZ = 0.0f;
         this.Body.rotateAngleX = 0.0F;
-        this.ArmRight.rotateAngleX = 0.0F;
         this.ArmLeft.rotateAngleX = 0.0F;
         this.LegRight.rotateAngleX = 0.0F;
         this.LegRight.rotateAngleY = 0.0F;
@@ -150,5 +162,10 @@ public class FairyModel extends EntityModel<FairyEntity>
                 this.LegLeft.rotateAngleZ = -0.07853982F;
             }
         }
+    }
+
+    private float triangleWave(float p_78172_1_, float p_78172_2_)
+    {
+        return (Math.abs(p_78172_1_ % p_78172_2_ - p_78172_2_ * 0.5F) - p_78172_2_ * 0.25F) / (p_78172_2_ * 0.25F);
     }
 }

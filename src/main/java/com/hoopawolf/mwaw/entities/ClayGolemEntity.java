@@ -100,6 +100,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     {
         super.writeAdditional(compound);
         compound.putBoolean("IsMinion", this.isMinion());
+        compound.putBoolean("IsHarden", this.isHardenForm());
         compound.putInt("GolemPhase", this.getPhase());
     }
 
@@ -108,6 +109,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     {
         super.readAdditional(compound);
         this.setMinion(compound.getBoolean("IsMinion"));
+        this.setHardenForm(compound.getBoolean("IsHarden"));
         this.setPhase(compound.getInt("GolemPhase"));
     }
 
@@ -194,6 +196,12 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         {
             super.handleStatusUpdate(id);
         }
+    }
+
+    @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 1;
     }
 
     @Override

@@ -22,6 +22,7 @@
   "item.mwaw.naturestaff": "Nature Staff",
   "item.mwaw.halloweenstaff": "Halloween Staff",
   "item.mwaw.christmasstaff": "Christmas Staff",
+
   "item.mwaw.airegg": "Air Egg",
   "item.mwaw.halloweenegg": "Halloween Egg",
   "item.mwaw.fireegg": "Fire Egg",
@@ -85,6 +86,9 @@
   "entity.mwaw.goldenarrow": "Golden Arrow",
   "entity.mwaw.sap": "Soul Sap",
   "entity.mwaw.foxhead": "Fox Spirit",
+  "death.attack.fairy": "%1$s was cobbled to death by %2$s",
+  "death.attack.foxhead": "%1$s was haunted to death by %2$s",
+  "death.attack.goldenram": "%1$s was rammed to death by %2$s",
   "advancements.mwaw.root.description": "Folklore, Myth and Urban Legend",
   "advancements.mwaw.killfairy.title": "A Fairy tale beginning...",
   "advancements.mwaw.killfairy.description": "Killed a Fairy"

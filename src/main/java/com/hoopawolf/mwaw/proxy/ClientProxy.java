@@ -13,6 +13,6 @@ public class ClientProxy
     @SubscribeEvent
     public static void onClientSetUp(final FMLClientSetupEvent event)
     {
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> EntityRegistryHandler::registerEntityRenderer);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> EntityRegistryHandler::registerEntityRenderer);
     }
 }

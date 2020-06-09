@@ -57,6 +57,12 @@ public class GoldenArrowEntity extends AbstractArrowEntity
 
     }
 
+    @Override
+    public float getBrightness()
+    {
+        return 15;
+    }
+
     @Override //TODO ADD SOME SPECIAL EFFECTS MAYBE
     protected void arrowHit(LivingEntity living)
     {

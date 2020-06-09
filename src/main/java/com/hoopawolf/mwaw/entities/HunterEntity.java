@@ -67,12 +67,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         super(type, worldIn);
 
         this.setCanPickUpLoot(true);
-    }
-
-    @Override
-    protected void registerData()
-    {
-        super.registerData();
+        this.stepHeight = 1.0F;
     }
 
     @Override
@@ -140,6 +135,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         }
     }
 
+    @Override
     public boolean processInteract(PlayerEntity player, Hand hand)
     {
         ItemStack itemstack = player.getHeldItem(hand);
@@ -305,6 +301,12 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
             this.onItemPickup(itemEntity, itemstack.getCount());
             itemEntity.remove();
         }
+    }
+
+    @Override
+    public int getMaxSpawnedInChunk()
+    {
+        return 2;
     }
 
     @Override
