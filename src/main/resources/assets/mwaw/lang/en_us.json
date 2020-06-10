@@ -88,7 +88,7 @@
   "entity.mwaw.foxhead": "Fox Spirit",
   "death.attack.fairy": "%1$s was cobbled to death by %2$s",
   "death.attack.foxhead": "%1$s was haunted to death by %2$s",
-  "death.attack.goldenram": "%1$s was rammed to death by Golden Ram",
+  "death.attack.goldenram.player": "%1$s was rammed to death by Golden Ram",
   "death.attack.animal": "%1$s was nibbled to death by an angry animal",
   "advancements.mwaw.root.description": "Folklore, Myth and Urban Legend",
   "advancements.mwaw.killfairy.title": "A Fairy tale beginning...",

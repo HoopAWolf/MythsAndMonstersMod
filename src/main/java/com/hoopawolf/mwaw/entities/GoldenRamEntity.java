@@ -125,6 +125,15 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                 moveStrafing = 0.0F;
                 moveForward = 0.0F;
                 navigator.clearPath();
+            } else
+            {
+                if (this.getRearTime() > 0)
+                {
+                    this.setRearTime(this.getRearTime() + (0.8F * this.getRearTime() * this.getRearTime() * this.getRearTime() - this.getRearTime()) * 0.8F - 0.05F);
+                } else if (this.getRearTime() < 0)
+                {
+                    this.setRearTime(0.0F);
+                }
             }
         }
 
@@ -543,6 +552,11 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
 
             if (isRearing)
             {
+                double d2 = entity.getAttackTarget().getPosX() - entity.getPosX();
+                double d1 = entity.getAttackTarget().getPosZ() - entity.getPosZ();
+                entity.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
+                entity.renderYawOffset = entity.rotationYaw;
+
                 entity.setRearTime(entity.getRearTime() + (1.0F - entity.getRearTime()) * 0.2F + 0.05F);
                 if (entity.getRearTime() > 1.0F)
                 {
@@ -552,6 +566,11 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
             } else if (!isRamming)
             {
                 entity.setRearTime(entity.getRearTime() + (0.8F * entity.getRearTime() * entity.getRearTime() * entity.getRearTime() - entity.getRearTime()) * 0.8F - 0.05F);
+                double d2 = entity.getAttackTarget().getPosX() - entity.getPosX();
+                double d1 = entity.getAttackTarget().getPosZ() - entity.getPosZ();
+                entity.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
+                entity.renderYawOffset = entity.rotationYaw;
+
                 if (entity.getRearTime() < 0.0F)
                 {
                     entity.setRearTime(0.0F);
@@ -608,7 +627,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                     }
                 }
 
-                if (timer >= 30 || (int) entity.prevPosX == (int) entity.getPosX() && (int) entity.prevPosZ == (int) entity.getPosZ() && entity.collidedHorizontally || !onGround)
+                if (timer >= 5 || (int) entity.prevPosX == (int) entity.getPosX() && (int) entity.prevPosZ == (int) entity.getPosZ() && entity.collidedHorizontally || !onGround)
                 {
                     entity.setMotion(0.0F, entity.getMotion().getY(), 0.0F);
                     entity.isRamming = false;

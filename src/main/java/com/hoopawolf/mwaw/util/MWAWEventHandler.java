@@ -1,9 +1,7 @@
 package com.hoopawolf.mwaw.util;
 
-import com.hoopawolf.mwaw.entities.FairyEntity;
 import com.hoopawolf.mwaw.entities.HunterEntity;
 import com.hoopawolf.mwaw.entities.KitsuneEntity;
-import com.hoopawolf.mwaw.entities.WolpertingerEntity;
 import com.hoopawolf.mwaw.entities.ai.AnimalMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.ref.Reference;
@@ -12,9 +10,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.passive.FoxEntity;
+import net.minecraft.entity.passive.*;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
@@ -143,7 +140,7 @@ public class MWAWEventHandler
                 ((PillagerEntity) entity).targetSelector.addGoal(2, new NearestAttackableTargetGoal<>((PillagerEntity) entity, HunterEntity.class, true));
             }
 
-            if (entity instanceof AnimalEntity && !(entity instanceof FairyEntity) && !(entity instanceof WolpertingerEntity))
+            if (entity instanceof CowEntity || entity instanceof RabbitEntity || entity instanceof SheepEntity || entity instanceof AbstractHorseEntity || entity instanceof PigEntity || entity instanceof ChickenEntity)
             {
                 ((AnimalEntity) entity).goalSelector.addGoal(1, new AnimalMeleeAttackGoal(((AnimalEntity) entity), 1.0D, true));
             }
