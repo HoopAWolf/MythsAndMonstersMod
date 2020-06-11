@@ -19,8 +19,7 @@ public class EntityHelper
     public List<PlayerEntity> getPlayersNearby(Entity ent, double distanceX, double distanceY, double distanceZ, double radius)
     {
         List<Entity> nearbyEntities = ent.world.getEntitiesWithinAABBExcludingEntity(ent, ent.getBoundingBox().grow(distanceX, distanceY, distanceZ));
-        List<PlayerEntity> listEntityPlayers = nearbyEntities.stream().filter(entityNeighbor -> entityNeighbor instanceof PlayerEntity && ent.getDistance(entityNeighbor) <= radius).map(entityNeighbor -> (PlayerEntity) entityNeighbor).collect(Collectors.toList());
-        return listEntityPlayers;
+        return nearbyEntities.stream().filter(entityNeighbor -> entityNeighbor instanceof PlayerEntity && ent.getDistance(entityNeighbor) <= radius).map(entityNeighbor -> (PlayerEntity) entityNeighbor).collect(Collectors.toList());
     }
 
     public List<LivingEntity> getEntityLivingBaseNearby(Entity ent, double distanceX, double distanceY, double distanceZ, double radius)

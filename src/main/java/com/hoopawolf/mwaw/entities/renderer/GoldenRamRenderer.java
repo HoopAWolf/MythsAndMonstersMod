@@ -2,6 +2,7 @@ package com.hoopawolf.mwaw.entities.renderer;
 
 import com.hoopawolf.mwaw.entities.GoldenRamEntity;
 import com.hoopawolf.mwaw.entities.model.GoldenRamModel;
+import com.hoopawolf.mwaw.entities.renderer.layer.GoldenRamEyeLayer;
 import com.hoopawolf.mwaw.entities.renderer.layer.GoldenWoolLayer;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -20,12 +21,13 @@ public class GoldenRamRenderer extends MobRenderer<GoldenRamEntity, GoldenRamMod
     {
         super(renderManagerIn, new GoldenRamModel(), 0.7F);
         this.addLayer(new GoldenWoolLayer(this));
+        this.addLayer(new GoldenRamEyeLayer(this));
     }
 
     @Override
     protected int getBlockLight(GoldenRamEntity entityIn, float partialTicks)
     {
-        return entityIn.getSheared() ? super.getBlockLight(entityIn, partialTicks) : 15;
+        return entityIn.getSheared() ? super.getBlockLight(entityIn, partialTicks) : 11;
     }
 
     @Override
