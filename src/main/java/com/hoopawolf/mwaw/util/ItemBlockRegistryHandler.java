@@ -10,10 +10,7 @@ import com.hoopawolf.mwaw.tab.MWAWItemGroup;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemTier;
+import net.minecraft.item.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.GenerationStage;
@@ -74,7 +71,7 @@ public class ItemBlockRegistryHandler
      public static final RegistryObject<Item> DARK_EGG = ITEMS.register("darkegg", ItemBase::new);
      public static final RegistryObject<Item> NATURE_EGG = ITEMS.register("natureegg", ItemBase::new);*/
     public static final RegistryObject<Item> BONE_DAGGER = ITEMS.register("bonedagger", () -> new BoneDaggerItem(ItemTier.DIAMOND, 4, -2.5f, new Item.Properties().maxDamage(1000)));
-    public static final RegistryObject<Item> GOLDEN_BOW = ITEMS.register("goldenbow", () -> new GoldenBowItem(new Item.Properties().maxStackSize(1).group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> GOLDEN_BOW = ITEMS.register("goldenbow", () -> new GoldenBowItem(new Item.Properties().maxStackSize(1).group(MWAWItemGroup.instance).rarity(Rarity.UNCOMMON)));
     /*public static final RegistryObject<Item> WATER_STAFF = ITEMS.register("waterstaff", ItemBase::new);
     public static final RegistryObject<Item> LIGHTNING_STAFF = ITEMS.register("lightningstaff", ItemBase::new);
     public static final RegistryObject<Item> EARTH_STAFF = ITEMS.register("earthstaff", ItemBase::new);

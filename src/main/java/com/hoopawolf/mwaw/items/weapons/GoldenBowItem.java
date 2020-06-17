@@ -8,7 +8,10 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShootableItem;
+import net.minecraft.item.UseAction;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.util.math.Vec3d;
@@ -181,11 +184,5 @@ public class GoldenBowItem extends ShootableItem
     public AbstractArrowEntity customeArrow(AbstractArrowEntity arrow)
     {
         return arrow;
-    }
-
-    @Override
-    public Rarity getRarity(ItemStack stack)
-    {
-        return Rarity.UNCOMMON;
     }
 }
