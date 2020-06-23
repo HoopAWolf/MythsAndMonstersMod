@@ -50,7 +50,7 @@ public class BadAppleItem extends Item
             }
 
             if (worldIn.rand.nextInt(100) < 50)
-                worldIn.addEntity(new ItemEntity(worldIn, entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ(), ItemBlockRegistryHandler.TAINTED_SEED.get().getDefaultInstance()));
+                worldIn.addEntity(new ItemEntity(worldIn, entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ(), new ItemStack(ItemBlockRegistryHandler.TAINTED_SEED.get())));
         }
 
         return stack;
