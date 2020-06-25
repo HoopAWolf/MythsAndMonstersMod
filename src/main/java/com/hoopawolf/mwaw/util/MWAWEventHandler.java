@@ -2,11 +2,12 @@ package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.entities.HunterEntity;
 import com.hoopawolf.mwaw.entities.KitsuneEntity;
-import com.hoopawolf.mwaw.entities.ai.AnimalMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.monster.ZombieEntity;
@@ -142,7 +143,11 @@ public class MWAWEventHandler
 
             if (entity instanceof CowEntity || entity instanceof RabbitEntity || entity instanceof SheepEntity || entity instanceof AbstractHorseEntity || entity instanceof PigEntity || entity instanceof ChickenEntity)
             {
-                ((AnimalEntity) entity).goalSelector.addGoal(1, new AnimalMeleeAttackGoal(((AnimalEntity) entity), 1.0D, true));
+                ((AnimalEntity) entity).getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+                ((AnimalEntity) entity).getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
+                ((AnimalEntity) entity).getAttribute(SharedMonsterAttributes.ATTACK_KNOCKBACK).setBaseValue(1.0D);
+
+                ((AnimalEntity) entity).goalSelector.addGoal(1, new MeleeAttackGoal(((AnimalEntity) entity), 1.0D, true));
             }
         }
     }

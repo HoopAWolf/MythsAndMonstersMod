@@ -135,16 +135,16 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                     this.setRearTime(0.0F);
                 }
             }
-        }
 
-        if (getHealth() <= (getMaxHealth() * 0.5F) && ticksExisted % 5 == 0)
-        {
-            List<LivingEntity> entities = EntityHelper.INSTANCE.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
-            for (LivingEntity entity : entities)
+            if (getHealth() <= (getMaxHealth() * 0.5F) && ticksExisted % 5 == 0)
             {
-                if (entity instanceof AnimalEntity && ((AnimalEntity) entity).getAttackTarget() == null)
+                List<LivingEntity> entities = EntityHelper.INSTANCE.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
+                for (LivingEntity entity : entities)
                 {
-                    ((AnimalEntity) entity).setAttackTarget(this.getAttackTarget());
+                    if (entity instanceof AnimalEntity && ((AnimalEntity) entity).getAttackTarget() == null)
+                    {
+                        ((AnimalEntity) entity).setAttackTarget(this.getAttackTarget());
+                    }
                 }
             }
         }
