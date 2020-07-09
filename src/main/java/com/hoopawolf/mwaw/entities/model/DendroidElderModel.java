@@ -197,10 +197,10 @@ public class DendroidElderModel extends EntityModel<DendroidElderEntity>
                         this.LeftArmJoint.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 1.5F * limbSwingAmount, -1.5F, 0);
                     }
 
-                    this.RightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.8F * limbSwingAmount;
-                    this.LeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.8F * limbSwingAmount;
-                    this.RightFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 3.0F * limbSwingAmount, 0, 1.0F);
-                    this.LeftFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 3.0F * limbSwingAmount, 0, 1.0F);
+                    this.RightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.5F * limbSwingAmount;
+                    this.LeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.5F * limbSwingAmount;
+                    this.RightFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount, 0, 1.0F);
+                    this.LeftFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount, 0, 1.0F);
                 } else
                 {
                     if (entityIn.animation.atDefaultRotation(RightArm.rotateAngleX, RightArm.rotateAngleY, RightArm.rotateAngleZ))

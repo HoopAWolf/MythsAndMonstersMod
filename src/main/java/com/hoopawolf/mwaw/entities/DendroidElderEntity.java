@@ -239,7 +239,7 @@ public class DendroidElderEntity extends CreatureEntity
     {
         this.goalSelector.addGoal(0, new ElderRecoveryGoal(this));
         this.goalSelector.addGoal(0, new ElderGroundSlamGoal(this));
-        this.goalSelector.addGoal(1, new ElderAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 2, true));
+        this.goalSelector.addGoal(1, new ElderAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 1.5F, true));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
         this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 4.0F));
@@ -829,7 +829,7 @@ public class DendroidElderEntity extends CreatureEntity
         @Override
         public void resetTask()
         {
-            coolDown = 1;
+            coolDown = 100;
             host.setState(0);
         }
 
