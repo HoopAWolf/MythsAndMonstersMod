@@ -238,7 +238,7 @@ public class DendroidElderEntity extends CreatureEntity
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new ElderRecoveryGoal(this));
-        this.goalSelector.addGoal(1, new ElderGroundSlamGoal(this));
+        this.goalSelector.addGoal(0, new ElderGroundSlamGoal(this));
         this.goalSelector.addGoal(1, new ElderAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 2, true));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -829,7 +829,7 @@ public class DendroidElderEntity extends CreatureEntity
         @Override
         public void resetTask()
         {
-            coolDown = 500;
+            coolDown = 1;
             host.setState(0);
         }
 
@@ -845,17 +845,22 @@ public class DendroidElderEntity extends CreatureEntity
                     if (host.getSlamTimer() < host.getSlamTimerMax() * 0.1F)
                     {
                         host.playSound(SoundEvents.ENTITY_ILLUSIONER_PREPARE_MIRROR, 5.0F, 0.1F);
+                        double d2 = host.getAttackTarget().getPosX() - host.getPosX();
+                        double d1 = host.getAttackTarget().getPosZ() - host.getPosZ();
+                        host.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
+                        host.renderYawOffset = host.rotationYaw;
+
                     } else if (host.getSlamTimer() >= host.getSlamTimerMax() * 0.9F)
                     {
                         List<LivingEntity> entities = EntityHelper.getEntityLivingBaseNearby(host, 30, 2, 30, 50);
 
                         host.playSound(SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 5.0F, 0.1F);
                         float wide = 0;
-                        Vec3d forward = new Vec3d(Math.signum(host.getLookVec().getX()), 1, Math.signum(host.getLookVec().getZ()));
+                        Vec3d forward = new Vec3d(MathFuncHelper.signum(host.getLookVec().getX()), 1, MathFuncHelper.signum(host.getLookVec().getZ()));
                         Vec3d right = MathFuncHelper.crossProduct(forward, new Vec3d(0, 1, 0));
                         for (int dist = 0; dist < 10; ++dist)
                         {
-                            for (int i = -(int) wide; i < (int) wide; ++i)
+                            for (int i = -(int) wide; i <= (int) wide; ++i)
                             {
                                 BlockPos pos = new BlockPos(host.getPosX() + (forward.getX() * dist) + (right.getX() * i), host.getPosY() - 1, host.getPosZ() + (forward.getZ() * dist) + (right.getZ() * i));
                                 FallingBlockEntity fallingblockentity = new FallingBlockEntity(host.world, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, host.world.getBlockState(pos));
