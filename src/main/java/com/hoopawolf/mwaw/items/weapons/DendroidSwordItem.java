@@ -20,17 +20,6 @@ import java.util.List;
 
 public class DendroidSwordItem extends SwordItem
 {
-    final Item[] log_list =
-            {
-                    Items.ACACIA_LOG,
-                    Items.BIRCH_LOG,
-                    Items.DARK_OAK_LOG,
-                    Items.JUNGLE_LOG,
-                    Items.OAK_LOG,
-                    Items.SPRUCE_LOG
-
-            };
-
     public DendroidSwordItem(IItemTier tier, int attackDamageIn, float attackSpeedIn, Properties builder)
     {
         super(tier, attackDamageIn, attackSpeedIn, builder.group(MWAWItemGroup.instance));
