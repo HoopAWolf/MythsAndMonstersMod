@@ -8,8 +8,10 @@ import com.hoopawolf.mwaw.items.weapons.*;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.tab.MWAWItemGroup;
 import net.minecraft.block.Block;
+import net.minecraft.block.LogBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
@@ -81,7 +83,11 @@ public class ItemBlockRegistryHandler
     public static final RegistryObject<Item> CHRISTMAS_STAFF = ITEMS.register("christmasstaff", ItemBase::new);*/
     //BLOCKS
     public static final RegistryObject<Block> FAIRY_MUSHROOM_BLOCK = BLOCKS.register("fairymushroom", () -> new FairyMushroomBlock(Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().sound(SoundType.PLANT).lightValue(5)));
+    public static final RegistryObject<Block> CORPSE_WOOD_BLOCK = BLOCKS.register("corpsewood", () -> new LogBlock(MaterialColor.BROWN, Block.Properties.create(Material.WOOD, MaterialColor.BROWN).hardnessAndResistance(2.0F).sound(SoundType.WOOD)));
+
     public static final RegistryObject<Item> FAIRY_MUSHROOM_ITEM = ITEMS.register("fairymushroom", () -> new BlockItem(FAIRY_MUSHROOM_BLOCK.get(), new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<Item> CORPSE_WOOD_ITEM = ITEMS.register("corpsewood", () -> new BlockItem(CORPSE_WOOD_BLOCK.get(), new Item.Properties().group(MWAWItemGroup.instance)));
+
     //SPAWN EGGS
     public static final RegistryObject<MWAWSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairyspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.FAIRY_ENTITY, 0x15153F, 0x153F3F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> SAND_WYRM_SPAWN_EGG = ITEMS.register("sandwyrmspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.SAND_WYRM_ENTITY, 0x2A2A00, 0x3F3F15, new Item.Properties().group(MWAWItemGroup.instance)));
@@ -91,6 +97,7 @@ public class ItemBlockRegistryHandler
     public static final RegistryObject<MWAWSpawnEggItem> HUNTER_SPAWN_EGG = ITEMS.register("hunterspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.HUNTER_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> CLAY_GOLEM_SPAWN_EGG = ITEMS.register("claygolemspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.CLAY_GOLEM_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> GOLDEN_RAM_SPAWN_EGG = ITEMS.register("goldenramspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.GOLDEN_RAM_ENTITY, 0x15235F, 0x16234F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> DENDROID_ELDER_SPAWN_EGG = ITEMS.register("dendroidelderspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.DENDROID_ELDER_ENTITY, 0x15235F, 0x16234F, new Item.Properties().group(MWAWItemGroup.instance)));
 
     public static void init(IEventBus _iEventBus)
     {

@@ -3,6 +3,7 @@ package com.hoopawolf.mwaw.entities;
 import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -13,6 +14,7 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -51,8 +53,8 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, CreatureEntity.class, 10, true, false, (p_213621_0_) ->
         {
-            return !(p_213621_0_ instanceof DendroidEntity);
-        }));   //TODO FOR WHEN DENDROID ELDER GETS ADDED ALSO
+            return !(p_213621_0_ instanceof DendroidEntity) && !(p_213621_0_ instanceof DendroidElderEntity);
+        }));
     }
 
     @Override
@@ -91,7 +93,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
     {
-        return worldIn.canSeeSky(getPosition());
+        return worldIn.canSeeSky(getPosition()) && worldIn.getBlockState(this.getPositionUnderneath()).getBlock().equals(Blocks.GRASS_BLOCK);
     }
 
     @Override
@@ -141,21 +143,37 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (source.getTrueSource() instanceof DendroidEntity)
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+        if (this.isInvulnerableTo(source))
+        {
             return false;
+        } else if (this.world.isRemote)
+        {
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
+        {
+            return false;
+        } else
+        {
+            if (source.getTrueSource() instanceof DendroidEntity || source.getTrueSource() instanceof DendroidElderEntity)
+                return false;
 
-        if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
-        {
-            this.setFireTimer(100);
-        } else if (source.damageType.equals(DamageSource.DROWN.damageType) || source.damageType.equals(DamageSource.CACTUS.damageType))
-        {
-            return false;
-        } else if (source.getTrueSource() instanceof LivingEntity && ((LivingEntity) source.getTrueSource()).getHeldItemMainhand().getItem() instanceof AxeItem)
-        {
-            return super.attackEntityFrom(source, amount * 2.0F);
+            if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
+            {
+                this.setFireTimer(100);
+            } else if (source.damageType.equals(DamageSource.DROWN.damageType) || source.damageType.equals(DamageSource.CACTUS.damageType))
+            {
+                return false;
+            } else if (source.getTrueSource() instanceof LivingEntity && ((LivingEntity) source.getTrueSource()).getHeldItemMainhand().getItem() instanceof AxeItem)
+            {
+                return super.attackEntityFrom(source, amount * 2.0F);
+            }
+
+            return super.attackEntityFrom(source, amount);
         }
-
-        return super.attackEntityFrom(source, amount);
     }
 
     @Override

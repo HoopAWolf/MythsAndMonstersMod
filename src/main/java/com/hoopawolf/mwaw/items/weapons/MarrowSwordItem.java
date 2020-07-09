@@ -32,7 +32,7 @@ public class MarrowSwordItem extends SwordItem
     {
         if (isSelected)
         {
-            if (entityIn instanceof PlayerEntity)
+            if (entityIn instanceof PlayerEntity && !((PlayerEntity) entityIn).isCreative())
             {
                 PlayerEntity _playerEntity = (PlayerEntity) entityIn;
 

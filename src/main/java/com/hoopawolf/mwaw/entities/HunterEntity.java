@@ -17,6 +17,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -336,14 +337,29 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-
-        if (source.getTrueSource() instanceof HunterEntity)
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+        if (this.isInvulnerableTo(source))
+        {
             return false;
+        } else if (this.world.isRemote)
+        {
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
+        {
+            return false;
+        } else
+        {
+            if (source.getTrueSource() instanceof HunterEntity)
+                return false;
 
-        if (ticksExisted % 2 == 0)
-            eatFoodOnOffHand(getMaxHealth() * 0.2F);
+            if (ticksExisted % 2 == 0)
+                eatFoodOnOffHand(getMaxHealth() * 0.2F);
 
-        return super.attackEntityFrom(source, amount);
+            return super.attackEntityFrom(source, amount);
+        }
     }
 
     @Override

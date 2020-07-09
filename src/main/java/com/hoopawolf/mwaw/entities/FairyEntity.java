@@ -20,6 +20,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.DamageSource;
@@ -441,19 +442,35 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
         if (this.isInvulnerableTo(source))
+        {
+            return false;
+        } else if (this.world.isRemote)
+        {
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
         {
             return false;
         } else
         {
-            Entity entity = source.getTrueSource();
-            this.ResetStamina();
-            if (!this.world.isRemote && entity instanceof PlayerEntity && !((PlayerEntity) entity).isCreative() && this.canEntityBeSeen(entity) && !this.isAIDisabled())
+            if (this.isInvulnerableTo(source))
             {
-                this.SetRevengeTarget(entity);
-            }
+                return false;
+            } else
+            {
+                Entity entity = source.getTrueSource();
+                this.ResetStamina();
+                if (!this.world.isRemote && entity instanceof PlayerEntity && !((PlayerEntity) entity).isCreative() && this.canEntityBeSeen(entity) && !this.isAIDisabled())
+                {
+                    this.SetRevengeTarget(entity);
+                }
 
-            return super.attackEntityFrom(source, amount);
+                return super.attackEntityFrom(source, amount);
+            }
         }
     }
 

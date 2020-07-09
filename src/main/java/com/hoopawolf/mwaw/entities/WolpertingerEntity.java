@@ -23,6 +23,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -484,7 +485,17 @@ public class WolpertingerEntity extends AnimalEntity
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
         if (this.isInvulnerableTo(source))
+        {
+            return false;
+        } else if (this.world.isRemote)
+        {
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
         {
             return false;
         } else

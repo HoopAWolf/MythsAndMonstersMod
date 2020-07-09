@@ -109,7 +109,7 @@ public class MWAWEventHandler
         {
             if (entity instanceof FoxEntity)
             {
-                List<KitsuneEntity> ent_list = EntityHelper.INSTANCE.getEntitiesNearby(entity, KitsuneEntity.class, 16.0D);
+                List<KitsuneEntity> ent_list = EntityHelper.getEntitiesNearby(entity, KitsuneEntity.class, 16.0D);
 
                 for (KitsuneEntity kit : ent_list)
                 {

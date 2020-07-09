@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
@@ -138,7 +139,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
 
             if (getHealth() <= (getMaxHealth() * 0.5F) && ticksExisted % 5 == 0)
             {
-                List<LivingEntity> entities = EntityHelper.INSTANCE.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
+                List<LivingEntity> entities = EntityHelper.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
                 for (LivingEntity entity : entities)
                 {
                     if (entity instanceof AnimalEntity && ((AnimalEntity) entity).getAttackTarget() == null)
@@ -668,7 +669,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         }
     }
 
-    private class MeleeRamGoal extends MeleeAttackGoal
+    private class MeleeRamGoal extends MWAWMeleeAttackGoal
     {
         public MeleeRamGoal(CreatureEntity creature, double speedIn, boolean useLongMemory)
         {

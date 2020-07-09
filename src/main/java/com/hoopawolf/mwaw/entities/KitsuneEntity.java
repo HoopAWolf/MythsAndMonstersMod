@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.entities.projectiles.FoxHeadEntity;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
@@ -228,18 +229,22 @@ public class KitsuneEntity extends CreatureEntity
             this.moveStrafing = 0.0F;
             this.moveForward = 0.0F;
 
-            List<LivingEntity> entities = EntityHelper.INSTANCE.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
+            List<LivingEntity> entities = EntityHelper.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
             for (LivingEntity entity : entities)
             {
                 if (!(entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()))
                 {
-                    double angle = (EntityHelper.INSTANCE.getAngleBetweenEntities(this, entity) + 90) * Math.PI / 180;
+                    double angle = (EntityHelper.getAngleBetweenEntities(this, entity) + 90) * Math.PI / 180;
                     double distance = getDistance(entity);
                     entity.setMotion(
                             entity.getMotion().getX() + Math.min(1 / (distance * distance), 1) * -2 * Math.cos(angle),
                             entity.getMotion().getY(),
                             entity.getMotion().getZ() + Math.min(1 / (distance * distance), 1) * -2 * Math.sin(angle));
 
+                    if (entity instanceof PlayerEntity)
+                    {
+                        entity.velocityChanged = true;
+                    }
 
                     int i = 0;
                     if (this.world.getDifficulty() == Difficulty.NORMAL)
@@ -297,7 +302,7 @@ public class KitsuneEntity extends CreatureEntity
 
         if (!world.isRemote)
         {
-            if (!isVillagerForm() && villager_absorb >= 100.0F && world.isDaytime())
+            if (!isVillagerForm() && villager_absorb >= 10.0F && world.isDaytime())
             {
                 changingForm(true);
                 spitOutItem(this.getItemStackFromSlot(EquipmentSlotType.MAINHAND));
@@ -317,7 +322,7 @@ public class KitsuneEntity extends CreatureEntity
             {
                 if (getAttackTarget() == null)
                 {
-                    List<LivingEntity> entities = EntityHelper.INSTANCE.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
+                    List<LivingEntity> entities = EntityHelper.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
                     for (LivingEntity entity : entities)
                     {
                         if (entity instanceof VillagerEntity)
@@ -433,10 +438,26 @@ public class KitsuneEntity extends CreatureEntity
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (isVillagerForm())
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+        if (this.isInvulnerableTo(source))
         {
-            changingForm(false);
-            villager_absorb = 0.0F;
+            return false;
+        } else if (this.world.isRemote)
+        {
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
+        {
+            return false;
+        } else
+        {
+            if (isVillagerForm())
+            {
+                changingForm(false);
+                villager_absorb = 0.0F;
+            }
         }
 
         return super.attackEntityFrom(source, amount);
@@ -627,7 +648,7 @@ public class KitsuneEntity extends CreatureEntity
         }
     }
 
-    class BiteGoal extends MeleeAttackGoal
+    class BiteGoal extends MWAWMeleeAttackGoal
     {
         public BiteGoal(double p_i50731_2_, boolean p_i50731_4_)
         {

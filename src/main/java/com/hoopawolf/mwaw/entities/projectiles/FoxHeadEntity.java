@@ -131,6 +131,11 @@ public class FoxHeadEntity extends DamagingProjectileEntity
         {
             startTimer = 0;
 
+            if (ticksExisted > 400)
+            {
+                setDead();
+            }
+
             if (!world.isRemote)
             {
                 if (target != null && target.isAlive())

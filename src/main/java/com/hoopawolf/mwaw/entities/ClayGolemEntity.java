@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
 import com.hoopawolf.mwaw.entities.projectiles.ClayEntity;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -37,7 +39,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     private static final DataParameter<Boolean> IS_MINION = EntityDataManager.createKey(ClayGolemEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> CLAYGOLEM_PHASE = EntityDataManager.createKey(ClayGolemEntity.class, DataSerializers.VARINT);
 
-    private MeleeAttackGoal meleeGoal;
+    private MWAWMeleeAttackGoal meleeGoal;
     private RangedAttackWithStrafeGoal rangedGoal;
 
     private boolean resized;
@@ -66,7 +68,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     @Override
     protected void registerGoals()
     {
-        meleeGoal = new MeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), true);
+        meleeGoal = new MWAWMeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), true);
         rangedGoal = new RangedAttackWithStrafeGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), 40, 50, 15.0F);
 
         this.goalSelector.addGoal(1, meleeGoal);
@@ -349,31 +351,48 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (spawned)
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+        if (this.isInvulnerableTo(source))
         {
-            spawned = false;
-        }
-
-        if (source.getTrueSource() instanceof ClayGolemEntity)
             return false;
-
-        if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
+        } else if (this.world.isRemote)
         {
-            if (!isHardenForm())
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
+        {
+            return false;
+        } else
+        {
+
+            if (spawned)
             {
-                this.setFire(100);
-                setBurnTime(getBurnTime() + 0.1F);
-            } else
+                spawned = false;
+            }
+
+            if (source.getTrueSource() instanceof ClayGolemEntity)
+                return false;
+
+            if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
             {
-                this.extinguish();
+                if (!isHardenForm())
+                {
+                    this.setFire(100);
+                    setBurnTime(getBurnTime() + 0.1F);
+                } else
+                {
+                    this.extinguish();
+                    return false;
+                }
+            } else if (isHardenForm() && source.damageType.equals(DamageSource.IN_FIRE.damageType))
+            {
                 return false;
             }
-        } else if (isHardenForm() && source.damageType.equals(DamageSource.IN_FIRE.damageType))
-        {
-            return false;
-        }
 
-        return isHardenForm() ? super.attackEntityFrom(source, amount * 0.5F) : super.attackEntityFrom(source, amount);
+            return isHardenForm() ? super.attackEntityFrom(source, amount * 0.5F) : super.attackEntityFrom(source, amount);
+        }
     }
 
     @Override

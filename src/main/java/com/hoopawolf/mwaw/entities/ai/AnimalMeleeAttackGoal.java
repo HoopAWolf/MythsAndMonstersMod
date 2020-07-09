@@ -3,12 +3,11 @@ package com.hoopawolf.mwaw.entities.ai;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 
-public class AnimalMeleeAttackGoal extends MeleeAttackGoal
+public class AnimalMeleeAttackGoal extends MWAWMeleeAttackGoal
 {
     private final AnimalEntity parentEntity;
     private final LivingEntity livingentity;

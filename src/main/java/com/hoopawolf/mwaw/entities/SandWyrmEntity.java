@@ -1,5 +1,6 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
@@ -7,7 +8,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.IMob;
@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
@@ -238,7 +239,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         if (getAttackTarget() == null)
         {
             double d0 = this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getBaseValue();
-            List<PlayerEntity> entities = EntityHelper.INSTANCE.getPlayersNearby(this, d0, d0, d0, d0 * 2);
+            List<PlayerEntity> entities = EntityHelper.getPlayersNearby(this, d0, d0, d0, d0 * 2);
             for (PlayerEntity entity : entities)
             {
                 if (!entity.isCreative() && !entity.isCrouching())
@@ -305,12 +306,28 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (source.damageType.equals(DamageSource.IN_WALL.damageType))
+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+        if (this.isInvulnerableTo(source))
         {
             return false;
-        }
+        } else if (this.world.isRemote)
+        {
+            return false;
+        } else if (this.getHealth() <= 0.0F)
+        {
+            return false;
+        } else if (source.isFireDamage() && this.isPotionActive(Effects.FIRE_RESISTANCE))
+        {
+            return false;
+        } else
+        {
+            if (source.damageType.equals(DamageSource.IN_WALL.damageType))
+            {
+                return false;
+            }
 
-        return super.attackEntityFrom(source, amount);
+            return super.attackEntityFrom(source, amount);
+        }
     }
 
     @Override
@@ -654,7 +671,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         }
     }
 
-    class TiredMeleeAttackGoal extends MeleeAttackGoal
+    class TiredMeleeAttackGoal extends MWAWMeleeAttackGoal
     {
         public TiredMeleeAttackGoal(CreatureEntity creature, double speedIn, boolean useLongMemory)
         {
