@@ -4,6 +4,11 @@ import net.minecraft.util.math.Vec3d;
 
 public class MathFuncHelper
 {
+    public static Vec3d Lerp(Vec3d start, Vec3d end, float percent)
+    {
+        return (start.add(end.subtract(start).mul(percent, percent, percent)));
+    }
+
     public static Vec3d crossProduct(Vec3d vec_A, Vec3d vec_B)
     {
         return new Vec3d(Math.signum((int) (vec_A.getY() * vec_B.getZ() - vec_A.getZ() * vec_B.getY())),
