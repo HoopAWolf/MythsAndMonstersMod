@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.hoopawolf.mwaw.entities.ai.LookAtCustomerHunterGoal;
 import com.hoopawolf.mwaw.entities.ai.RangedBowAttackHunterGoal;
 import com.hoopawolf.mwaw.entities.ai.TradeWithPlayerHunterGoal;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.merchant.Trades;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
@@ -17,6 +19,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -69,6 +72,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
 
         this.setCanPickUpLoot(true);
         this.stepHeight = 1.0F;
+        this.moveController = new MWAWMovementController(this, 180);
     }
 
     @Override
@@ -95,6 +99,12 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.525D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
+    }
+
+    @Override
+    protected PathNavigator createNavigator(World world)
+    {
+        return new MWAWPathNavigateGround(this, world);
     }
 
     @Override

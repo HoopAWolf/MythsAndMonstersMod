@@ -1,6 +1,8 @@
 package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.entities.projectiles.FoxHeadEntity;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
@@ -28,6 +30,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -76,6 +79,8 @@ public class KitsuneEntity extends CreatureEntity
         villager_absorb = 0.0F;
         this.stepHeight = 1.0F;
         summoned = false;
+
+        this.moveController = new MWAWMovementController(this, 30);
     }
 
     @Override
@@ -119,6 +124,12 @@ public class KitsuneEntity extends CreatureEntity
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60.0D);
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
+    }
+
+    @Override
+    protected PathNavigator createNavigator(World world)
+    {
+        return new MWAWPathNavigateGround(this, world);
     }
 
     public boolean isVillagerForm()

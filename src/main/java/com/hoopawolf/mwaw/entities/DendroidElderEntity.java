@@ -1,6 +1,8 @@
 package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.helper.AnimationHelper;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.entities.helper.MathFuncHelper;
@@ -19,6 +21,7 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
@@ -77,6 +80,8 @@ public class DendroidElderEntity extends CreatureEntity
         animation.registerData(LEFT_FOOT_ROTATION);
         animation.registerData(RIGHT_LEG_ROTATION);
         animation.registerData(RIGHT_FOOT_ROTATION);
+
+        this.moveController = new MWAWMovementController(this, 7);
     }
 
     @Override
@@ -101,6 +106,12 @@ public class DendroidElderEntity extends CreatureEntity
         this.dataManager.register(RIGHT_LEG_ROTATION, new Rotations(0, 0, 0));
         this.dataManager.register(LEFT_FOOT_ROTATION, new Rotations(0, 0, 0));
         this.dataManager.register(RIGHT_FOOT_ROTATION, new Rotations(0, 0, 0));
+    }
+
+    @Override
+    protected PathNavigator createNavigator(World world)
+    {
+        return new MWAWPathNavigateGround(this, world);
     }
 
     public boolean isRunning()
@@ -809,7 +820,7 @@ public class DendroidElderEntity extends CreatureEntity
                 return false;
             }
 
-            return host.getAttackTarget() != null && host.getState() == 0 && rand.nextInt(100) < 40;
+            return host.getAttackTarget() != null && host.getDistance(host.getAttackTarget()) < 10 && host.getState() == 0 && rand.nextInt(100) < 40;
         }
 
         @Override

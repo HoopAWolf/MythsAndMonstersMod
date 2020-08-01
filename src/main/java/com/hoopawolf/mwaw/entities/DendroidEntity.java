@@ -1,6 +1,8 @@
 package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -14,6 +16,7 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -33,6 +36,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         super(type, worldIn);
         shootRenderTimer = 0.0F;
         this.stepHeight = 1.0F;
+        this.moveController = new MWAWMovementController(this, 30);
     }
 
     @Override
@@ -63,6 +67,12 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
+    }
+
+    @Override
+    protected PathNavigator createNavigator(World world)
+    {
+        return new MWAWPathNavigateGround(this, world);
     }
 
     public boolean isShooting()

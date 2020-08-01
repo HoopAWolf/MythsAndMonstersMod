@@ -2,6 +2,8 @@ package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.projectiles.ClayEntity;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
@@ -53,6 +56,8 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         this.stepHeight = 1.0F;
         resized = false;
         spawned = false;
+
+        this.moveController = new MWAWMovementController(this, 7);
     }
 
     @Override
@@ -83,6 +88,12 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         {
             return !(p_213621_0_ instanceof ClayGolemEntity);
         }));
+    }
+
+    @Override
+    protected PathNavigator createNavigator(World world)
+    {
+        return new MWAWPathNavigateGround(this, world);
     }
 
     @Override

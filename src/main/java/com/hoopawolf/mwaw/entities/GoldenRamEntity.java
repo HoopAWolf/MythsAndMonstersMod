@@ -1,6 +1,8 @@
 package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
@@ -17,6 +19,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -58,6 +61,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         shakeCoolDown = 0;
         ramingCoolDown = 0;
         this.stepHeight = 1.0F;
+        this.moveController = new MWAWMovementController(this, 30);
     }
 
     @Override
@@ -77,6 +81,12 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
         this.goalSelector.addGoal(7, new LookAtRamGoal(this, PlayerEntity.class, 6.0F));
         this.goalSelector.addGoal(8, new LookAtRandomRamGoal(this));
+    }
+
+    @Override
+    protected PathNavigator createNavigator(World world)
+    {
+        return new MWAWPathNavigateGround(this, world);
     }
 
     @Override
