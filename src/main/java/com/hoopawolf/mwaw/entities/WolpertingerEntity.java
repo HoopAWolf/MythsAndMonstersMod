@@ -94,9 +94,9 @@ public class WolpertingerEntity extends AnimalEntity
     {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(0, new AnimalMeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue(), true));
-        this.goalSelector.addGoal(2, new BreedGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
-        this.goalSelector.addGoal(4, new TemptGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), Ingredient.fromItems(Items.GOLDEN_CARROT), false));
-        this.goalSelector.addGoal(5, new RandomWalkingWithRidden(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, Ingredient.fromItems(Items.GOLDEN_CARROT), false));
+        this.goalSelector.addGoal(5, new RandomWalkingWithRidden(this, 1.0D));
         this.goalSelector.addGoal(6, new JumpToGrabGoal(this, 10));
         this.goalSelector.addGoal(8, new LookAtWithPassenger(this, PlayerEntity.class, 4.0F));
         this.goalSelector.addGoal(8, new LookAtWithPassenger(this, CreatureEntity.class, 4.0F));
@@ -108,7 +108,7 @@ public class WolpertingerEntity extends AnimalEntity
         super.registerAttributes();
         this.getAttributes().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
 
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(5.0D);
         this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.2D);
     }

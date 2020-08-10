@@ -115,162 +115,60 @@ public class DendroidElderModel extends EntityModel<DendroidElderEntity>
     @Override
     public void setRotationAngles(DendroidElderEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        this.Head.rotateAngleX = 0;
+        this.Head.rotateAngleX = (float) Math.toRadians(entityIn.getHeadRotation().getX());
+        this.Head.rotateAngleY = (float) Math.toRadians(entityIn.getHeadRotation().getY());
+        this.Head.rotateAngleZ = (float) Math.toRadians(entityIn.getHeadRotation().getZ());
 
-        this.RightArm.rotateAngleX = 0;
-        this.RightArm.rotateAngleY = 0;
-        this.RightArm.rotateAngleZ = 0;
+        this.UpperBody.rotateAngleX = (float) Math.toRadians(entityIn.getBodyRotation().getX());
+        this.UpperBody.rotateAngleY = (float) Math.toRadians(entityIn.getBodyRotation().getY());
+        this.UpperBody.rotateAngleZ = (float) Math.toRadians(entityIn.getBodyRotation().getZ());
 
-        this.RightArmJoint.rotateAngleX = 0;
-        this.RightArmJoint.rotateAngleY = 0;
-        this.RightArmJoint.rotateAngleZ = 0;
+        this.RightArm.rotateAngleX = (float) Math.toRadians(entityIn.getRightArmRotation().getX());
+        this.RightArm.rotateAngleY = (float) Math.toRadians(entityIn.getRightArmRotation().getY());
+        this.RightArm.rotateAngleZ = (float) Math.toRadians(entityIn.getRightArmRotation().getZ());
+        this.RightArmJoint.rotateAngleX = (float) Math.toRadians(entityIn.getRightJointRotation().getX());
+        this.RightArmJoint.rotateAngleY = (float) Math.toRadians(entityIn.getRightJointRotation().getY());
+        this.RightArmJoint.rotateAngleZ = (float) Math.toRadians(entityIn.getRightJointRotation().getZ());
 
-        this.LeftArm.rotateAngleX = 0;
-        this.LeftArm.rotateAngleY = 0;
-        this.LeftArm.rotateAngleZ = 0;
+        this.LeftArm.rotateAngleX = (float) Math.toRadians(entityIn.getLeftArmRotation().getX());
+        this.LeftArm.rotateAngleY = (float) Math.toRadians(entityIn.getLeftArmRotation().getY());
+        this.LeftArm.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftArmRotation().getZ());
+        this.LeftArmJoint.rotateAngleX = (float) Math.toRadians(entityIn.getLeftJointRotation().getX());
+        this.LeftArmJoint.rotateAngleY = (float) Math.toRadians(entityIn.getLeftJointRotation().getY());
+        this.LeftArmJoint.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftJointRotation().getZ());
 
-        this.LeftArmJoint.rotateAngleX = 0;
-        this.LeftArmJoint.rotateAngleY = 0;
-        this.LeftArmJoint.rotateAngleZ = 0;
+        this.RightLeg.rotateAngleX = (float) Math.toRadians(entityIn.getRightLegRotation().getX());
+        this.RightLeg.rotateAngleY = (float) Math.toRadians(entityIn.getRightLegRotation().getY());
+        this.RightLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getRightLegRotation().getZ());
+        this.RightFoot.rotateAngleX = (float) Math.toRadians(entityIn.getRightFootRotation().getX());
+        this.RightFoot.rotateAngleY = (float) Math.toRadians(entityIn.getRightFootRotation().getY());
+        this.RightFoot.rotateAngleZ = (float) Math.toRadians(entityIn.getRightFootRotation().getZ());
 
-        this.RightLeg.rotateAngleX = 0;
-        this.RightLeg.rotateAngleY = 0;
-        this.RightLeg.rotateAngleZ = 0;
+        this.LeftLeg.rotateAngleX = (float) Math.toRadians(entityIn.getLeftLegRotation().getX());
+        this.LeftLeg.rotateAngleY = (float) Math.toRadians(entityIn.getLeftLegRotation().getY());
+        this.LeftLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftLegRotation().getZ());
+        this.LeftFoot.rotateAngleX = (float) Math.toRadians(entityIn.getLeftFootRotation().getX());
+        this.LeftFoot.rotateAngleY = (float) Math.toRadians(entityIn.getLeftFootRotation().getY());
+        this.LeftFoot.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftFootRotation().getZ());
 
-        this.LeftLeg.rotateAngleX = 0;
-        this.LeftLeg.rotateAngleY = 0;
-        this.LeftLeg.rotateAngleZ = 0;
-
-        this.RightFoot.rotateAngleX = 0;
-        this.RightFoot.rotateAngleY = 0;
-        this.RightFoot.rotateAngleZ = 0;
-
-        this.LeftFoot.rotateAngleX = 0;
-        this.LeftFoot.rotateAngleY = 0;
-        this.LeftFoot.rotateAngleZ = 0;
-
-        this.UpperBody.rotateAngleX = 0;
-
-        this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
-        this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
-
-        switch (entityIn.getState())
+        if (entityIn.getState() == 0)
         {
-            case 0:
+            this.Head.rotateAngleY = Head.rotateAngleY + netHeadYaw * ((float) Math.PI / 180F);
+            this.Head.rotateAngleX = Head.rotateAngleX + headPitch * ((float) Math.PI / 180F);
+
+            this.RightArm.rotateAngleX = RightArm.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
+            this.LeftArm.rotateAngleX = LeftArm.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
+            if (!entityIn.isDefensiveMode())
             {
-                entityIn.animation.animationTick(entityIn.getDataManager(), 9.0F);
-
-                this.UpperBody.rotateAngleX = (float) Math.toRadians(entityIn.getBodyRotation().getX());
-                this.RightArm.rotateAngleX = (float) Math.toRadians(entityIn.getRightArmRotation().getX());
-                this.RightArm.rotateAngleY = (float) Math.toRadians(entityIn.getRightArmRotation().getY());
-                this.RightArm.rotateAngleZ = (float) Math.toRadians(entityIn.getRightArmRotation().getZ());
-                this.RightArmJoint.rotateAngleX = (float) Math.toRadians(entityIn.getRightJointRotation().getX());
-                this.RightArmJoint.rotateAngleY = (float) Math.toRadians(entityIn.getRightJointRotation().getY());
-                this.RightArmJoint.rotateAngleZ = (float) Math.toRadians(entityIn.getRightJointRotation().getZ());
-
-                this.LeftArm.rotateAngleX = (float) Math.toRadians(entityIn.getLeftArmRotation().getX());
-                this.LeftArm.rotateAngleY = (float) Math.toRadians(entityIn.getLeftArmRotation().getY());
-                this.LeftArm.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftArmRotation().getZ());
-                this.LeftArmJoint.rotateAngleX = (float) Math.toRadians(entityIn.getLeftJointRotation().getX());
-                this.LeftArmJoint.rotateAngleY = (float) Math.toRadians(entityIn.getLeftJointRotation().getY());
-                this.LeftArmJoint.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftJointRotation().getZ());
-
-                if (entityIn.isRunning() && entityIn.prevPosX != entityIn.getPosX() && entityIn.prevPosZ != entityIn.getPosZ())
-                {
-                    if (entityIn.animation.atDefaultRotation(RightArm.rotateAngleX, RightArm.rotateAngleY, RightArm.rotateAngleZ))
-                    {
-                        this.RightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.5F * limbSwingAmount * 0.5F;
-                    }
-
-                    if (entityIn.animation.atDefaultRotation(LeftArm.rotateAngleX, LeftArm.rotateAngleY, LeftArm.rotateAngleZ))
-                    {
-                        this.LeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.5F * limbSwingAmount * 0.5F;
-                    }
-
-                    if (entityIn.animation.atDefaultRotation(RightArmJoint.rotateAngleX, RightArmJoint.rotateAngleY, RightArmJoint.rotateAngleZ))
-                    {
-                        this.RightArmJoint.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.5F * limbSwingAmount, -1.5F, 0);
-                    }
-
-                    if (entityIn.animation.atDefaultRotation(LeftArmJoint.rotateAngleX, LeftArmJoint.rotateAngleY, LeftArmJoint.rotateAngleZ))
-                    {
-                        this.LeftArmJoint.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 1.5F * limbSwingAmount, -1.5F, 0);
-                    }
-
-                    this.RightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.5F * limbSwingAmount;
-                    this.LeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.5F * limbSwingAmount;
-                    this.RightFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount, 0, 1.0F);
-                    this.LeftFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount, 0, 1.0F);
-                } else
-                {
-                    if (entityIn.animation.atDefaultRotation(RightArm.rotateAngleX, RightArm.rotateAngleY, RightArm.rotateAngleZ))
-                    {
-                        this.RightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
-                    }
-
-                    if (entityIn.animation.atDefaultRotation(LeftArm.rotateAngleX, LeftArm.rotateAngleY, LeftArm.rotateAngleZ))
-                    {
-                        this.LeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
-                    }
-
-                    if (entityIn.animation.atDefaultRotation(RightArmJoint.rotateAngleX, RightArmJoint.rotateAngleY, RightArmJoint.rotateAngleZ))
-                    {
-                        this.RightArmJoint.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount, -0.5F, 0);
-                    }
-
-                    if (entityIn.animation.atDefaultRotation(LeftArmJoint.rotateAngleX, LeftArmJoint.rotateAngleY, LeftArmJoint.rotateAngleZ))
-                    {
-                        this.LeftArmJoint.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount, -0.5F, 0);
-                    }
-
-                    this.RightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-                    this.LeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-                    this.RightFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount, 0, 0.5F);
-                    this.LeftFoot.rotateAngleX = MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount, 0, 0.5F);
-                }
+                this.RightArmJoint.rotateAngleX = RightArmJoint.rotateAngleX + MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount, -0.5F, 0);
             }
-            break;
-
-            case 1:
-            case 2:
-            {
-                entityIn.animation.animationTick(entityIn.getDataManager(), (entityIn.getState() == 1) ? 9.0F : 12.0F);
-
-                this.UpperBody.rotateAngleX = (float) Math.toRadians(entityIn.getBodyRotation().getX());
-                this.Head.rotateAngleX = (float) Math.toRadians(entityIn.getHeadRotation().getX());
-
-                this.RightArm.rotateAngleX = (float) Math.toRadians(entityIn.getRightArmRotation().getX());
-                this.RightArm.rotateAngleY = (float) Math.toRadians(entityIn.getRightArmRotation().getY());
-                this.RightArm.rotateAngleZ = (float) Math.toRadians(entityIn.getRightArmRotation().getZ());
-                this.RightArmJoint.rotateAngleX = (float) Math.toRadians(entityIn.getRightJointRotation().getX());
-                this.RightArmJoint.rotateAngleY = (float) Math.toRadians(entityIn.getRightJointRotation().getY());
-                this.RightArmJoint.rotateAngleZ = (float) Math.toRadians(entityIn.getRightJointRotation().getZ());
-
-                this.LeftArm.rotateAngleX = (float) Math.toRadians(entityIn.getLeftArmRotation().getX());
-                this.LeftArm.rotateAngleY = (float) Math.toRadians(entityIn.getLeftArmRotation().getY());
-                this.LeftArm.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftArmRotation().getZ());
-                this.LeftArmJoint.rotateAngleX = (float) Math.toRadians(entityIn.getLeftJointRotation().getX());
-                this.LeftArmJoint.rotateAngleY = (float) Math.toRadians(entityIn.getLeftJointRotation().getY());
-                this.LeftArmJoint.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftJointRotation().getZ());
-
-                this.RightLeg.rotateAngleX = (float) Math.toRadians(entityIn.getRightLegRotation().getX());
-                this.RightLeg.rotateAngleY = (float) Math.toRadians(entityIn.getRightLegRotation().getY());
-                this.RightLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getRightLegRotation().getZ());
-
-                this.LeftLeg.rotateAngleX = (float) Math.toRadians(entityIn.getLeftLegRotation().getX());
-                this.LeftLeg.rotateAngleY = (float) Math.toRadians(entityIn.getLeftLegRotation().getY());
-                this.LeftLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftLegRotation().getZ());
-
-                this.RightFoot.rotateAngleX = (float) Math.toRadians(entityIn.getRightFootRotation().getX());
-                this.RightFoot.rotateAngleY = (float) Math.toRadians(entityIn.getRightFootRotation().getY());
-                this.RightFoot.rotateAngleZ = (float) Math.toRadians(entityIn.getRightFootRotation().getZ());
-
-                this.LeftFoot.rotateAngleX = (float) Math.toRadians(entityIn.getLeftFootRotation().getX());
-                this.LeftFoot.rotateAngleY = (float) Math.toRadians(entityIn.getLeftFootRotation().getY());
-                this.LeftFoot.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftFootRotation().getZ());
-            }
-            break;
-
+            this.LeftArmJoint.rotateAngleX = LeftArmJoint.rotateAngleX + MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount, -0.5F, 0);
+            this.RightLeg.rotateAngleX = RightLeg.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+            this.LeftLeg.rotateAngleX = LeftLeg.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+            this.RightFoot.rotateAngleX = RightFoot.rotateAngleX + MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount, 0, 0.5F);
+            this.LeftFoot.rotateAngleX = LeftFoot.rotateAngleX + MathHelper.clamp(MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount, 0, 0.5F);
         }
+
+        entityIn.animation.animationTick(entityIn.getDataManager(), entityIn.getAnimationSpeed());
     }
 }

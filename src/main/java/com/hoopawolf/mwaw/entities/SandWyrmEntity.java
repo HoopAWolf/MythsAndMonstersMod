@@ -87,7 +87,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.goalSelector.addGoal(3, new SandWyrmEntity.ChargeAttackGoal(this));
         this.goalSelector.addGoal(4, new SandWyrmEntity.DiveGoal(this));
         this.goalSelector.addGoal(5, new SandWyrmEntity.MoveRandomGoal());
-        this.goalSelector.addGoal(6, new SandWyrmEntity.TiredMeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 0.5F, true));
+        this.goalSelector.addGoal(6, new SandWyrmEntity.TiredMeleeAttackGoal(this, 0.5F, true));
 
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     }
@@ -101,7 +101,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
 
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(24.0D);
         this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.7D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(12.0D);
     }

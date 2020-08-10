@@ -84,20 +84,20 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
 
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new TradeWithPlayerHunterGoal(this));
-        this.goalSelector.addGoal(4, new RangedBowAttackHunterGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), 20, 15.0F));
+        this.goalSelector.addGoal(4, new RangedBowAttackHunterGoal(this, 1.0D, 20, 15.0F));
         this.goalSelector.addGoal(5, new FindItemsGoal());
         this.goalSelector.addGoal(6, new LookAtCustomerHunterGoal(this));
         this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
         this.goalSelector.addGoal(10, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
-        this.goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
     }
 
     @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.525D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
     }
 

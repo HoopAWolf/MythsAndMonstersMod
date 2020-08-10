@@ -76,9 +76,9 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         this.goalSelector.addGoal(2, new ShakeFairyGoal(this));
         this.goalSelector.addGoal(3, new RammingGoal(this));
         this.goalSelector.addGoal(4, new LeapAtTargetRamGoal(this, 0.4F));
-        this.goalSelector.addGoal(5, new MeleeRamGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), true));
+        this.goalSelector.addGoal(5, new MeleeRamGoal(this, 1.0D, true));
         this.goalSelector.addGoal(5, this.eatGrassGoal);
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookAtRamGoal(this, PlayerEntity.class, 6.0F));
         this.goalSelector.addGoal(8, new LookAtRandomRamGoal(this));
     }
@@ -166,7 +166,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
     {
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(70.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
     }
 

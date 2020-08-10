@@ -76,6 +76,10 @@ public class EntityRegistryHandler
             .setShouldReceiveVelocityUpdates(false)
             .build("dendroidelder"));
 
+    public static final RegistryObject<EntityType<PyromancerEntity>> PYRO_ENTITY = ENTITIES.register("pyro", () -> EntityType.Builder.create(PyromancerEntity::new, EntityClassification.CREATURE)
+            .size(0.75F, 2.3F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("pyro"));
 
     //PROJECTILE
     public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
@@ -129,6 +133,7 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_GOLEM_ENTITY.get(), ClayGolemRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_RAM_ENTITY.get(), GoldenRamRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.DENDROID_ELDER_ENTITY.get(), DendroidElderRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.PYRO_ENTITY.get(), PyromancerRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));

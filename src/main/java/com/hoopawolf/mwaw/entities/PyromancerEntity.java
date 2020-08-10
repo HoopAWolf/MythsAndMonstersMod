@@ -1,18 +1,13 @@
 package com.hoopawolf.mwaw.entities;
 
-import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
-import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.BlazeEntity;
+import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.AxeItem;
+import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -21,21 +16,19 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
+//Spirt BOMBBB, shoot fire, fly, fire charge rain. land cannot do spirit bomb, summon fire spirits(like sloth), explosive fire charge
+public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
 {
     private static final DataParameter<Boolean> SHOOTING = EntityDataManager.createKey(DendroidEntity.class, DataSerializers.BOOLEAN);
     float shootRenderTimer;
 
-    public DendroidEntity(EntityType<? extends DendroidEntity> type, World worldIn)
+    public PyromancerEntity(EntityType<? extends PyromancerEntity> type, World worldIn)
     {
         super(type, worldIn);
         shootRenderTimer = 0.0F;
-        this.stepHeight = 1.0F;
         this.moveController = new MWAWMovementController(this, 30);
     }
 
@@ -49,7 +42,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     protected void registerGoals()
     {
-        this.goalSelector.addGoal(4, new RangedAttackWithStrafeGoal(this, 1.0D, 40, 50, 10.0F));
+        this.goalSelector.addGoal(4, new RangedAttackGoal(this, 1.0D, 40, 50, 10.0F));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
         this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 4.0F));
@@ -57,7 +50,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, CreatureEntity.class, 10, true, false, (p_213621_0_) ->
         {
-            return !(p_213621_0_ instanceof DendroidEntity) && !(p_213621_0_ instanceof DendroidElderEntity);
+            return !(p_213621_0_ instanceof PillagerEntity) && !(p_213621_0_ instanceof PyromancerEntity) && !(p_213621_0_ instanceof BlazeEntity); //TODO future cult member
         }));
     }
 
@@ -101,32 +94,21 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     }
 
     @Override
-    public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
+    public float getBrightness()
     {
-        return worldIn.canSeeSky(getPosition()) && worldIn.getBlockState(this.getPositionUnderneath()).getBlock().equals(Blocks.GRASS_BLOCK);
-    }
-
-    @Override
-    protected void playStepSound(BlockPos pos, BlockState blockIn)
-    {
-        this.playSound(this.getStepSound(), 0.15F, 5.0F);
-    }
-
-    protected SoundEvent getStepSound()
-    {
-        return SoundEvents.BLOCK_WOOD_STEP;
+        return 1.0F;
     }
 
     @Override
     protected SoundEvent getDeathSound()
     {
-        return SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR;
+        return SoundEvents.ENTITY_BLAZE_DEATH;
     }
 
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    public void tick()
     {
-        return SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR;
+        super.tick();
     }
 
     @Override
@@ -141,13 +123,6 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
                 setIsShooting(false);
             }
         }
-
-    }
-
-    @Override
-    public int getMaxSpawnedInChunk()
-    {
-        return 3;
     }
 
     @Override
@@ -168,18 +143,12 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
             return false;
         } else
         {
-            if (source.getTrueSource() instanceof DendroidEntity || source.getTrueSource() instanceof DendroidElderEntity)
-                return false;
-
-            if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
-            {
-                this.setFireTimer(100);
-            } else if (source.damageType.equals(DamageSource.DROWN.damageType) || source.damageType.equals(DamageSource.CACTUS.damageType))
+            if (source.getTrueSource() instanceof BlazeEntity)
             {
                 return false;
-            } else if (source.getTrueSource() instanceof LivingEntity && ((LivingEntity) source.getTrueSource()).getHeldItemMainhand().getItem() instanceof AxeItem)
+            } else if (source.damageType.equals(DamageSource.ON_FIRE.damageType) || source.damageType.equals(DamageSource.IN_FIRE.damageType))
             {
-                return super.attackEntityFrom(source, amount * 2.0F);
+                return false;
             }
 
             return super.attackEntityFrom(source, amount);
@@ -189,14 +158,15 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor)
     {
-        SapEntity sapentity = new SapEntity(this.world, this);
-        double d0 = target.getPosYEye() - (double) 1.1F;
+        double d0 = this.getDistanceSq(target);
+        float f = MathHelper.sqrt(MathHelper.sqrt(d0)) * 0.5F;
         double d1 = target.getPosX() - this.getPosX();
-        double d2 = d0 - sapentity.getPosY();
+        double d2 = target.getPosYHeight(0.5D) - this.getPosYHeight(0.5D);
         double d3 = target.getPosZ() - this.getPosZ();
-        float f = MathHelper.sqrt(d1 * d1 + d3 * d3) * 0.2F;
-        sapentity.shoot(d1, d2 + (double) f, d3, 1.6F, 12.0F);
-        this.playSound(SoundEvents.ENTITY_SLIME_JUMP, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-        this.world.addEntity(sapentity);
+
+        SmallFireballEntity smallfireballentity = new SmallFireballEntity(this.world, this, d1 + this.getRNG().nextGaussian() * (double) f, d2, d3 + this.getRNG().nextGaussian() * (double) f);
+        smallfireballentity.setPosition(smallfireballentity.getPosX(), this.getPosYHeight(0.5D) + 0.5D, smallfireballentity.getPosZ());
+        this.world.addEntity(smallfireballentity);
+        this.playSound(SoundEvents.ENTITY_BLAZE_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
     }
 }

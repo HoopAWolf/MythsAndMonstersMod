@@ -91,16 +91,16 @@ public class KitsuneEntity extends CreatureEntity
 
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(2, new KitsuneEntity.LeapGoal(this, 0.4F));
-        this.goalSelector.addGoal(3, new KitsuneEntity.BiteGoal(this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), true));
+        this.goalSelector.addGoal(3, new KitsuneEntity.BiteGoal(1.0D, true));
         this.goalSelector.addGoal(3, new KitsuneEntity.JumpGoal());
-        this.goalSelector.addGoal(4, new KitsuneEntity.AvoidPlayerGoal(this, PlayerEntity.class, 16.0F, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), (p_213497_1_) ->
+        this.goalSelector.addGoal(4, new KitsuneEntity.AvoidPlayerGoal(this, PlayerEntity.class, 16.0F, 1.0D, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), (p_213497_1_) ->
         {
             return SHOULD_AVOID.test(p_213497_1_) && this.getAttackTarget() == null;
         }));
         this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
-        this.goalSelector.addGoal(8, new KitsuneEntity.MoveToVillageGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(8, new KitsuneEntity.MoveToVillageGoal(this, 1.0D));
         this.goalSelector.addGoal(9, new KitsuneEntity.StrollGoal(32, 200));
-        this.goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(11, new KitsuneEntity.FindItemsGoal());
         this.goalSelector.addGoal(12, new LookAtGoal(this, VillagerEntity.class, 24.0F));
     }
@@ -120,7 +120,7 @@ public class KitsuneEntity extends CreatureEntity
     protected void registerAttributes()
     {
         super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60.0D);
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);

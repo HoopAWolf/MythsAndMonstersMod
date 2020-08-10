@@ -98,6 +98,7 @@ public class ItemBlockRegistryHandler
     public static final RegistryObject<MWAWSpawnEggItem> CLAY_GOLEM_SPAWN_EGG = ITEMS.register("claygolemspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.CLAY_GOLEM_ENTITY, 0x153F3F, 0x15153F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> GOLDEN_RAM_SPAWN_EGG = ITEMS.register("goldenramspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.GOLDEN_RAM_ENTITY, 0x15235F, 0x16234F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> DENDROID_ELDER_SPAWN_EGG = ITEMS.register("dendroidelderspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.DENDROID_ELDER_ENTITY, 0x15235F, 0x16234F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> PYRO_SPAWN_EGG = ITEMS.register("pyrospawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.PYRO_ENTITY, 0x15153F, 0x20234F, new Item.Properties().group(MWAWItemGroup.instance)));
 
     public static void init(IEventBus _iEventBus)
     {

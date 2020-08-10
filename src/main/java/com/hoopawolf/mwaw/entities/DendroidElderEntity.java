@@ -1,9 +1,10 @@
 package com.hoopawolf.mwaw.entities;
 
+import com.hoopawolf.mwaw.client.animation.AnimationHelper;
+import com.hoopawolf.mwaw.client.animation.PercentageRotation;
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
-import com.hoopawolf.mwaw.entities.helper.AnimationHelper;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.entities.helper.MathFuncHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
@@ -42,13 +43,13 @@ import java.util.List;
 
 public class DendroidElderEntity extends CreatureEntity
 {
-    private static final DataParameter<Boolean> RUNNING = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ATTACKING_ARM = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.BOOLEAN); //true - left false - right
     private static final DataParameter<Boolean> DEFEND_MODE = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> STATE = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Float> ABSORB_TIMER = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Float> SLAM_TIMER = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Float> ATTACK_TIMER = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
+    private static final DataParameter<Float> ANIMATION_SPEED = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
 
     private static final DataParameter<Rotations> HEAD_ROTATION = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.ROTATIONS);
     private static final DataParameter<Rotations> BODY_ROTATION = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.ROTATIONS);
@@ -88,13 +89,13 @@ public class DendroidElderEntity extends CreatureEntity
     protected void registerData()
     {
         super.registerData();
-        this.dataManager.register(RUNNING, false);
         this.dataManager.register(ATTACKING_ARM, false);
         this.dataManager.register(DEFEND_MODE, false);
         this.dataManager.register(STATE, 0);
         this.dataManager.register(ABSORB_TIMER, 0F);
         this.dataManager.register(SLAM_TIMER, 0F);
         this.dataManager.register(ATTACK_TIMER, 0F);
+        this.dataManager.register(ANIMATION_SPEED, 0F);
 
         this.dataManager.register(HEAD_ROTATION, new Rotations(0, 0, 0));
         this.dataManager.register(BODY_ROTATION, new Rotations(0, 0, 0));
@@ -114,16 +115,6 @@ public class DendroidElderEntity extends CreatureEntity
         return new MWAWPathNavigateGround(this, world);
     }
 
-    public boolean isRunning()
-    {
-        return this.dataManager.get(RUNNING);
-    }
-
-    public void setRunning(boolean running)
-    {
-        this.dataManager.set(RUNNING, running);
-    }
-
     public boolean getAttackingArm()
     {
         return this.dataManager.get(ATTACKING_ARM);
@@ -132,6 +123,16 @@ public class DendroidElderEntity extends CreatureEntity
     public void setAttackingArm(boolean isLeft)
     {
         this.dataManager.set(ATTACKING_ARM, isLeft);
+    }
+
+    public float getAnimationSpeed()
+    {
+        return this.dataManager.get(ANIMATION_SPEED);
+    }
+
+    public void setAnimationSpeed(float speedIn)
+    {
+        this.dataManager.set(ANIMATION_SPEED, speedIn);
     }
 
     public boolean isDefensiveMode()
@@ -250,8 +251,8 @@ public class DendroidElderEntity extends CreatureEntity
     {
         this.goalSelector.addGoal(0, new ElderRecoveryGoal(this));
         this.goalSelector.addGoal(0, new ElderGroundSlamGoal(this));
-        this.goalSelector.addGoal(1, new ElderAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 1.5F, true));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
         this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 4.0F));
         this.goalSelector.addGoal(8, new LookAtGoal(this, CreatureEntity.class, 4.0F));
@@ -269,7 +270,7 @@ public class DendroidElderEntity extends CreatureEntity
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 
         this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(140.0D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7.0D);
     }
@@ -321,64 +322,60 @@ public class DendroidElderEntity extends CreatureEntity
                 }
                 break;
             }
-        } else if (world.isRemote)
+        } else
         {
             switch (getState())
             {
                 case 0:
                 {
-                    if (isRunning())
-                    {
-                        animation.registerRotationPoints(BODY_ROTATION, new Rotations(20, 0, 0));
-                    } else
-                    {
-                        animation.registerRotationPoints(BODY_ROTATION, new Rotations(0, 0, 0));
-                    }
+                    setAnimationSpeed(0.08F);
 
                     if (isDefensiveMode())
                     {
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(-25, -45, -75));
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(-45, 0, 0));
+                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(-25, -45, -75)));
+                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-45, 0, 0)));
                     }
 
                     if (getAttackTimer() > attackTimerMax * 0.5F)
                     {
                         if (getAttackingArm())
                         {
-                            animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(-95, -35, 0));
-                            animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(-55, 0, 0));
+                            animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-95, -35, 0)));
+                            animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(-55, 0, 0)));
                         } else
                         {
-                            animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(-95, 35, 0));
-                            animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(-55, 0, 0));
+                            animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-95, 35, 0)));
+                            animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(-55, 0, 0)));
                         }
                     } else if (getAttackTimer() > 0)
                     {
                         if (getAttackingArm())
                         {
-                            animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(-55, 25, 0));
-                            animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(0, 0, 20));
+                            animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-55, 25, 0)));
+                            animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(0, 0, 20)));
                         } else
                         {
-                            animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(-55, -25, 0));
-                            animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(0, 0, -20));
+                            animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-55, -25, 0)));
+                            animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(0, 0, -20)));
                         }
                     } else
                     {
                         if (!isDefensiveMode())
                         {
-                            animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(0, 0, 0));
-                            animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(0, 0, 0));
+                            animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(0, 0, 0)));
+                            animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(0, 0, 0)));
                         }
 
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(HEAD_ROTATION, new PercentageRotation(getHeadRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(0, 0, 0)));
 
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(0, 0, 0)));
 
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new PercentageRotation(getRightLegRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new PercentageRotation(getLeftLegRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new PercentageRotation(getRightFootRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new PercentageRotation(getLeftFootRotation(), new Rotations(0, 0, 0)));
                     }
                 }
                 break;
@@ -387,46 +384,38 @@ public class DendroidElderEntity extends CreatureEntity
                 {
                     if (getAbsorbTimer() < absorbTimerMax * 0.90F)
                     {
-                        animation.registerRotationPoints(HEAD_ROTATION, new Rotations(45, 0, 0));
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(-25, -45, -75));
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(-45, 0, 0));
+                        setAnimationSpeed(0.05F);
 
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(-25, 45, 75));
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(-45, 0, 0));
+                        animation.registerRotationPoints(HEAD_ROTATION, new PercentageRotation(getHeadRotation(), new Rotations(45, 0, 0)));
+                        animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(-25, -45, -75)));
+                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-45, 0, 0)));
 
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(-65, 0, 0));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(-65, 0, 0));
+                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(-25, 45, 75)));
+                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-45, 0, 0)));
 
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(95, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(95, 0, 0));
+                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new PercentageRotation(getRightLegRotation(), new Rotations(-65, 0, 0)));
+                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new PercentageRotation(getLeftLegRotation(), new Rotations(-65, 0, 0)));
+
+                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new PercentageRotation(getRightFootRotation(), new Rotations(95, 0, 0)));
+                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new PercentageRotation(getLeftFootRotation(), new Rotations(95, 0, 0)));
                     } else if (getAbsorbTimer() < absorbTimerMax)
                     {
-                        animation.registerRotationPoints(HEAD_ROTATION, new Rotations(-45, 0, 0));
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(60, 0, 0));
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(0, -105, 60));
+                        setAnimationSpeed(0.07F);
 
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(60, 0, 0));
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(0, 105, -60));
+                        animation.registerRotationPoints(HEAD_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-45, 0, 0)));
+                        animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(0, 0, 0)));
+                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(60, 0, 0)));
+                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(0, -105, 60)));
 
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(0, -25, 30));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(0, 25, -30));
+                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(60, 0, 0)));
+                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(0, 105, -60)));
 
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(25, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(25, 0, 0));
-                    } else
-                    {
-                        animation.registerRotationPoints(HEAD_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new PercentageRotation(getRightLegRotation(), new Rotations(0, -25, 30)));
+                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new PercentageRotation(getLeftLegRotation(), new Rotations(0, 25, -30)));
 
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(0, 0, 0));
-
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(0, 0, 0));
-
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new PercentageRotation(getRightFootRotation(), new Rotations(25, 0, 0)));
+                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new PercentageRotation(getLeftFootRotation(), new Rotations(25, 0, 0)));
                     }
                 }
                 break;
@@ -435,46 +424,37 @@ public class DendroidElderEntity extends CreatureEntity
                 {
                     if (getSlamTimer() < slamTimerMax * 0.8F)
                     {
-                        animation.registerRotationPoints(HEAD_ROTATION, new Rotations(-40, 0, 0));
-                        animation.registerRotationPoints(BODY_ROTATION, new Rotations(-25, 0, 0));
+                        setAnimationSpeed(0.05F);
 
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(-75, 0, 0));
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(-140, 0, 30));
+                        animation.registerRotationPoints(HEAD_ROTATION, new PercentageRotation(getHeadRotation(), new Rotations(-40, 0, 0)));
+                        animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(-25, 0, 0)));
 
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(-75, 0, 0));
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(-140, 0, -30));
+                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(-75, 0, 0)));
+                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-140, 0, 30)));
 
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(-15, 20, 0));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(-15, -20, 0));
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(15, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(15, 0, 0));
+                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(-75, 0, 0)));
+                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-140, 0, -30)));
+
+                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new PercentageRotation(getRightLegRotation(), new Rotations(-15, 20, 0)));
+                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new PercentageRotation(getLeftLegRotation(), new Rotations(-15, -20, 0)));
+                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new PercentageRotation(getRightFootRotation(), new Rotations(15, 0, 0)));
+                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new PercentageRotation(getLeftFootRotation(), new Rotations(15, 0, 0)));
                     } else if (getSlamTimer() < slamTimerMax)
                     {
-                        animation.registerRotationPoints(HEAD_ROTATION, new Rotations(-55, 0, 0));
-                        animation.registerRotationPoints(BODY_ROTATION, new Rotations(85, 0, 0));
+                        setAnimationSpeed(0.09F);
 
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(-55, -30, -5));
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(-85, 0, 20));
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(-55, 30, 5));
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(-85, 0, -20));
+                        animation.registerRotationPoints(HEAD_ROTATION, new PercentageRotation(getHeadRotation(), new Rotations(-55, 0, 0)));
+                        animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(85, 0, 0)));
 
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(-15, 20, 0));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(-15, -20, 0));
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(15, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(15, 0, 0));
-                    } else
-                    {
-                        animation.registerRotationPoints(HEAD_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-55, -30, -5)));
+                        animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(-85, 0, 20)));
+                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-55, 30, 5)));
+                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(-85, 0, -20)));
 
-                        animation.registerRotationPoints(LEFT_ARM_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_JOINT_ROTATION, new Rotations(0, 0, 0));
-
-                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new Rotations(0, 0, 0));
-                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new Rotations(0, 0, 0));
+                        animation.registerRotationPoints(RIGHT_LEG_ROTATION, new PercentageRotation(getRightLegRotation(), new Rotations(-15, 20, 0)));
+                        animation.registerRotationPoints(LEFT_LEG_ROTATION, new PercentageRotation(getLeftLegRotation(), new Rotations(-15, -20, 0)));
+                        animation.registerRotationPoints(RIGHT_FOOT_ROTATION, new PercentageRotation(getRightFootRotation(), new Rotations(15, 0, 0)));
+                        animation.registerRotationPoints(LEFT_FOOT_ROTATION, new PercentageRotation(getLeftFootRotation(), new Rotations(15, 0, 0)));
                     }
                 }
                 break;
@@ -613,14 +593,12 @@ public class DendroidElderEntity extends CreatureEntity
         public void startExecuting()
         {
             super.startExecuting();
-            host.setRunning(true);
         }
 
         @Override
         public void resetTask()
         {
             super.resetTask();
-            host.setRunning(false);
         }
 
         @Override
@@ -629,7 +607,6 @@ public class DendroidElderEntity extends CreatureEntity
             super.tick();
             livingentity = this.attacker.getAttackTarget();
             double dist = this.attacker.getDistanceSq(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ());
-            host.setRunning(dist > 20.0D);
         }
     }
 

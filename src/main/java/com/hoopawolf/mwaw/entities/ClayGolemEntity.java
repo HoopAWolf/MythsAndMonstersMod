@@ -73,12 +73,12 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     @Override
     protected void registerGoals()
     {
-        meleeGoal = new MWAWMeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), true);
-        rangedGoal = new RangedAttackWithStrafeGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), 40, 50, 15.0F);
+        meleeGoal = new MWAWMeleeAttackGoal(this, 1.0D, true);
+        rangedGoal = new RangedAttackWithStrafeGoal(this, 1.0D, 40, 50, 15.0F);
 
         this.goalSelector.addGoal(1, meleeGoal);
-        this.goalSelector.addGoal(2, new MoveTowardsTargetGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), 32.0F));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()));
+        this.goalSelector.addGoal(2, new MoveTowardsTargetGoal(this, 1.0D, 32.0F));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
         this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 4.0F));
         this.goalSelector.addGoal(8, new LookAtGoal(this, CreatureEntity.class, 4.0F));
@@ -103,7 +103,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 
         this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(015D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(250.0D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
     }
@@ -159,7 +159,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
             if (!world.isRemote)
             {
                 this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
-                this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.55D);
+                this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.08D);
                 this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
 
                 this.goalSelector.removeGoal(meleeGoal);
