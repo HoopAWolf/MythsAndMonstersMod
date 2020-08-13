@@ -168,6 +168,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(70.0D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
+        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override

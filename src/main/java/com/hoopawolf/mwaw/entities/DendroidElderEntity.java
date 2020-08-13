@@ -45,7 +45,7 @@ public class DendroidElderEntity extends CreatureEntity
 {
     private static final DataParameter<Boolean> ATTACKING_ARM = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.BOOLEAN); //true - left false - right
     private static final DataParameter<Boolean> DEFEND_MODE = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Integer> STATE = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> STATE = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.VARINT); //STATE: NORMAL MELEE, RECOVERY, SLAM ATTACk
     private static final DataParameter<Float> ABSORB_TIMER = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Float> SLAM_TIMER = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Float> ATTACK_TIMER = EntityDataManager.createKey(DendroidElderEntity.class, DataSerializers.FLOAT);
@@ -82,7 +82,7 @@ public class DendroidElderEntity extends CreatureEntity
         animation.registerData(RIGHT_LEG_ROTATION);
         animation.registerData(RIGHT_FOOT_ROTATION);
 
-        this.moveController = new MWAWMovementController(this, 7);
+        this.moveController = new MWAWMovementController(this, 30);
     }
 
     @Override
@@ -249,6 +249,7 @@ public class DendroidElderEntity extends CreatureEntity
     @Override
     protected void registerGoals()
     {
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(0, new ElderRecoveryGoal(this));
         this.goalSelector.addGoal(0, new ElderGroundSlamGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
@@ -273,6 +274,7 @@ public class DendroidElderEntity extends CreatureEntity
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(140.0D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7.0D);
+        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override
@@ -709,17 +711,17 @@ public class DendroidElderEntity extends CreatureEntity
 
                                 SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(chosenBlock.getX() + 0.5F, chosenBlock.getY() + 1.0F, chosenBlock.getZ() + 0.5F), new Vec3d(0.05D, -1.05D, 0.05D), 10, 8, 0.5F);
                                 MWAWPacketHandler.packetHandler.sendToDimension(host.dimension, spawnParticleMessage);
+
                                 host.playSound(SoundEvents.BLOCK_GRASS_BREAK, 0.3F, 0.1F);
 
+                                SpawnSuckingParticleMessage spawnSuckingParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(host.getPosX(), host.getPosY() + (host.getHeight() * 0.5F) + 1.0F, host.getPosZ()), new Vec3d(0.05D, 0.05D, 0.05D), 3, 1, 0.5F);
+                                MWAWPacketHandler.packetHandler.sendToDimension(host.dimension, spawnSuckingParticleMessage);
                                 host.heal(5);
                             } else
                             {
                                 host.playSound(SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON, 0.3F, 0.1F);
                             }
                         }
-
-                        SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(host.getPosX(), host.getPosY() + (host.getHeight() * 0.5F) + 1.0F, host.getPosZ()), new Vec3d(0.05D, 0.05D, 0.05D), 3, 1, 0.5F);
-                        MWAWPacketHandler.packetHandler.sendToDimension(host.dimension, spawnParticleMessage);
                     } else
                     {
                         for (int i = 1; i <= 180; ++i)
@@ -774,7 +776,7 @@ public class DendroidElderEntity extends CreatureEntity
     private class ElderGroundSlamGoal extends Goal
     {
         DendroidElderEntity host;
-        private float coolDown;
+        private int coolDown;
 
         public ElderGroundSlamGoal(DendroidElderEntity creature)
         {

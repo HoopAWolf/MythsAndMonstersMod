@@ -57,7 +57,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         resized = false;
         spawned = false;
 
-        this.moveController = new MWAWMovementController(this, 7);
+        this.moveController = new MWAWMovementController(this, 30);
     }
 
     @Override
@@ -106,6 +106,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(015D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(250.0D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
+        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override

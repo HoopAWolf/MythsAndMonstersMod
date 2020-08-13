@@ -1,13 +1,11 @@
 package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.entities.*;
-import com.hoopawolf.mwaw.entities.projectiles.ClayEntity;
-import com.hoopawolf.mwaw.entities.projectiles.FoxHeadEntity;
-import com.hoopawolf.mwaw.entities.projectiles.GoldenArrowEntity;
-import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
+import com.hoopawolf.mwaw.entities.projectiles.*;
 import com.hoopawolf.mwaw.entities.renderer.*;
 import com.hoopawolf.mwaw.entities.renderer.projectiles.FoxHeadRenderer;
 import com.hoopawolf.mwaw.entities.renderer.projectiles.GoldenArrowRenderer;
+import com.hoopawolf.mwaw.entities.renderer.projectiles.SpiritBombRenderer;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -81,6 +79,12 @@ public class EntityRegistryHandler
             .setShouldReceiveVelocityUpdates(false)
             .build("pyro"));
 
+    public static final RegistryObject<EntityType<FireSpiritEntity>> FIRE_SPIRIT_ENTITY = ENTITIES.register("firespirit", () -> EntityType.Builder.create(FireSpiritEntity::new, EntityClassification.CREATURE)
+            .size(0.4F, 0.8F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("firespirit"));
+
+
     //PROJECTILE
     public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
             .size(0.5F, 0.5F)
@@ -97,6 +101,10 @@ public class EntityRegistryHandler
     public static final RegistryObject<EntityType<FoxHeadEntity>> FOX_HEAD_ENTITY = ENTITIES.register("foxspirit", () -> EntityType.Builder.<FoxHeadEntity>create(FoxHeadEntity::new, EntityClassification.MISC)
             .size(0.5F, 0.5F)
             .build("foxspirit"));
+
+    public static final RegistryObject<EntityType<SpiritBombEntity>> SPIRIT_BOMB_ENTITY = ENTITIES.register("spiritbomb", () -> EntityType.Builder.<SpiritBombEntity>create(SpiritBombEntity::new, EntityClassification.MISC)
+            .size(3.0F, 3.0F)
+            .build("spiritbomb"));
 
     public static void generateEntityWorldSpawn()
     {
@@ -124,21 +132,23 @@ public class EntityRegistryHandler
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenderer()
     {
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FAIRY_ENTITY.get(), FairyRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAND_WYRM_ENTITY.get(), SandWyrmRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.DENDROID_ENTITY.get(), DendroidRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), WolpertingerRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.KITSUNE_ENTITY.get(), KitsuneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.HUNTER_ENTITY.get(), HunterRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_GOLEM_ENTITY.get(), ClayGolemRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_RAM_ENTITY.get(), GoldenRamRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.DENDROID_ELDER_ENTITY.get(), DendroidElderRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.PYRO_ENTITY.get(), PyromancerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(FAIRY_ENTITY.get(), FairyRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SAND_WYRM_ENTITY.get(), SandWyrmRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(DENDROID_ENTITY.get(), DendroidRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(WOLPERTINGER_ENTITY.get(), WolpertingerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(KITSUNE_ENTITY.get(), KitsuneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(HUNTER_ENTITY.get(), HunterRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(CLAY_GOLEM_ENTITY.get(), ClayGolemRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(GOLDEN_RAM_ENTITY.get(), GoldenRamRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(DENDROID_ELDER_ENTITY.get(), DendroidElderRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(PYRO_ENTITY.get(), PyromancerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(FIRE_SPIRIT_ENTITY.get(), FireSpiritRenderer::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.CLAY_ENTITY.get(), m -> new SpriteRenderer<ClayEntity>(m, Minecraft.getInstance().getItemRenderer()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(CLAY_ENTITY.get(), m -> new SpriteRenderer<ClayEntity>(m, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(FOX_HEAD_ENTITY.get(), FoxHeadRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SPIRIT_BOMB_ENTITY.get(), SpiritBombRenderer::new);
 
         RenderTypeLookup.setRenderLayer(ItemBlockRegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
     }//TODO ADD KITSUNE SPAWN IN VILLAGE, SPAWNING RATE NEED FIX

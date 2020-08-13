@@ -9,7 +9,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class PyromancerModel extends EntityModel<PyromancerEntity>
 {
-    private final ModelRenderer Head;
+    public final ModelRenderer Head;
     private final ModelRenderer RightArm;
     private final ModelRenderer LeftArm;
     private final ModelRenderer RightLeg;
@@ -73,13 +73,52 @@ public class PyromancerModel extends EntityModel<PyromancerEntity>
     @Override
     public void setRotationAngles(PyromancerEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
-        this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
+        this.Head.rotateAngleX = (float) Math.toRadians(entityIn.getHeadRotation().getX());
+        this.Head.rotateAngleY = (float) Math.toRadians(entityIn.getHeadRotation().getY());
+        this.Head.rotateAngleZ = (float) Math.toRadians(entityIn.getHeadRotation().getZ());
 
-        this.RightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
-        this.LeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
-        this.RightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-        this.LeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.Body.rotateAngleX = (float) Math.toRadians(entityIn.getBodyRotation().getX());
+        this.Body.rotateAngleY = (float) Math.toRadians(entityIn.getBodyRotation().getY());
+        this.Body.rotateAngleZ = (float) Math.toRadians(entityIn.getBodyRotation().getZ());
 
+        this.RightArm.rotateAngleX = (float) Math.toRadians(entityIn.getRightArmRotation().getX());
+        this.RightArm.rotateAngleY = (float) Math.toRadians(entityIn.getRightArmRotation().getY());
+        this.RightArm.rotateAngleZ = (float) Math.toRadians(entityIn.getRightArmRotation().getZ());
+
+        this.LeftArm.rotateAngleX = (float) Math.toRadians(entityIn.getLeftArmRotation().getX());
+        this.LeftArm.rotateAngleY = (float) Math.toRadians(entityIn.getLeftArmRotation().getY());
+        this.LeftArm.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftArmRotation().getZ());
+
+        this.RightLeg.rotateAngleX = (float) Math.toRadians(entityIn.getRightLegRotation().getX());
+        this.RightLeg.rotateAngleY = (float) Math.toRadians(entityIn.getRightLegRotation().getY());
+        this.RightLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getRightLegRotation().getZ());
+
+        this.LeftLeg.rotateAngleX = (float) Math.toRadians(entityIn.getLeftLegRotation().getX());
+        this.LeftLeg.rotateAngleY = (float) Math.toRadians(entityIn.getLeftLegRotation().getY());
+        this.LeftLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftLegRotation().getZ());
+
+        this.Head.rotateAngleY = Head.rotateAngleY + (netHeadYaw * ((float) Math.PI / 180F));
+        this.Head.rotateAngleX = Head.rotateAngleX + (headPitch * ((float) Math.PI / 180F));
+
+        if (!entityIn.isFlying())
+        {
+            this.RightArm.rotateAngleX = RightArm.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
+            this.LeftArm.rotateAngleX = LeftArm.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
+            this.RightLeg.rotateAngleX = RightLeg.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+            this.LeftLeg.rotateAngleX = LeftLeg.rotateAngleX + MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        } else
+        {
+            this.RightArm.rotateAngleY = RightArm.rotateAngleY + (float) Math.toRadians(35);
+            this.RightArm.rotateAngleZ = RightArm.rotateAngleZ + (float) Math.toRadians(12.5);
+            this.LeftArm.rotateAngleY = LeftArm.rotateAngleY + (float) Math.toRadians(-35);
+            this.LeftArm.rotateAngleZ = LeftArm.rotateAngleZ + (float) Math.toRadians(-12.5);
+
+            this.RightLeg.rotateAngleX = RightLeg.rotateAngleX + (float) Math.toRadians(15);
+            this.RightLeg.rotateAngleY = RightLeg.rotateAngleY + (float) Math.toRadians(10);
+            this.LeftLeg.rotateAngleX = LeftLeg.rotateAngleX + (float) Math.toRadians(15);
+            this.LeftLeg.rotateAngleY = LeftLeg.rotateAngleY + (float) Math.toRadians(-10);
+        }
+
+        entityIn.animation.animationTick(entityIn.getDataManager(), entityIn.getAnimationSpeed());
     }
 }

@@ -2,7 +2,6 @@ package com.hoopawolf.mwaw.entities.renderer;
 
 import com.hoopawolf.mwaw.entities.PyromancerEntity;
 import com.hoopawolf.mwaw.entities.model.PyromancerModel;
-import com.hoopawolf.mwaw.entities.renderer.layer.PyromancerGlowLayer;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -15,13 +14,13 @@ public class PyromancerRenderer extends MobRenderer<PyromancerEntity, Pyromancer
     public PyromancerRenderer(EntityRendererManager _manager)
     {
         super(_manager, new PyromancerModel(), 0.5f);
-        this.addLayer(new PyromancerGlowLayer(this));
+        //this.addLayer(new PyromancerGlowLayer(this));
     }
 
     @Override
     protected int getBlockLight(PyromancerEntity entityIn, float partialTicks)
     {
-        return 15;
+        return (int) (15.0F * (entityIn.getHealth() / entityIn.getMaxHealth()));
     }
 
     @Override

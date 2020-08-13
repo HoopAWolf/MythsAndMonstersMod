@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 public class MessageHandlerOnClient
 {
-    static final BasicParticleType[] types = //0 - FIREWORKS, 1 - HEART, 2 - BLOCK TYPE, 3 - VILLAGER ANGRY, 4 - CLOUD, 5 - HAPPY VILLAGER, 6 - YELLOW ENCHANTMENT, 7 - NATURE AURA, 8 - MYCELIM
+    static final BasicParticleType[] types = //0 - FIREWORKS, 1 - HEART, 2 - BLOCK TYPE, 3 - VILLAGER ANGRY, 4 - CLOUD, 5 - HAPPY VILLAGER, 6 - YELLOW ENCHANTMENT, 7 - NATURE AURA, 8 - MYCELIM, 9 - FLAME, 10 - FIRE PARTICLE
             {
                     ParticleTypes.FIREWORK,
                     ParticleTypes.HEART,
@@ -33,7 +33,9 @@ public class MessageHandlerOnClient
                     ParticleTypes.HAPPY_VILLAGER,
                     ParticleRegistryHandler.YELLOW_ENCHANTMENT_PARTICLE.get(),
                     ParticleRegistryHandler.NATURE_AURA_PARTICLE.get(),
-                    ParticleTypes.MYCELIUM
+                    ParticleTypes.MYCELIUM,
+                    ParticleTypes.FLAME,
+                    ParticleRegistryHandler.FIRE_PARTICLE.get()
             };
 
     static final BasicParticleType[] orbiting_types = //0 - YELLOW ENCHANTMENT ORBITING
@@ -41,10 +43,11 @@ public class MessageHandlerOnClient
                     ParticleRegistryHandler.YELLOW_ORBITING_ENCHANTMENT_PARTICLE.get()
             };
 
-    static final BasicParticleType[] sucking_types = //0 - GREEN SUCKING, 1 - NATURE AURA SUCKING
+    static final BasicParticleType[] sucking_types = //0 - GREEN SUCKING, 1 - NATURE AURA SUCKING, 2 - FIRE SUCKING
             {
                     ParticleRegistryHandler.GREEN_SUCKING_ENCHANTMENT_PARTICLE.get(),
-                    ParticleRegistryHandler.NATURE_AURA_SUCKING_PARTICLE.get()
+                    ParticleRegistryHandler.NATURE_AURA_SUCKING_PARTICLE.get(),
+                    ParticleRegistryHandler.FIRE_SUCKING_PARTICLE.get()
             };
 
     public static void onMessageReceived(final MessageToClient message, Supplier<NetworkEvent.Context> ctxSupplier)

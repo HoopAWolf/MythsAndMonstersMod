@@ -7,10 +7,7 @@ import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
@@ -49,6 +46,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     protected void registerGoals()
     {
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(4, new RangedAttackWithStrafeGoal(this, 1.0D, 40, 50, 10.0F));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -67,6 +65,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
+        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override

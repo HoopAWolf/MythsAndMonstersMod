@@ -3,6 +3,9 @@ package com.hoopawolf.mwaw.entities.helper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,5 +36,10 @@ public class EntityHelper
     public static <T extends Entity> List<T> getEntitiesNearby(Entity ent, Class<T> entityClass, double dX, double dY, double dZ, double r)
     {
         return ent.world.getEntitiesWithinAABB(entityClass, ent.getBoundingBox().grow(dX, dY, dZ), e -> e != ent && ent.getDistance(e) <= r && e.getPosY() <= ent.getPosY() + dY);
+    }
+
+    public static <T extends Entity> List<T> getEntitiesNearbyWithPos(World world, AxisAlignedBB box, BlockPos pos, Class<T> entityClass, double dX, double dY, double dZ, double r)
+    {
+        return world.getEntitiesWithinAABB(entityClass, box.grow(dX, dY, dZ), e -> pos.withinDistance(e.getPositionVec(), r) && e.getPosY() <= pos.getY() + dY);
     }
 }

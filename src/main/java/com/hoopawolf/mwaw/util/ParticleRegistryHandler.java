@@ -25,6 +25,8 @@ public class ParticleRegistryHandler
     public static final RegistryObject<BasicParticleType> GREEN_FLAME_PARTICLE = PARTICLES.register("greenflameparticle", () -> new BasicParticleType(false));
     public static final RegistryObject<BasicParticleType> NATURE_AURA_PARTICLE = PARTICLES.register("natureauraparticle", () -> new BasicParticleType(false));
     public static final RegistryObject<BasicParticleType> YELLOW_ENCHANTMENT_PARTICLE = PARTICLES.register("yellowenchantmentparticle", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> FIRE_PARTICLE = PARTICLES.register("fireparticle", () -> new BasicParticleType(true));
+    public static final RegistryObject<BasicParticleType> FIRE_SUCKING_PARTICLE = PARTICLES.register("firesuckingparticle", () -> new BasicParticleType(true));
 
     @SubscribeEvent
     public static void registerFactories(ParticleFactoryRegisterEvent event)
@@ -37,5 +39,7 @@ public class ParticleRegistryHandler
         particles.registerFactory(NATURE_AURA_PARTICLE.get(), NatureAuraParticle.Factory::new);
         particles.registerFactory(YELLOW_ENCHANTMENT_PARTICLE.get(), YellowEnchantmentParticle.Factory::new);
         particles.registerFactory(NATURE_AURA_SUCKING_PARTICLE.get(), NatureAuraSuckingParticle.Factory::new);
+        particles.registerFactory(FIRE_PARTICLE.get(), FireParticle.FireSmokeFactory::new);
+        particles.registerFactory(FIRE_SUCKING_PARTICLE.get(), FireSuckingParticle.Factory::new);
     }
 }

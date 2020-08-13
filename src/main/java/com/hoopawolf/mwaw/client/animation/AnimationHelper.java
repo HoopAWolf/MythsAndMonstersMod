@@ -6,31 +6,27 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.Rotations;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class AnimationHelper
 {
-    public HashMap<DataParameter<Rotations>, LinkedList<PercentageRotation>> animation = new HashMap<>();
+    public HashMap<DataParameter<Rotations>, PercentageRotation> animation = new HashMap<>();
 
     public void registerData(DataParameter<Rotations> data)
     {
-        animation.put(data, new LinkedList<>());
+        animation.put(data, null);
     }
 
     public void registerRotationPoints(DataParameter<Rotations> data, PercentageRotation rotations)
     {
         if (animation.get(data) != null)
         {
-            if (!animation.get(data).isEmpty())
+            if (!animation.get(data).getEndRotation().equals(rotations.getEndRotation()))
             {
-                if (!animation.get(data).getLast().getEndRotation().equals(rotations.getEndRotation()) && animation.get(data).size() < 2)
-                {
-                    animation.get(data).add(rotations);
-                }
-            } else
-            {
-                animation.get(data).add(rotations);
+                animation.put(data, rotations);
             }
+        } else
+        {
+            animation.put(data, rotations);
         }
     }
 
@@ -40,22 +36,14 @@ public class AnimationHelper
         {
             for (DataParameter<Rotations> data : animation.keySet())
             {
-                if (!animation.get(data).isEmpty())
+                if (animation.get(data) != null)
                 {
-                    PercentageRotation stored_rotation = null;
+                    PercentageRotation stored_rotation = animation.get(data);
 
-                    while (!animation.get(data).isEmpty())
+                    if (dataManager.get(data).equals(stored_rotation.getEndRotation()) || stored_rotation.getPercentage() >= 1)
                     {
-                        PercentageRotation temp = animation.get(data).getFirst();
-
-                        if (dataManager.get(data).equals(temp.getEndRotation()) || temp.getPercentage() >= 1)
-                        {
-                            animation.get(data).removeFirst();
-                        } else
-                        {
-                            stored_rotation = temp;
-                            break;
-                        }
+                        animation.put(data, null);
+                        stored_rotation = null;
                     }
 
                     if (stored_rotation != null)
