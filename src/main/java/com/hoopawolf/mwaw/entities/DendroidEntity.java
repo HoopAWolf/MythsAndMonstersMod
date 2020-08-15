@@ -41,7 +41,8 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
 
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
-        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 10.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 10.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
+                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
     @Override

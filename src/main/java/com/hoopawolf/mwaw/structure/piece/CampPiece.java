@@ -4,7 +4,6 @@ import com.hoopawolf.mwaw.entities.HunterEntity;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import com.hoopawolf.mwaw.util.StructureRegistryHandler;
-import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;

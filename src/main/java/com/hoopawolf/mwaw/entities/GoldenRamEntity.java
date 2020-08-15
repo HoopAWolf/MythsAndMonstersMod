@@ -70,7 +70,7 @@ public class GoldenRamEntity extends CreatureEntity implements IForgeShearable
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
         return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 70.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
-                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
         return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 250.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D).createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 015D);
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     {
         if (!world.isRemote && _isHardenForm)
         {
-            this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() * 0.7D);
+            this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() * 0.8D);
         }
 
         this.dataManager.set(HARDEN_FORM, _isHardenForm);
@@ -156,7 +156,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
             if (!world.isRemote)
             {
                 this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
-                this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.08D);
+                this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.2D);
                 this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(1.0D);
 
                 this.goalSelector.removeGoal(meleeGoal);
