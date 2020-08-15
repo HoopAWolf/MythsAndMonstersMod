@@ -7,7 +7,10 @@ import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
@@ -36,6 +39,11 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         this.moveController = new MWAWMovementController(this, 30);
     }
 
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 10.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+    }
+
     @Override
     protected void registerData()
     {
@@ -57,15 +65,6 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
         {
             return !(p_213621_0_ instanceof DendroidEntity) && !(p_213621_0_ instanceof DendroidElderEntity);
         }));
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override
@@ -172,7 +171,7 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
 
             if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
             {
-                this.setFireTimer(100);
+                this.setFire(100);
             } else if (source.damageType.equals(DamageSource.DROWN.damageType) || source.damageType.equals(DamageSource.CACTUS.damageType))
             {
                 return false;

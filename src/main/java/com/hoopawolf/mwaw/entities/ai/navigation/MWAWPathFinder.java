@@ -7,14 +7,13 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Region;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MWAWPathFinder extends PathFinder
 {
@@ -57,6 +56,7 @@ public class MWAWPathFinder extends PathFinder
         this.path.clearPath();
         this.closedSet.clear();
         this.path.addPoint(p_227479_1_);
+        Set<FlaggedPathPoint> set2 = Sets.newHashSetWithExpectedSize(set.size());
         int i = 0;
         int j = (int) ((float) this.field_215751_d * p_227479_5_);
 
@@ -70,11 +70,16 @@ public class MWAWPathFinder extends PathFinder
 
             PathPoint pathpoint = this.path.dequeue();
             pathpoint.visited = true;
-            set.stream().filter((p_224781_2_) ->
+            for (FlaggedPathPoint flaggedpathpoint : set)
             {
-                return pathpoint.func_224757_c(p_224781_2_) <= (float) p_227479_4_;
-            }).forEach(FlaggedPathPoint::func_224764_e);
-            if (set.stream().anyMatch(FlaggedPathPoint::func_224762_f))
+                if (pathpoint.func_224757_c(flaggedpathpoint) <= (float) p_227479_4_)
+                {
+                    flaggedpathpoint.func_224764_e();
+                    set2.add(flaggedpathpoint);
+                }
+            }
+
+            if (!set2.isEmpty())
             {
                 break;
             }
@@ -107,23 +112,14 @@ public class MWAWPathFinder extends PathFinder
             }
         }
 
-        Stream<Path> stream;
-        if (set.stream().anyMatch(FlaggedPathPoint::func_224762_f))
+        Optional<Path> optional = !set2.isEmpty() ? set2.stream().map((p_224778_2_) ->
         {
-            stream = set.stream().filter(FlaggedPathPoint::func_224762_f).map((p_224778_2_) ->
-            {
-                return this.createPath(p_224778_2_.func_224763_d(), p_227479_2_.get(p_224778_2_), true);
-            }).sorted(Comparator.comparingInt(Path::getCurrentPathLength));
-        } else
+            return this.createPath(p_224778_2_.func_224763_d(), p_227479_2_.get(p_224778_2_), true);
+        }).min(Comparator.comparingInt(Path::getCurrentPathLength)) : set.stream().map((p_224777_2_) ->
         {
-            stream = set.stream().map((p_224777_2_) ->
-            {
-                return this.createPath(p_224777_2_.func_224763_d(), p_227479_2_.get(p_224777_2_), false);
-            }).sorted(Comparator.comparingDouble(Path::func_224769_l).thenComparingInt(Path::getCurrentPathLength));
-        }
-
-        Optional<Path> optional = stream.findFirst();
-        return optional.orElse(null);
+            return this.createPath(p_224777_2_.func_224763_d(), p_227479_2_.get(p_224777_2_), false);
+        }).min(Comparator.comparingDouble(Path::func_224769_l).thenComparingInt(Path::getCurrentPathLength));
+        return !optional.isPresent() ? null : optional.get();
     }
 
     private float func_224776_a(PathPoint p_224776_1_, Set<FlaggedPathPoint> p_224776_2_)
@@ -164,13 +160,13 @@ public class MWAWPathFinder extends PathFinder
         }
 
         @Override
-        public Vec3d getVectorFromIndex(Entity entity, int index)
+        public Vector3d getVectorFromIndex(Entity entity, int index)
         {
             PathPoint point = this.getPathPointFromIndex(index);
             double d0 = point.x + MathHelper.floor(entity.getWidth() + 1.0F) * 0.5D;
             double d1 = point.y;
             double d2 = point.z + MathHelper.floor(entity.getWidth() + 1.0F) * 0.5D;
-            return new Vec3d(d0, d1, d2);
+            return new Vector3d(d0, d1, d2);
         }
     }
 }

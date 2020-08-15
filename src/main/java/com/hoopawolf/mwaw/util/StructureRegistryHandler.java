@@ -1,63 +1,56 @@
 package com.hoopawolf.mwaw.util;
 
+import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.structure.CampStructure;
 import com.hoopawolf.mwaw.structure.piece.CampPiece;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.placement.IPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.Locale;
+import java.util.Arrays;
 
 //Credits to TelepathicGrunt for helping me out
 public class StructureRegistryHandler
 {
-    public static final Structure<NoFeatureConfig> HUNTER_CAMP = new CampStructure(NoFeatureConfig::deserialize);
-    public static IStructurePieceType HUNTER_CAMP_FEATURE = CampPiece.Piece::new;
+    public static final DeferredRegister<Structure<?>> STRUCTURES = DeferredRegister.create(ForgeRegistries.STRUCTURE_FEATURES, Reference.MOD_ID);
+
+    public static final RegistryObject<Structure<NoFeatureConfig>> HUNTER_CAMP_STRUCTURE = STRUCTURES.register("huntercamp", () -> new CampStructure(NoFeatureConfig.field_236558_a_));
+
+    public static final IStructurePieceType HUNTER_CAMP_FEATURE = registerStructurePiece(CampPiece.Piece::new, CampPiece.HUNTER_CAMP_LOC);
 
     public static void generateStructureWorldSpawn()
     {
-        registerStructureWorldSpawn(HUNTER_CAMP.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG),
-                new Biome[]{Biomes.FOREST, Biomes.TALL_BIRCH_FOREST});
-
-        registerFeatureWorldSpawn(HUNTER_CAMP.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+        Structure.field_236365_a_.put(HUNTER_CAMP_STRUCTURE.get().getStructureName(), HUNTER_CAMP_STRUCTURE.get());
+        registerStructureWorldSpawn(HUNTER_CAMP_STRUCTURE.get().func_236391_a_(NoFeatureConfig.field_236559_b_), new Biome.Category[]{Biome.Category.FOREST, Biome.Category.TAIGA});
     }
 
-    public static void registerFeature(IForgeRegistry<Feature<?>> registry)
-    {
-        registry.register(StructureRegistryHandler.HUNTER_CAMP.setRegistryName("huntercamp"));
-        register(HUNTER_CAMP_FEATURE, "HCF");
-    }
-
-    protected static void registerStructureWorldSpawn(ConfiguredFeature structureIn, Biome[] biomes)
-    {
-        for (Biome biome : biomes)
-        {
-            biome.addStructure(structureIn);
-        }
-    }
-
-    protected static void registerFeatureWorldSpawn(ConfiguredFeature<?, ?> featureIn)
+    protected static void registerStructureWorldSpawn(StructureFeature<?, ?> structureIn, Biome.Category[] biomeCatList)
     {
         for (Biome biome : ForgeRegistries.BIOMES)
         {
-            biome.addFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, featureIn);
+            if (Arrays.asList(biomeCatList).contains(biome.getCategory()))
+            {
+                biome.func_235063_a_(structureIn);
+            }
         }
     }
 
-
-    static IStructurePieceType register(IStructurePieceType structurePiece, String key)
+    public static void init(IEventBus _iEventBus)
     {
-        return Registry.register(Registry.STRUCTURE_PIECE, key.toLowerCase(Locale.ROOT), structurePiece);
+        STRUCTURES.register(_iEventBus);
+    }
+
+    public static <C extends IFeatureConfig> IStructurePieceType registerStructurePiece(IStructurePieceType pieceType, ResourceLocation key)
+    {
+        return Registry.register(Registry.STRUCTURE_PIECE, key, pieceType);
     }
 }

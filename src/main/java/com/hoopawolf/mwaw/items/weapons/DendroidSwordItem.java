@@ -1,7 +1,7 @@
 package com.hoopawolf.mwaw.items.weapons;
 
 import com.hoopawolf.mwaw.tab.MWAWItemGroup;
-import net.minecraft.block.LogBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -36,21 +36,24 @@ public class DendroidSwordItem extends SwordItem
         {
             if (entityIn instanceof PlayerEntity)
             {
-                PlayerEntity _playerEntity = (PlayerEntity) entityIn;
-
-                if (!_playerEntity.getHeldItemOffhand().isEmpty())
+                if (entityIn.ticksExisted % 3 == 0)
                 {
-                    if (_playerEntity.getHeldItemOffhand().getItem() instanceof BlockItem && ((BlockItem) _playerEntity.getHeldItemOffhand().getItem()).getBlock() instanceof LogBlock)
-                    {
-                        if (!worldIn.isRemote())
-                        {
-                            int _recoveryAmount = 5;
+                    PlayerEntity _playerEntity = (PlayerEntity) entityIn;
 
-                            stack.setDamage(stack.getDamage() - _recoveryAmount);
-                            _playerEntity.inventory.offHandInventory.get(0).setCount(_playerEntity.inventory.offHandInventory.get(0).getCount() - 1);
-                        } else
+                    if (!_playerEntity.getHeldItemOffhand().isEmpty())
+                    {
+                        if (_playerEntity.getHeldItemOffhand().getItem() instanceof BlockItem && ((BlockItem) _playerEntity.getHeldItemOffhand().getItem()).getBlock().getDefaultState().getMaterial().equals(Material.WOOD))
                         {
-                            worldIn.playSound(_playerEntity.getPosX(), _playerEntity.getPosY() + 2, _playerEntity.getPosZ(), SoundEvents.BLOCK_BAMBOO_BREAK, SoundCategory.NEUTRAL, 1, 5, false);
+                            if (!worldIn.isRemote())
+                            {
+                                int _recoveryAmount = 5;
+
+                                stack.setDamage(stack.getDamage() - _recoveryAmount);
+                                _playerEntity.inventory.offHandInventory.get(0).setCount(_playerEntity.inventory.offHandInventory.get(0).getCount() - 1);
+                            } else
+                            {
+                                worldIn.playSound(_playerEntity.getPosX(), _playerEntity.getPosY() + 2, _playerEntity.getPosZ(), SoundEvents.BLOCK_BAMBOO_BREAK, SoundCategory.NEUTRAL, 1, 5, false);
+                            }
                         }
                     }
                 }

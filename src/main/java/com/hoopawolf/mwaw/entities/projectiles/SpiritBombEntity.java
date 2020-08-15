@@ -10,8 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -20,7 +18,11 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -60,7 +62,7 @@ public class SpiritBombEntity extends DamagingProjectileEntity
     {
         this(EntityRegistryHandler.SPIRIT_BOMB_ENTITY.get(), worldIn);
         this.owner = ownerIn;
-        BlockPos blockpos = new BlockPos(ownerIn);
+        BlockPos blockpos = ownerIn.getPosition();
         double d0 = (double) blockpos.getX() + 0.5D;
         double d1 = (double) blockpos.getY() + 0.5D;
         double d2 = (double) blockpos.getZ() + 0.5D;
@@ -92,51 +94,6 @@ public class SpiritBombEntity extends DamagingProjectileEntity
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound)
-    {
-        if (this.owner != null)
-        {
-            BlockPos blockpos = new BlockPos(this.owner);
-            CompoundNBT compoundnbt = NBTUtil.writeUniqueId(this.owner.getUniqueID());
-            compoundnbt.putInt("X", blockpos.getX());
-            compoundnbt.putInt("Y", blockpos.getY());
-            compoundnbt.putInt("Z", blockpos.getZ());
-            compound.put("Owner", compoundnbt);
-        }
-
-        if (this.target != null)
-        {
-            BlockPos blockpos1 = new BlockPos(this.target);
-            CompoundNBT compoundnbt1 = NBTUtil.writeUniqueId(this.target.getUniqueID());
-            compoundnbt1.putInt("X", blockpos1.getX());
-            compoundnbt1.putInt("Y", blockpos1.getY());
-            compoundnbt1.putInt("Z", blockpos1.getZ());
-            compound.put("Target", compoundnbt1);
-        }
-
-        if (this.direction != null)
-        {
-            compound.putInt("Dir", this.direction.getIndex());
-        }
-
-        compound.putDouble("TXD", this.targetDeltaX);
-        compound.putDouble("TYD", this.targetDeltaY);
-        compound.putDouble("TZD", this.targetDeltaZ);
-    }
-
-    @Override
-    public void readAdditional(CompoundNBT compound)
-    {
-        this.targetDeltaX = compound.getDouble("TXD");
-        this.targetDeltaY = compound.getDouble("TYD");
-        this.targetDeltaZ = compound.getDouble("TZD");
-        if (compound.contains("Dir", 99))
-        {
-            this.direction = Direction.byIndex(compound.getInt("Dir"));
-        }
-    }
-
-    @Override
     public void checkDespawn()
     {
         if (this.world.getDifficulty() == Difficulty.PEACEFUL)
@@ -161,9 +118,9 @@ public class SpiritBombEntity extends DamagingProjectileEntity
                 }
             }
 
-            Vec3d _vec = new Vec3d(this.getPosX(), this.getPosYHeight(0.5D), this.getPosZ());
-            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 10, getWidth() * getCharge());
-            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+            Vector3d _vec = new Vector3d(this.getPosX(), this.getPosYHeight(0.5D), this.getPosZ());
+            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, 0, 0), 1, 10, getWidth() * getCharge());
+            MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
 
             if (hasShot)
             {
@@ -220,12 +177,12 @@ public class SpiritBombEntity extends DamagingProjectileEntity
         return ParticleRegistryHandler.FIRE_PARTICLE.get();
     }
 
-    private void setDead()
+    private void setDeadEffect()
     {
         if (!world.isRemote)
         {
-            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
-            this.world.createExplosion(null, this.getPosX(), this.getPosY(), this.getPosZ(), 10.0F * getCharge(), flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
+            Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.func_234616_v_()) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+            this.world.createExplosion(this, this.getPosX(), this.getPosY(), this.getPosZ(), 10.0F * getCharge(), false, explosion$mode);
             this.remove();
         }
     }
@@ -241,21 +198,20 @@ public class SpiritBombEntity extends DamagingProjectileEntity
                 Entity entity = ((EntityRayTraceResult) result).getEntity();
                 if (!(entity instanceof PyromancerEntity))
                 {
-                    entity.attackEntityFrom(DamageSource.causeFireballDamage(this, this.shootingEntity), 20.0F * getCharge());
-                    this.applyEnchantments(this.shootingEntity, entity);
-                    this.setDead();
+                    entity.attackEntityFrom(DamageSource.MAGIC, 20.0F * getCharge());
+                    this.setDeadEffect();
                 }
             } else
             {
-                this.setDead();
+                this.setDeadEffect();
             }
         }
     }
 
     public void increaseCharge()
     {
-        SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(getPosX(), getPosY() + 1.0F, getPosZ()), new Vec3d(0.1D, 0.1D, 0.1D), 10, 2, 0.5F);
-        MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+        SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vector3d(getPosX(), getPosY() + 1.0F, getPosZ()), new Vector3d(0.1D, 0.1D, 0.1D), 10, 2, 0.5F);
+        MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
         setChargeTimer(MathHelper.clamp(getChargeTimer() + 1, 0, 100));
     }
 

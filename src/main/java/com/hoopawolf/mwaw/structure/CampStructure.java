@@ -2,15 +2,16 @@ package com.hoopawolf.mwaw.structure;
 
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.structure.piece.CampPiece;
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Codec;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeManager;
+import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
@@ -19,90 +20,78 @@ import net.minecraft.world.gen.feature.template.TemplateManager;
 import org.apache.logging.log4j.Level;
 
 import java.util.Random;
-import java.util.function.Function;
 
 public class CampStructure extends Structure<NoFeatureConfig>
 {
-    public CampStructure(Function<Dynamic<?>, ? extends NoFeatureConfig> config)
+    public CampStructure(Codec<NoFeatureConfig> p_i231997_1_)
     {
-        super(config);
-    }
-
-    @Override
-    protected ChunkPos getStartPositionForPosition(ChunkGenerator<?> chunkGenerator, Random random, int x, int z, int spacingOffsetsX, int spacingOffsetsZ)
-    {
-        int maxDistance = 12;
-        int minDistance = 7;
-
-        int xTemp = x + maxDistance * spacingOffsetsX;
-        int ztemp = z + maxDistance * spacingOffsetsZ;
-        int xTemp2 = xTemp < 0 ? xTemp - maxDistance + 1 : xTemp;
-        int zTemp2 = ztemp < 0 ? ztemp - maxDistance + 1 : ztemp;
-        int validChunkX = xTemp2 / maxDistance;
-        int validChunkZ = zTemp2 / maxDistance;
-
-        ((SharedSeedRandom) random).setLargeFeatureSeedWithSalt(chunkGenerator.getSeed(), validChunkX, validChunkZ, this.getSeedModifier());
-        validChunkX = validChunkX * maxDistance;
-        validChunkZ = validChunkZ * maxDistance;
-        validChunkX = validChunkX + random.nextInt(maxDistance - minDistance);
-        validChunkZ = validChunkZ + random.nextInt(maxDistance - minDistance);
-
-        return new ChunkPos(validChunkX, validChunkZ);
+        super(p_i231997_1_);
     }
 
     @Override
     public String getStructureName()
     {
-        return Reference.MOD_ID + ":huntercamp";
+        return CampPiece.HUNTER_CAMP_LOC.toString();
+    }
+
+    protected ChunkPos getStartPositionForPosition(ChunkGenerator chunkGenerator, Random random, int x, int z, int spacingOffsetsX, int spacingOffsetsZ)
+    {
+        int featureDistance = 12;
+        int featureSeparation = 7;
+
+        int xTemp = x + featureDistance * spacingOffsetsX;
+        int zTemp = z + featureDistance * spacingOffsetsZ;
+        int validChunkX = (xTemp < 0 ? xTemp - featureDistance + 1 : xTemp) / featureDistance;
+        int validChunkZ = (zTemp < 0 ? zTemp - featureDistance + 1 : zTemp) / featureDistance;
+        ((SharedSeedRandom) random).setLargeFeatureSeedWithSalt(62353535, x, z, 62226333);
+        validChunkX *= featureDistance;
+        validChunkZ *= featureDistance;
+        validChunkX += random.nextInt(featureDistance - featureSeparation) + random.nextInt(featureDistance - featureSeparation) / 2;
+        validChunkZ += random.nextInt(featureDistance - featureSeparation) + random.nextInt(featureDistance - featureSeparation) / 2;
+        return new ChunkPos(validChunkX, validChunkZ);
     }
 
     @Override
-    public int getSize()
+    protected boolean func_230363_a_(ChunkGenerator p_230363_1_, BiomeProvider p_230363_2_, long p_230363_3_, SharedSeedRandom p_230363_5_, int p_230363_6_, int p_230363_7_, Biome p_230363_8_, ChunkPos p_230363_9_, NoFeatureConfig p_230363_10_)
     {
-        return 0;
-    }
+        ChunkPos chunkpos = this.getStartPositionForPosition(p_230363_1_, p_230363_5_, p_230363_6_, p_230363_7_, 0, 0);
 
-
-    @Override
-    public Structure.IStartFactory getStartFactory()
-    {
-        return CampStructure.Start::new;
-    }
-
-    protected int getSeedModifier()
-    {
-        return 62353535;
-    }
-
-    @Override
-    public boolean canBeGenerated(BiomeManager p_225558_1_, ChunkGenerator<?> chunkGen, Random rand, int chunkPosX, int chunkPosZ, Biome biome)
-    {
-        ChunkPos chunkpos = this.getStartPositionForPosition(chunkGen, rand, chunkPosX, chunkPosZ, 0, 0);
-
-        if (chunkPosX == chunkpos.x && chunkPosZ == chunkpos.z && rand.nextInt(100) < 10)
+        if (p_230363_6_ == chunkpos.x && p_230363_7_ == chunkpos.z && p_230363_5_.nextInt(100) < 70)
         {
-            return chunkGen.hasStructure(biome, this);
+            return p_230363_2_.hasStructure(this);
         }
 
         return false;
     }
 
-    public static class Start extends StructureStart
+    @Override
+    public Structure.IStartFactory<NoFeatureConfig> getStartFactory()
     {
-        public Start(Structure<?> structureIn, int chunkX, int chunkZ, MutableBoundingBox mutableBoundingBox, int referenceIn, long seedIn)
+        return CampStructure.Start::new;
+    }
+
+    @Override
+    public GenerationStage.Decoration func_236396_f_()
+    {
+        return GenerationStage.Decoration.SURFACE_STRUCTURES;
+    }
+
+    public static class Start extends StructureStart<NoFeatureConfig>
+    {
+        public Start(Structure<NoFeatureConfig> structureIn, int chunkX, int chunkZ, MutableBoundingBox mutableBoundingBox, int referenceIn, long seedIn)
         {
             super(structureIn, chunkX, chunkZ, mutableBoundingBox, referenceIn, seedIn);
         }
 
         @Override
-        public void init(ChunkGenerator<?> generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn)
+        public void func_230364_a_(ChunkGenerator generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn, NoFeatureConfig p_230364_6_)
         {
             Rotation rotation = Rotation.values()[this.rand.nextInt(Rotation.values().length)];
 
-            int x = (chunkX << 4) + 7;
-            int z = (chunkZ << 4) + 7;
+            int x = (chunkX << 4);
+            int z = (chunkZ << 4);
 
-            int surfaceY = generator.func_222531_c(x, z, Heightmap.Type.WORLD_SURFACE_WG);
+            int surfaceY = generator.getNoiseHeight(x, z, Heightmap.Type.WORLD_SURFACE_WG) - 1;
             BlockPos blockpos = new BlockPos(x, surfaceY, z);
 
             CampPiece.start(templateManagerIn, blockpos, rotation, this.components, this.rand);
@@ -111,6 +100,5 @@ public class CampStructure extends Structure<NoFeatureConfig>
 
             Reference.LOGGER.log(Level.DEBUG, "Hunter Camp at " + (blockpos.getX()) + " " + blockpos.getY() + " " + (blockpos.getZ()));
         }
-
     }
 }

@@ -6,14 +6,15 @@ import com.hoopawolf.mwaw.ref.Reference;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -32,7 +33,7 @@ public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
     }
 
     @Override
-    protected int getBlockLight(FoxHeadEntity entityIn, float partialTicks)
+    protected int getBlockLight(FoxHeadEntity entityIn, BlockPos partialTicks)
     {
         return 15;
     }
@@ -55,9 +56,9 @@ public class FoxHeadRenderer extends EntityRenderer<FoxHeadEntity>
     }
 
     @Override
-    public Vec3d getRenderOffset(FoxHeadEntity entityIn, float partialTicks)
+    public Vector3d getRenderOffset(FoxHeadEntity entityIn, float partialTicks)
     {
-        return new Vec3d(this.rnd.nextGaussian() * 0.02D, 0.0D, this.rnd.nextGaussian() * 0.02D);
+        return new Vector3d(this.rnd.nextGaussian() * 0.02D, 0.0D, this.rnd.nextGaussian() * 0.02D);
     }
 
     @Override

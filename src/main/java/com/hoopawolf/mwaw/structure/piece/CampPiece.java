@@ -4,6 +4,7 @@ import com.hoopawolf.mwaw.entities.HunterEntity;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import com.hoopawolf.mwaw.util.StructureRegistryHandler;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
@@ -12,8 +13,10 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.TemplateStructurePiece;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
@@ -94,7 +97,7 @@ public class CampPiece
         }
 
         @Override
-        public boolean create(IWorld worldIn, ChunkGenerator<?> p_225577_2_, Random randomIn, MutableBoundingBox structureBoundingBoxIn, ChunkPos chunkPos)
+        public boolean func_230383_a_(ISeedReader p_230383_1_, StructureManager p_230383_2_, ChunkGenerator p_225577_2_, Random randomIn, MutableBoundingBox structureBoundingBoxIn, ChunkPos chunkPos, BlockPos p_230383_7_)
         {
             PlacementSettings placementsettings = (new PlacementSettings()).setRotation(this.rotation).setMirror(Mirror.NONE);
             BlockPos blockpos = new BlockPos(0, 1, 0);
@@ -110,20 +113,20 @@ public class CampPiece
                     int i1 = this.getYWithOffset(1);
                     int k = this.getZWithOffset(2, 2);
 
-                    if (structureBoundingBoxIn.isVecInside(new BlockPos(l, i1, k)) && !worldIn.getBlockState(new BlockPos(l, i1, k)).isSolid())
+                    if (structureBoundingBoxIn.isVecInside(new BlockPos(l, i1, k)))
                     {
-                        HunterEntity hunter = EntityRegistryHandler.HUNTER_ENTITY.get().create(worldIn.getWorld());
+                        HunterEntity hunter = EntityRegistryHandler.HUNTER_ENTITY.get().create(p_230383_1_.getWorld());
                         hunter.enablePersistence();
                         hunter.setLocationAndAngles((double) l + 0.5D, i1, (double) k + 0.5D, 0.0F, 0.0F);
-                        hunter.onInitialSpawn(worldIn, worldIn.getDifficultyForLocation(new BlockPos(l, i1, k)), SpawnReason.STRUCTURE, null, null);
-                        worldIn.addEntity(hunter);
+                        hunter.onInitialSpawn(p_230383_1_, p_230383_1_.getDifficultyForLocation(new BlockPos(l, i1, k)), SpawnReason.STRUCTURE, null, null);
+                        p_230383_1_.addEntity(hunter);
                     }
                 }
 
                 this.isSpawned = true;
             }
 
-            return super.create(worldIn, p_225577_2_, randomIn, structureBoundingBoxIn, chunkPos);
+            return super.func_230383_a_(p_230383_1_, p_230383_2_, p_225577_2_, randomIn, structureBoundingBoxIn, chunkPos, p_230383_7_);
         }
     }
 }

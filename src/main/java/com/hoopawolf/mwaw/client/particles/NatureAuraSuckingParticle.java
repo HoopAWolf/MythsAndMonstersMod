@@ -3,20 +3,20 @@ package com.hoopawolf.mwaw.client.particles;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class NatureAuraSuckingParticle extends SuckingParticle
 {
-    protected NatureAuraSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
+    protected NatureAuraSuckingParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, spreadIn);
     }
 
-    protected NatureAuraSuckingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    protected NatureAuraSuckingParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         float f = this.rand.nextFloat() * 0.6F + 0.4F;
@@ -35,7 +35,7 @@ public class NatureAuraSuckingParticle extends SuckingParticle
             this.spriteSet = p_i50441_1_;
         }
 
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
         {
             NatureAuraSuckingParticle particle = new NatureAuraSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
             particle.selectSpriteRandomly(this.spriteSet);
@@ -43,7 +43,7 @@ public class NatureAuraSuckingParticle extends SuckingParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             NatureAuraSuckingParticle particle = new NatureAuraSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             particle.selectSpriteRandomly(this.spriteSet);
@@ -61,7 +61,7 @@ public class NatureAuraSuckingParticle extends SuckingParticle
             this.spriteSet = p_i50442_1_;
         }
 
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
         {
             NatureAuraSuckingParticle particle = new NatureAuraSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
             particle.selectSpriteRandomly(this.spriteSet);
@@ -69,7 +69,7 @@ public class NatureAuraSuckingParticle extends SuckingParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             NatureAuraSuckingParticle particle = new NatureAuraSuckingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             particle.selectSpriteRandomly(this.spriteSet);

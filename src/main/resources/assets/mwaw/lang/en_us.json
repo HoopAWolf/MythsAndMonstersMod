@@ -63,13 +63,17 @@
   "item.mwaw.goldenramspawnegg": "Golden Ram Spawn Egg",
   "item.mwaw.dendroidelderspawnegg": "Dendroid Elder Spawn Egg",
   "item.mwaw.pyrospawnegg": "Pyromancer Spawn Egg",
+  "item.mwaw.dropbearspawnegg": "Drop Bear Spawn Egg",
+
   "block.mwaw.fairymushroom": "Fairy Mushroom",
   "block.mwaw.corpsewood": "Corpse Log",
+
   "effect.mwaw.claysloweffect": "Clay Slug Effect",
+
   "itemGroup.mwawItemGroup": "Myths & Monsters",
+
   "tooltip.mwaw:dendroidinfo": "Hold Logs in your offhand to repair this weapon",
   "tooltip.mwaw:marrowinfo": "Turns hunger into health upon taking damage",
-
   "tooltip.mwaw:shard": "Infused with",
   "tooltip.mwaw:fireshard": "Fire Energy",
   "tooltip.mwaw:watershard": "Water Energy",
@@ -81,6 +85,7 @@
   "tooltip.mwaw:airshard": "Air Energy",
   "tooltip.mwaw:iceshard": "Ice Energy",
   "tooltip.mwaw:sandshard": "Sand Energy",
+
   "entity.mwaw.fairy": "Fairy",
   "entity.mwaw.sandwyrm": "Sand Wyrm",
   "entity.mwaw.dendroid": "Dendroid",
@@ -96,11 +101,14 @@
   "entity.mwaw.foxhead": "Fox Spirit",
   "entity.mwaw.firespirit": "Fire Spirit",
   "entity.mwaw.spiritbomb": "Spirit Bomb",
+  "entity.mwaw.dropbear": "Drop Bear",
+
   "death.attack.fairy": "%1$s was cobbled to death by %2$s",
   "death.attack.foxhead": "%1$s was haunted to death by %2$s",
   "death.attack.goldenram.player": "%1$s was rammed to death by Golden Ram",
   "death.attack.animal": "%1$s was nibbled to death by an angry animal",
   "death.attack.slam": "%1$s was slammed to death",
+
   "advancements.mwaw.root.description": "Folklore, Myth and Urban Legend",
   "advancements.mwaw.killfairy.title": "A Fairy tale beginning...",
   "advancements.mwaw.killfairy.description": "Killed a Fairy"

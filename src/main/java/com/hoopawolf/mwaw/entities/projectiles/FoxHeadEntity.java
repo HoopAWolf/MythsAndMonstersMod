@@ -9,15 +9,20 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -29,10 +34,6 @@ public class FoxHeadEntity extends DamagingProjectileEntity
 {
     private LivingEntity owner;
     private Entity target;
-    private Direction direction;
-    private double targetDeltaX;
-    private double targetDeltaY;
-    private double targetDeltaZ;
     private float startTimer;
 
     public FoxHeadEntity(EntityType<? extends FoxHeadEntity> p_i50161_1_, World p_i50161_2_)
@@ -55,7 +56,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity
     {
         this(EntityRegistryHandler.FOX_HEAD_ENTITY.get(), worldIn);
         this.owner = ownerIn;
-        BlockPos blockpos = new BlockPos(ownerIn);
+        BlockPos blockpos = ownerIn.getPosition();
         double d0 = (double) blockpos.getX() + 0.5D;
         double d1 = (double) blockpos.getY() + 0.5D;
         double d2 = (double) blockpos.getZ() + 0.5D;
@@ -67,51 +68,6 @@ public class FoxHeadEntity extends DamagingProjectileEntity
     public SoundCategory getSoundCategory()
     {
         return SoundCategory.HOSTILE;
-    }
-
-    @Override
-    public void writeAdditional(CompoundNBT compound)
-    {
-        if (this.owner != null)
-        {
-            BlockPos blockpos = new BlockPos(this.owner);
-            CompoundNBT compoundnbt = NBTUtil.writeUniqueId(this.owner.getUniqueID());
-            compoundnbt.putInt("X", blockpos.getX());
-            compoundnbt.putInt("Y", blockpos.getY());
-            compoundnbt.putInt("Z", blockpos.getZ());
-            compound.put("Owner", compoundnbt);
-        }
-
-        if (this.target != null)
-        {
-            BlockPos blockpos1 = new BlockPos(this.target);
-            CompoundNBT compoundnbt1 = NBTUtil.writeUniqueId(this.target.getUniqueID());
-            compoundnbt1.putInt("X", blockpos1.getX());
-            compoundnbt1.putInt("Y", blockpos1.getY());
-            compoundnbt1.putInt("Z", blockpos1.getZ());
-            compound.put("Target", compoundnbt1);
-        }
-
-        if (this.direction != null)
-        {
-            compound.putInt("Dir", this.direction.getIndex());
-        }
-
-        compound.putDouble("TXD", this.targetDeltaX);
-        compound.putDouble("TYD", this.targetDeltaY);
-        compound.putDouble("TZD", this.targetDeltaZ);
-    }
-
-    @Override
-    public void readAdditional(CompoundNBT compound)
-    {
-        this.targetDeltaX = compound.getDouble("TXD");
-        this.targetDeltaY = compound.getDouble("TYD");
-        this.targetDeltaZ = compound.getDouble("TZD");
-        if (compound.contains("Dir", 99))
-        {
-            this.direction = Direction.byIndex(compound.getInt("Dir"));
-        }
     }
 
     @Override
@@ -140,7 +96,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity
             {
                 if (target != null && target.isAlive())
                 {
-                    Vec3d _dir = new Vec3d(target.getPositionVec().getX(), target.getPositionVec().getY() + 0.25F, target.getPositionVec().getZ()).subtract(this.getPositionVec());
+                    Vector3d _dir = new Vector3d(target.getPositionVec().getX(), target.getPositionVec().getY() + 0.25F, target.getPositionVec().getZ()).subtract(this.getPositionVec());
                     this.setMotion(MathHelper.signum(_dir.getX()) * 0.25F, MathHelper.signum(_dir.getY()) * 0.25F, MathHelper.signum(_dir.getZ()) * 0.25F);
                 } else
                 {
@@ -154,8 +110,8 @@ public class FoxHeadEntity extends DamagingProjectileEntity
 
             if (!world.isRemote)
             {
-                SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(getPosX(), getPosY() + 0.5F, getPosZ()), new Vec3d(0.1D, 0.1D, 0.1D), 10, 0, 0.5F);
-                MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vector3d(getPosX(), getPosY() + 0.5F, getPosZ()), new Vector3d(0.1D, 0.1D, 0.1D), 10, 0, 0.5F);
+                MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
             }
         }
 
@@ -226,7 +182,7 @@ public class FoxHeadEntity extends DamagingProjectileEntity
                         ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20 * i, 1));
                     }
 
-                    this.setDead();
+                    this.setDeadEffect();
                 }
             }
         }
@@ -245,13 +201,13 @@ public class FoxHeadEntity extends DamagingProjectileEntity
         return true;
     }
 
-    private void setDead()
+    private void setDeadEffect()
     {
         if (!world.isRemote)
         {
             this.playSound(SoundEvents.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 1.0F, 1.0F);
-            SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(this.getPositionVec(), new Vec3d(0.1D, 0.1D, 0.1D), 10, 0, 0.5F);
-            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+            SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(this.getPositionVec(), new Vector3d(0.1D, 0.1D, 0.1D), 10, 0, 0.5F);
+            MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
         }
 
         this.remove();

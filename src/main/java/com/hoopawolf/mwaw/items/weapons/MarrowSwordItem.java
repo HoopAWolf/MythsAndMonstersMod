@@ -32,19 +32,22 @@ public class MarrowSwordItem extends SwordItem
     {
         if (isSelected)
         {
-            if (entityIn instanceof PlayerEntity && !((PlayerEntity) entityIn).isCreative())
+            if (entityIn.ticksExisted % 3 == 0)
             {
-                PlayerEntity _playerEntity = (PlayerEntity) entityIn;
-
-                if (_playerEntity.getHealth() != _playerEntity.getMaxHealth() && _playerEntity.getFoodStats().getFoodLevel() > 1)
+                if (entityIn instanceof PlayerEntity && !((PlayerEntity) entityIn).isCreative())
                 {
-                    if (!worldIn.isRemote())
+                    PlayerEntity _playerEntity = (PlayerEntity) entityIn;
+
+                    if (_playerEntity.getHealth() != _playerEntity.getMaxHealth() && _playerEntity.getFoodStats().getFoodLevel() > 1)
                     {
-                        _playerEntity.heal(1f);
-                        _playerEntity.getFoodStats().setFoodLevel(_playerEntity.getFoodStats().getFoodLevel() - 1);
-                    } else
-                    {
-                        worldIn.playSound(_playerEntity.getPosX(), _playerEntity.getPosY() + 2, _playerEntity.getPosZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.NEUTRAL, 1, 100.0f, false);
+                        if (!worldIn.isRemote())
+                        {
+                            _playerEntity.heal(1f);
+                            _playerEntity.getFoodStats().setFoodLevel(_playerEntity.getFoodStats().getFoodLevel() - 1);
+                        } else
+                        {
+                            worldIn.playSound(_playerEntity.getPosX(), _playerEntity.getPosY() + 2, _playerEntity.getPosZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.NEUTRAL, 1, 100.0f, false);
+                        }
                     }
                 }
             }

@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,7 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class EntityRegistryHandler
 {
-    public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Reference.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, Reference.MOD_ID);
 
     //ENTITIES
     public static final RegistryObject<EntityType<FairyEntity>> FAIRY_ENTITY = ENTITIES.register("fairy", () -> EntityType.Builder.create(FairyEntity::new, EntityClassification.CREATURE)
@@ -80,9 +81,14 @@ public class EntityRegistryHandler
             .build("pyro"));
 
     public static final RegistryObject<EntityType<FireSpiritEntity>> FIRE_SPIRIT_ENTITY = ENTITIES.register("firespirit", () -> EntityType.Builder.create(FireSpiritEntity::new, EntityClassification.CREATURE)
-            .size(0.4F, 0.8F)
+            .size(0.5F, 0.5F)
             .setShouldReceiveVelocityUpdates(false)
             .build("firespirit"));
+
+    public static final RegistryObject<EntityType<DropBearEntity>> DROP_BEAR_ENTITY = ENTITIES.register("dropbear", () -> EntityType.Builder.create(DropBearEntity::new, EntityClassification.CREATURE)
+            .size(0.4F, 0.8F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("dropbear"));
 
 
     //PROJECTILE
@@ -143,6 +149,7 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(DENDROID_ELDER_ENTITY.get(), DendroidElderRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(PYRO_ENTITY.get(), PyromancerRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(FIRE_SPIRIT_ENTITY.get(), FireSpiritRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(DROP_BEAR_ENTITY.get(), DropBearRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
@@ -152,4 +159,20 @@ public class EntityRegistryHandler
 
         RenderTypeLookup.setRenderLayer(ItemBlockRegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
     }//TODO ADD KITSUNE SPAWN IN VILLAGE, SPAWNING RATE NEED FIX
+
+    public static void registerEntityAttributes()
+    {
+        GlobalEntityTypeAttributes.put(FAIRY_ENTITY.get(), FairyEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(SAND_WYRM_ENTITY.get(), SandWyrmEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(DENDROID_ENTITY.get(), DendroidEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(WOLPERTINGER_ENTITY.get(), WolpertingerEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(KITSUNE_ENTITY.get(), KitsuneEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(HUNTER_ENTITY.get(), HunterEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(CLAY_GOLEM_ENTITY.get(), ClayGolemEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(GOLDEN_RAM_ENTITY.get(), GoldenRamEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(DENDROID_ELDER_ENTITY.get(), DendroidElderEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(PYRO_ENTITY.get(), PyromancerEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(FIRE_SPIRIT_ENTITY.get(), FireSpiritEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(DROP_BEAR_ENTITY.get(), DropBearEntity.func_234321_m_().create());
+    }
 }

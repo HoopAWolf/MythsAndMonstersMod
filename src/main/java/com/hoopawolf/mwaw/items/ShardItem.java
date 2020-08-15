@@ -40,7 +40,7 @@ public class ShardItem extends Item
 
         String _string = "tooltip.mwaw:" + _idWithoutTag;
 
-        tooltip.add(new TranslationTextComponent(I18n.format("tooltip.mwaw:shard") + " " + I18n.format(_string)).setStyle(new Style().setItalic(true).setColor(TextFormatting.LIGHT_PURPLE)));
+        tooltip.add(new TranslationTextComponent(I18n.format("tooltip.mwaw:shard") + " " + I18n.format(_string)).setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.LIGHT_PURPLE)));
 
     }
 }

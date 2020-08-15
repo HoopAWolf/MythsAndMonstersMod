@@ -25,7 +25,7 @@ public class TradeWithPlayerHunterGoal extends Goal
         } else if (this.hunter.isInWater())
         {
             return false;
-        } else if (!this.hunter.onGround)
+        } else if (!this.hunter.isOnGround())
         {
             return false;
         } else if (this.hunter.velocityChanged)

@@ -5,6 +5,7 @@ import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,7 +20,7 @@ public class GoldenArrowRenderer extends ArrowRenderer<GoldenArrowEntity>
     }
 
     @Override
-    protected int getBlockLight(GoldenArrowEntity entityIn, float partialTicks)
+    protected int getBlockLight(GoldenArrowEntity entityIn, BlockPos partialTicks)
     {
         return 15;
     }

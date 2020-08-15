@@ -2,14 +2,14 @@ package com.hoopawolf.mwaw.network.packets.server;
 
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class FireParticleSpawnMessage extends MessageToServer
 {
-    private Vec3d targetCoordinates, targetSpeed;
+    private Vector3d targetCoordinates, targetSpeed;
     private int iteration;
 
-    public FireParticleSpawnMessage(Vec3d i_targetCoordinates, Vec3d i_targetSpeed, int _iteration)
+    public FireParticleSpawnMessage(Vector3d i_targetCoordinates, Vector3d i_targetSpeed, int _iteration)
     {
         messageIsValid = true;
         messageType = 1;
@@ -56,15 +56,15 @@ public class FireParticleSpawnMessage extends MessageToServer
             return new FireParticleSpawnMessage();
         }
 
-        return new FireParticleSpawnMessage(new Vec3d(x, y, z), new Vec3d(speedx, speedy, speedz), iterationAmount);
+        return new FireParticleSpawnMessage(new Vector3d(x, y, z), new Vector3d(speedx, speedy, speedz), iterationAmount);
     }
 
-    public Vec3d getTargetCoordinates()
+    public Vector3d getTargetCoordinates()
     {
         return targetCoordinates;
     }
 
-    public Vec3d getTargetSpeed()
+    public Vector3d getTargetSpeed()
     {
         return targetSpeed;
     }

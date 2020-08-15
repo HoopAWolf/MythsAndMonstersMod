@@ -6,6 +6,7 @@ import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 public class PyromancerRenderer extends MobRenderer<PyromancerEntity, PyromancerModel>
 {
@@ -18,7 +19,7 @@ public class PyromancerRenderer extends MobRenderer<PyromancerEntity, Pyromancer
     }
 
     @Override
-    protected int getBlockLight(PyromancerEntity entityIn, float partialTicks)
+    protected int getBlockLight(PyromancerEntity entityIn, BlockPos partialTicks)
     {
         return (int) (15.0F * (entityIn.getHealth() / entityIn.getMaxHealth()));
     }

@@ -11,11 +11,14 @@ import com.hoopawolf.mwaw.network.packets.client.SpawnSuckingParticleMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.SheepEntity;
@@ -36,7 +39,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 
@@ -83,6 +86,12 @@ public class KitsuneEntity extends CreatureEntity
         this.moveController = new MWAWMovementController(this, 30);
     }
 
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 60.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+    }
+
     @Override
     protected void registerGoals()
     {
@@ -93,7 +102,7 @@ public class KitsuneEntity extends CreatureEntity
         this.goalSelector.addGoal(2, new KitsuneEntity.LeapGoal(this, 0.4F));
         this.goalSelector.addGoal(3, new KitsuneEntity.BiteGoal(1.0D, true));
         this.goalSelector.addGoal(3, new KitsuneEntity.JumpGoal());
-        this.goalSelector.addGoal(4, new KitsuneEntity.AvoidPlayerGoal(this, PlayerEntity.class, 16.0F, 1.0D, this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue(), (p_213497_1_) ->
+        this.goalSelector.addGoal(4, new KitsuneEntity.AvoidPlayerGoal(this, PlayerEntity.class, 16.0F, 1.0D, 1.0D, (p_213497_1_) ->
         {
             return SHOULD_AVOID.test(p_213497_1_) && this.getAttackTarget() == null;
         }));
@@ -114,16 +123,6 @@ public class KitsuneEntity extends CreatureEntity
         this.dataManager.register(FOX_PHASE, 3);
         this.dataManager.register(FOX_FLAGS, (byte) 0);
         this.dataManager.register(SHAKE_HEAD_TICKS, 0);
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
 
     @Override
@@ -305,8 +304,8 @@ public class KitsuneEntity extends CreatureEntity
                     double xSpeed = speed * Math.cos(Math.toRadians(yaw));
                     double zSpeed = speed * Math.sin(Math.toRadians(yaw));
 
-                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(getPosX(), getPosY() + 0.5F, getPosZ()), new Vec3d(xSpeed, 0.0D, zSpeed), 3, 4, 0.0F);
-                    MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(getPosX(), getPosY() + 0.5F, getPosZ()), new Vector3d(xSpeed, 0.0D, zSpeed), 3, 4, 0.0F);
+                    MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
                 }
             }
         }
@@ -324,7 +323,7 @@ public class KitsuneEntity extends CreatureEntity
 
             if (this.isStuck() && this.world.rand.nextFloat() < 0.2F)
             {
-                BlockPos blockpos = new BlockPos(this);
+                BlockPos blockpos = this.getPosition();
                 BlockState blockstate = this.world.getBlockState(blockpos);
                 this.world.playEvent(2001, blockpos, Block.getStateId(blockstate));
             }
@@ -339,8 +338,8 @@ public class KitsuneEntity extends CreatureEntity
                         if (entity instanceof VillagerEntity)
                         {
                             villager_absorb += 0.5F;
-                            SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(entity.getPosX(), entity.getPosY() + 0.75F, entity.getPosZ()), new Vec3d(0.1D, 0.1D, 0.1D), 5, 0, 0.5F);
-                            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                            SpawnSuckingParticleMessage spawnParticleMessage = new SpawnSuckingParticleMessage(new Vector3d(entity.getPosX(), entity.getPosY() + 0.75F, entity.getPosZ()), new Vector3d(0.1D, 0.1D, 0.1D), 5, 0, 0.5F);
+                            MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
                             entity.playSound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME, 0.5F, 10.0F);
                         }
                     }
@@ -352,11 +351,11 @@ public class KitsuneEntity extends CreatureEntity
     private void changingForm(boolean change)
     {
         setVillagerForm(change);
-        SpawnSuckingParticleMessage spawnSuckingParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(this.getPosX(), this.getPosY() + 0.75F, this.getPosZ()), new Vec3d(0.1D, 0.1D, 0.1D), 5, 0, 0.5F);
-        MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnSuckingParticleMessage);
+        SpawnSuckingParticleMessage spawnSuckingParticleMessage = new SpawnSuckingParticleMessage(new Vector3d(this.getPosX(), this.getPosY() + 0.75F, this.getPosZ()), new Vector3d(0.1D, 0.1D, 0.1D), 5, 0, 0.5F);
+        MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnSuckingParticleMessage);
 
-        SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(this.getPosX(), this.getPosY() + 0.75F, this.getPosZ()), new Vec3d(0.0D, 0.1D, 0.0D), 10, 4, 0.5F);
-        MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+        SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(this.getPosX(), this.getPosY() + 0.75F, this.getPosZ()), new Vector3d(0.0D, 0.1D, 0.0D), 10, 4, 0.5F);
+        MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
 
         this.playSound(SoundEvents.ENTITY_PUFFER_FISH_BLOW_OUT, 1.5F, 10.0F);
     }
@@ -371,7 +370,7 @@ public class KitsuneEntity extends CreatureEntity
             {
                 for (int i = 0; i < 8; ++i)
                 {
-                    Vec3d vec3d = (new Vec3d(((double) this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D)).rotatePitch(-this.rotationPitch * ((float) Math.PI / 180F)).rotateYaw(-this.rotationYaw * ((float) Math.PI / 180F));
+                    Vector3d vec3d = (new Vector3d(((double) this.rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D)).rotatePitch(-this.rotationPitch * ((float) Math.PI / 180F)).rotateYaw(-this.rotationYaw * ((float) Math.PI / 180F));
                     this.world.addParticle(new ItemParticleData(ParticleTypes.ITEM, itemstack), this.getPosX() + this.getLookVec().x / 2.0D, this.getPosY(), this.getPosZ() + this.getLookVec().z / 2.0D, vec3d.x, vec3d.y + 0.05D, vec3d.z);
                 }
             }
@@ -388,7 +387,7 @@ public class KitsuneEntity extends CreatureEntity
     }
 
     @Override
-    protected boolean canEquipItem(ItemStack stack)
+    public boolean canEquipItem(ItemStack stack)
     {
         Item item = stack.getItem();
         ItemStack itemstack = this.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
@@ -481,11 +480,11 @@ public class KitsuneEntity extends CreatureEntity
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand)
+    public ActionResultType func_230254_b_(PlayerEntity player, Hand hand)
     {
         if (isVillagerForm())
             this.shakeHead();
-        return super.processInteract(player, hand);
+        return super.func_230254_b_(player, hand);
     }
 
     @Override
@@ -594,7 +593,7 @@ public class KitsuneEntity extends CreatureEntity
         }
     }
 
-    class MoveToVillageGoal extends MoveTowardsVillageGoal
+    class MoveToVillageGoal extends PatrolVillageGoal
     {
         public MoveToVillageGoal(CreatureEntity p_i50325_1_, double p_i50325_2_)
         {
@@ -741,7 +740,7 @@ public class KitsuneEntity extends CreatureEntity
             ItemStack itemstack = KitsuneEntity.this.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
             if (itemstack.isEmpty() && !list.isEmpty())
             {
-                KitsuneEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), KitsuneEntity.this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+                KitsuneEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), 1.0D);
             }
 
         }
@@ -752,7 +751,7 @@ public class KitsuneEntity extends CreatureEntity
             List<ItemEntity> list = KitsuneEntity.this.world.getEntitiesWithinAABB(ItemEntity.class, KitsuneEntity.this.getBoundingBox().grow(8.0D, 8.0D, 8.0D), KitsuneEntity.TRUSTED_TARGET_SELECTOR);
             if (!list.isEmpty())
             {
-                KitsuneEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), KitsuneEntity.this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+                KitsuneEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), 1.);
             }
 
         }

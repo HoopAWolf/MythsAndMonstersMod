@@ -10,7 +10,10 @@ import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,21 +23,21 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.IForgeShearable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class GoldenRamEntity extends CreatureEntity implements net.minecraftforge.common.IShearable
+public class GoldenRamEntity extends CreatureEntity implements IForgeShearable
 {
 
     private static final DataParameter<Boolean> SHEARED = EntityDataManager.createKey(GoldenRamEntity.class, DataSerializers.BOOLEAN);
@@ -62,6 +65,12 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         ramingCoolDown = 0;
         this.stepHeight = 1.0F;
         this.moveController = new MWAWMovementController(this, 30);
+    }
+
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 70.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
     }
 
     @Override
@@ -159,16 +168,6 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                 }
             }
         }
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(70.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override
@@ -358,9 +357,9 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         {
             for (int j = 0; j < 10; ++j)
             {
-                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(GoldenRamEntity.this.getPosX(), GoldenRamEntity.this.getPosY() + GoldenRamEntity.this.getEyeHeight(), GoldenRamEntity.this.getPosZ()),
-                        new Vec3d(0.0f, -0.1f, 0.0f), 4, 6, getWidth());
-                MWAWPacketHandler.packetHandler.sendToDimension(GoldenRamEntity.this.dimension, spawnParticleMessage);
+                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(GoldenRamEntity.this.getPosX(), GoldenRamEntity.this.getPosY() + GoldenRamEntity.this.getEyeHeight(), GoldenRamEntity.this.getPosZ()),
+                        new Vector3d(0.0f, -0.1f, 0.0f), 4, 6, getWidth());
+                MWAWPacketHandler.packetHandler.sendToDimension(GoldenRamEntity.this.world.func_234923_W_(), spawnParticleMessage);
             }
         }
     }
@@ -381,24 +380,24 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
     }
 
     @Override
-    public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos)
+    public boolean isShearable(@Nonnull ItemStack item, World world, BlockPos pos)
     {
         return !this.getSheared();
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand)
+    public ActionResultType func_230254_b_(PlayerEntity player, Hand hand)
     {
         if (!getSheared() && player.inventory.getCurrentItem().getItem().equals(Items.SHEARS))
         {
             this.setAttackTarget(player);
         }
 
-        return super.processInteract(player, hand);
+        return super.func_230254_b_(player, hand);
     }
 
     @Override
-    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune)
+    public List<ItemStack> onSheared(@Nullable PlayerEntity player, @Nonnull ItemStack item, World world, BlockPos pos, int fortune)
     {
         java.util.List<ItemStack> ret = new java.util.ArrayList<>();
 
@@ -504,9 +503,9 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
 
                 for (int j = 0; j < i; ++j)
                 {
-                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(entity.getPosX(), entity.getPosY() + entity.getEyeHeight(), entity.getPosZ()),
-                            new Vec3d((rand.nextDouble() - rand.nextDouble()) * 0.3F, -0.1f, (rand.nextDouble() - rand.nextDouble()) * 0.3F), 4, 6, getWidth());
-                    MWAWPacketHandler.packetHandler.sendToDimension(entity.dimension, spawnParticleMessage);
+                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(entity.getPosX(), entity.getPosY() + entity.getEyeHeight(), entity.getPosZ()),
+                            new Vector3d((rand.nextDouble() - rand.nextDouble()) * 0.3F, -0.1f, (rand.nextDouble() - rand.nextDouble()) * 0.3F), 4, 6, getWidth());
+                    MWAWPacketHandler.packetHandler.sendToDimension(entity.world.func_234923_W_(), spawnParticleMessage);
                 }
             }
         }
@@ -516,7 +515,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
     {
         private final GoldenRamEntity entity;
         private boolean isRearing, isRamming;
-        private Vec3d motion;
+        private Vector3d motion;
         private int timer;
 
         public RammingGoal(GoldenRamEntity _entity)
@@ -552,7 +551,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
             entity.setMotion(0.0F, entity.getMotion().getY(), 0.0F);
             entity.isRamming = false;
             entity.ramingCoolDown = 100;
-            entity.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+            entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
         }
 
         @Override
@@ -560,7 +559,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
         {
             entity.setPrevRearTime(entity.getRearTime());
             entity.getLookController().setLookPosition(entity.getAttackTarget().getPosX(), entity.getAttackTarget().getPosYEye(), entity.getAttackTarget().getPosZ());
-            entity.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
+            entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
 
             if (isRearing)
             {
@@ -590,8 +589,8 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
 
                     if (entity.getAttackTarget() != null)
                     {
-                        Vec3d dir = entity.getAttackTarget().getPositionVec().subtract(entity.getPositionVec()).normalize();
-                        motion = new Vec3d(dir.x * 1.5F, dir.y, dir.z * 1.5F);
+                        Vector3d dir = entity.getAttackTarget().getPositionVec().subtract(entity.getPositionVec()).normalize();
+                        motion = new Vector3d(dir.x * 1.5F, dir.y, dir.z * 1.5F);
 
                         for (int i = 1; i <= 180; ++i)
                         {
@@ -600,8 +599,8 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                             double xSpeed = speed * Math.cos(Math.toRadians(yaw));
                             double zSpeed = speed * Math.sin(Math.toRadians(yaw));
 
-                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(getPosX(), getPosY() + 0.1F, getPosZ()), new Vec3d(xSpeed, 0.0D, zSpeed), 3, 2, 0.0F);
-                            MWAWPacketHandler.packetHandler.sendToDimension(entity.dimension, spawnParticleMessage);
+                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(getPosX(), getPosY() + 0.1F, getPosZ()), new Vector3d(xSpeed, 0.0D, zSpeed), 3, 2, 0.0F);
+                            MWAWPacketHandler.packetHandler.sendToDimension(entity.world.func_234923_W_(), spawnParticleMessage);
                         }
 
                         entity.playSound(SoundEvents.ENTITY_PUFFER_FISH_BLOW_OUT, 3.0F, 0.1F);
@@ -619,13 +618,13 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                 LivingEntity livingentity = entity.getAttackTarget();
                 if (livingentity != null && entity.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)))
                 {
-                    livingentity.attackEntityFrom(new DamageSource("goldenram"), (float) entity.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue() * 2);
+                    livingentity.attackEntityFrom(new DamageSource("goldenram"), (float) entity.getAttribute(Attributes.ATTACK_DAMAGE).getBaseValue() * 2);
 
                     livingentity.setMotion(livingentity.getMotion().add(motion.mul(2.0D, 2.0D, 2.0D)));
                     entity.setMotion(0.0F, entity.getMotion().getY(), 0.0F);
                     entity.isRamming = false;
                     entity.ramingCoolDown = 100;
-                    entity.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+                    entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
                     entity.playSound(SoundEvents.BLOCK_ANVIL_LAND, 1.0F, 0.1F);
                 }
 
@@ -633,9 +632,9 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                 {
                     for (int j = 0; j < 10; ++j)
                     {
-                        SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(GoldenRamEntity.this.getPosX(), GoldenRamEntity.this.getPosY() + GoldenRamEntity.this.getEyeHeight(), GoldenRamEntity.this.getPosZ()),
-                                new Vec3d(0.0f, -0.1f, 0.0f), 4, 6, getWidth());
-                        MWAWPacketHandler.packetHandler.sendToDimension(GoldenRamEntity.this.dimension, spawnParticleMessage);
+                        SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(GoldenRamEntity.this.getPosX(), GoldenRamEntity.this.getPosY() + GoldenRamEntity.this.getEyeHeight(), GoldenRamEntity.this.getPosZ()),
+                                new Vector3d(0.0f, -0.1f, 0.0f), 4, 6, getWidth());
+                        MWAWPacketHandler.packetHandler.sendToDimension(GoldenRamEntity.this.world.func_234923_W_(), spawnParticleMessage);
                     }
                 }
 
@@ -644,7 +643,7 @@ public class GoldenRamEntity extends CreatureEntity implements net.minecraftforg
                     entity.setMotion(0.0F, entity.getMotion().getY(), 0.0F);
                     entity.isRamming = false;
                     entity.ramingCoolDown = 100;
-                    entity.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+                    entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
 
                 }
             }

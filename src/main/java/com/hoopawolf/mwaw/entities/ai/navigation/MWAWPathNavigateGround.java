@@ -5,7 +5,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.Objects;
@@ -29,7 +29,7 @@ public class MWAWPathNavigateGround extends GroundPathNavigator
         return MathHelper.floor(coord + step * EPSILON);
     }
 
-    static float element(Vec3d v, int i)
+    static float element(Vector3d v, int i)
     {
         switch (i)
         {
@@ -56,7 +56,7 @@ public class MWAWPathNavigateGround extends GroundPathNavigator
     protected void pathFollow()
     {
         Path path = Objects.requireNonNull(this.currentPath);
-        Vec3d entityPos = this.getEntityPosition();
+        Vector3d entityPos = this.getEntityPosition();
         int pathLength = path.getCurrentPathLength();
         for (int i = path.getCurrentPathIndex(); i < path.getCurrentPathLength(); i++)
         {
@@ -66,9 +66,9 @@ public class MWAWPathNavigateGround extends GroundPathNavigator
                 break;
             }
         }
-        final Vec3d base = entityPos.add(-this.entity.getWidth() * 0.5F, 0.0F, -this.entity.getWidth() * 0.5F);
-        final Vec3d max = base.add(this.entity.getWidth(), this.entity.getHeight(), this.entity.getWidth());
-        if (this.tryShortcut(path, new Vec3d(this.entity.getPosX(), this.entity.getPosY(), this.entity.getPosZ()), pathLength, base, max))
+        final Vector3d base = entityPos.add(-this.entity.getWidth() * 0.5F, 0.0F, -this.entity.getWidth() * 0.5F);
+        final Vector3d max = base.add(this.entity.getWidth(), this.entity.getHeight(), this.entity.getWidth());
+        if (this.tryShortcut(path, new Vector3d(this.entity.getPosX(), this.entity.getPosY(), this.entity.getPosZ()), pathLength, base, max))
         {
             if (this.isAt(path, 0.5F) || this.atElevationChange(path) && this.isAt(path, this.entity.getWidth() * 0.5F))
             {
@@ -80,7 +80,7 @@ public class MWAWPathNavigateGround extends GroundPathNavigator
 
     private boolean isAt(Path path, float threshold)
     {
-        final Vec3d pathPos = path.getPosition(this.entity);
+        final Vector3d pathPos = path.getPosition(this.entity);
         return MathHelper.abs((float) (this.entity.getPosX() - pathPos.x)) < threshold &&
                 MathHelper.abs((float) (this.entity.getPosZ() - pathPos.z)) < threshold &&
                 Math.abs(this.entity.getPosY() - pathPos.y) < 1.0D;
@@ -101,11 +101,11 @@ public class MWAWPathNavigateGround extends GroundPathNavigator
         return false;
     }
 
-    private boolean tryShortcut(Path path, Vec3d entityPos, int pathLength, Vec3d base, Vec3d max)
+    private boolean tryShortcut(Path path, Vector3d entityPos, int pathLength, Vector3d base, Vector3d max)
     {
         for (int i = pathLength; --i > path.getCurrentPathIndex(); )
         {
-            final Vec3d vec = path.getVectorFromIndex(this.entity, i).subtract(entityPos);
+            final Vector3d vec = path.getVectorFromIndex(this.entity, i).subtract(entityPos);
             if (this.sweep(vec, base, max))
             {
                 path.setCurrentPathIndex(i);
@@ -116,13 +116,13 @@ public class MWAWPathNavigateGround extends GroundPathNavigator
     }
 
     @Override
-    protected boolean isDirectPathBetweenPoints(Vec3d start, Vec3d end, int sizeX, int sizeY, int sizeZ)
+    protected boolean isDirectPathBetweenPoints(Vector3d start, Vector3d end, int sizeX, int sizeY, int sizeZ)
     {
         return true;
     }
 
     // Based off of https://github.com/andyhall/voxel-aabb-sweep/blob/d3ef85b19c10e4c9d2395c186f9661b052c50dc7/index.js
-    private boolean sweep(Vec3d vec, Vec3d base, Vec3d max)
+    private boolean sweep(Vector3d vec, Vector3d base, Vector3d max)
     {
         float t = 0.0F;
         float max_t = (float) vec.length();

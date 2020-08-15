@@ -3,12 +3,15 @@ package com.hoopawolf.mwaw.entities;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.BlazeEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,7 +22,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -38,18 +41,13 @@ public class FireSpiritEntity extends CreatureEntity
         this.moveController = new FireSpiritEntity.MoveHelperController(this);
     }
 
-    @Override
-    protected void registerAttributes()
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(2.0D);
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 2.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D);
     }
 
     @Override
-    public void move(MoverType typeIn, Vec3d pos)
+    public void move(MoverType typeIn, Vector3d pos)
     {
         super.move(typeIn, pos);
         this.doBlockCollisions();
@@ -65,8 +63,8 @@ public class FireSpiritEntity extends CreatureEntity
 
         if (!world.isRemote)
         {
-            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(this.getPosX(), this.getPosY(), this.getPosZ()), new Vec3d(0.0F, 0.0D, 0.0F), 2, 9, 0);
-            MWAWPacketHandler.packetHandler.sendToDimension(this.world.dimension.getType(), spawnParticleMessage);
+            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(this.getPosX(), this.getPosY(), this.getPosZ()), new Vector3d(0.0F, 0.0D, 0.0F), 2, 9, 0);
+            MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
 
             if (owner == null)
             {
@@ -224,7 +222,7 @@ public class FireSpiritEntity extends CreatureEntity
         public void startExecuting()
         {
             LivingEntity livingentity = FireSpiritEntity.this.getAttackTarget();
-            Vec3d Vec3d = livingentity.getEyePosition(1.0F);
+            Vector3d Vec3d = livingentity.getEyePosition(1.0F);
             FireSpiritEntity.this.moveController.setMoveTo(Vec3d.x, Vec3d.y, Vec3d.z, 1.0D);
             FireSpiritEntity.this.setCharging(true);
             FireSpiritEntity.this.playSound(SoundEvents.ENTITY_PUFFER_FISH_BLOW_OUT, 1.0F, 0.5F);
@@ -247,7 +245,7 @@ public class FireSpiritEntity extends CreatureEntity
                 FireSpiritEntity.this.setCharging(false);
             } else
             {
-                Vec3d Vec3d = livingentity.getEyePosition(1.0F);
+                Vector3d Vec3d = livingentity.getEyePosition(1.0F);
                 FireSpiritEntity.this.moveController.setMoveTo(Vec3d.x, Vec3d.y, Vec3d.z, 1.0D);
             }
 
@@ -266,7 +264,7 @@ public class FireSpiritEntity extends CreatureEntity
         {
             if (this.action == MovementController.Action.MOVE_TO)
             {
-                Vec3d Vec3d = new Vec3d(this.posX - FireSpiritEntity.this.getPosX(), this.posY - FireSpiritEntity.this.getPosY(), this.posZ - FireSpiritEntity.this.getPosZ());
+                Vector3d Vec3d = new Vector3d(this.posX - FireSpiritEntity.this.getPosX(), this.posY - FireSpiritEntity.this.getPosY(), this.posZ - FireSpiritEntity.this.getPosZ());
                 double d0 = Vec3d.length();
                 if (d0 < FireSpiritEntity.this.getBoundingBox().getAverageEdgeLength())
                 {
@@ -277,7 +275,7 @@ public class FireSpiritEntity extends CreatureEntity
                     FireSpiritEntity.this.setMotion(FireSpiritEntity.this.getMotion().add(Vec3d.scale(this.speed * 0.05D / d0)));
                     if (FireSpiritEntity.this.getAttackTarget() == null)
                     {
-                        Vec3d Vec3d1 = FireSpiritEntity.this.getMotion();
+                        Vector3d Vec3d1 = FireSpiritEntity.this.getMotion();
                         FireSpiritEntity.this.rotationYaw = -((float) MathHelper.atan2(Vec3d1.x, Vec3d1.z)) * (180F / (float) Math.PI);
                     } else
                     {

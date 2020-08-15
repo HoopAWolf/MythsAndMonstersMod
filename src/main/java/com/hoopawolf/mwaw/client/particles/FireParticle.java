@@ -3,10 +3,10 @@ package com.hoopawolf.mwaw.client.particles;
 import com.hoopawolf.mwaw.entities.PyromancerEntity;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -15,10 +15,10 @@ public class FireParticle extends SpriteTexturedParticle
     private boolean setSized;
     private float sizeMultiplyer;
 
-    private FireParticle(World p_i51046_1_, double p_i51046_2_, double p_i51046_4_, double p_i51046_6_, double p_i51046_8_, double p_i51046_10_, double p_i51046_12_, boolean p_i51046_14_)
+    private FireParticle(ClientWorld p_i51046_1_, double p_i51046_2_, double p_i51046_4_, double p_i51046_6_, double p_i51046_8_, double p_i51046_10_, double p_i51046_12_, boolean p_i51046_14_)
     {
         super(p_i51046_1_, p_i51046_2_, p_i51046_4_, p_i51046_6_);
-        this.multipleParticleScaleBy(3.0F);
+        this.multiplyParticleScaleBy(3.0F);
         this.setSize(0.25F, 0.25F);
         this.maxAge = this.rand.nextInt(10);
         particleAlpha = 1.0F;
@@ -98,7 +98,7 @@ public class FireParticle extends SpriteTexturedParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             FireParticle campfireparticle = new FireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, false);
             campfireparticle.selectSpriteRandomly(this.spriteSet);

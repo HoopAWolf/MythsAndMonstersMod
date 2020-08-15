@@ -73,7 +73,7 @@ public class SapEntity extends ProjectileItemEntity
         if (result.getType() == RayTraceResult.Type.ENTITY)
         {
             Entity entity = ((EntityRayTraceResult) result).getEntity();
-            entity.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 1.0F);
+            entity.attackEntityFrom(DamageSource.causeThrownDamage(this, this.func_234616_v_()), 1.0F);
             if (entity instanceof LivingEntity)
             {
                 EffectInstance effectinstance = new EffectInstance(Effects.SLOWNESS, 200);

@@ -15,8 +15,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
 import net.minecraft.network.datasync.DataParameter;
@@ -31,7 +34,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Rotations;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -83,6 +86,12 @@ public class DendroidElderEntity extends CreatureEntity
         animation.registerData(RIGHT_FOOT_ROTATION);
 
         this.moveController = new MWAWMovementController(this, 30);
+    }
+
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 140.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 7.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D);
     }
 
     @Override
@@ -245,7 +254,6 @@ public class DendroidElderEntity extends CreatureEntity
         return this.dataManager.get(LEFT_FOOT_ROTATION);
     }
 
-
     @Override
     protected void registerGoals()
     {
@@ -262,19 +270,6 @@ public class DendroidElderEntity extends CreatureEntity
         {
             return !(p_213621_0_ instanceof DendroidEntity) && !(p_213621_0_ instanceof DendroidElderEntity);
         }));
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-
-        this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(140.0D);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override
@@ -516,7 +511,7 @@ public class DendroidElderEntity extends CreatureEntity
 
             if (source.damageType.equals(DamageSource.ON_FIRE.damageType))
             {
-                this.setFireTimer(100);
+                this.setFire(100);
             } else if (source.damageType.equals(DamageSource.DROWN.damageType) || source.damageType.equals(DamageSource.CACTUS.damageType))
             {
                 return false;
@@ -527,7 +522,7 @@ public class DendroidElderEntity extends CreatureEntity
 
             if (getState() == 0 && source.getTrueSource() != null && !(source.getImmediateSource() instanceof LivingEntity))
             {
-                Vec3d dir = this.getPositionVec().subtract(source.getTrueSource().getPositionVec());
+                Vector3d dir = this.getPositionVec().subtract(source.getTrueSource().getPositionVec());
 
                 if (this.isDefensiveMode())
                 {
@@ -550,7 +545,7 @@ public class DendroidElderEntity extends CreatureEntity
             {
                 if (source.isProjectile() || source.getImmediateSource() instanceof LivingEntity)
                 {
-                    Vec3d dir = this.getPositionVec().subtract(source.getImmediateSource().getPositionVec());
+                    Vector3d dir = this.getPositionVec().subtract(source.getImmediateSource().getPositionVec());
 
                     if (MathHelper.signum(this.getLookVec().getX()) != MathHelper.signum(dir.getX()) && MathHelper.signum(this.getLookVec().getZ()) != MathHelper.signum(dir.getZ()))
                     {
@@ -688,7 +683,7 @@ public class DendroidElderEntity extends CreatureEntity
             if (host.getAbsorbTimer() <= host.getAbsorbTimerMax())
             {
                 host.setAbsorbTimer(host.getAbsorbTimer() + 1.0F);
-                host.setMotion(Vec3d.ZERO);
+                host.setMotion(Vector3d.ZERO);
 
                 if (!host.world.isRemote)
                 {
@@ -709,13 +704,13 @@ public class DendroidElderEntity extends CreatureEntity
                                     host.world.setBlockState(chosenBlock, Blocks.AIR.getDefaultState());
                                 }
 
-                                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(chosenBlock.getX() + 0.5F, chosenBlock.getY() + 1.0F, chosenBlock.getZ() + 0.5F), new Vec3d(0.05D, -1.05D, 0.05D), 10, 8, 0.5F);
-                                MWAWPacketHandler.packetHandler.sendToDimension(host.dimension, spawnParticleMessage);
+                                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(chosenBlock.getX() + 0.5F, chosenBlock.getY() + 1.0F, chosenBlock.getZ() + 0.5F), new Vector3d(0.05D, -1.05D, 0.05D), 10, 8, 0.5F);
+                                MWAWPacketHandler.packetHandler.sendToDimension(host.world.func_234923_W_(), spawnParticleMessage);
 
                                 host.playSound(SoundEvents.BLOCK_GRASS_BREAK, 0.3F, 0.1F);
 
-                                SpawnSuckingParticleMessage spawnSuckingParticleMessage = new SpawnSuckingParticleMessage(new Vec3d(host.getPosX(), host.getPosY() + (host.getHeight() * 0.5F) + 1.0F, host.getPosZ()), new Vec3d(0.05D, 0.05D, 0.05D), 3, 1, 0.5F);
-                                MWAWPacketHandler.packetHandler.sendToDimension(host.dimension, spawnSuckingParticleMessage);
+                                SpawnSuckingParticleMessage spawnSuckingParticleMessage = new SpawnSuckingParticleMessage(new Vector3d(host.getPosX(), host.getPosY() + (host.getHeight() * 0.5F) + 1.0F, host.getPosZ()), new Vector3d(0.05D, 0.05D, 0.05D), 3, 1, 0.5F);
+                                MWAWPacketHandler.packetHandler.sendToDimension(host.world.func_234923_W_(), spawnSuckingParticleMessage);
                                 host.heal(5);
                             } else
                             {
@@ -731,8 +726,8 @@ public class DendroidElderEntity extends CreatureEntity
                             double xSpeed = speed * Math.cos(Math.toRadians(yaw));
                             double zSpeed = speed * Math.sin(Math.toRadians(yaw));
 
-                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vec3d(host.getPosX(), host.getPosY() + (host.getHeight() * 0.5F) + 1.0F, host.getPosZ()), new Vec3d(xSpeed, 0.0D, zSpeed), 1, 7, 0.0F);
-                            MWAWPacketHandler.packetHandler.sendToDimension(host.dimension, spawnParticleMessage);
+                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(host.getPosX(), host.getPosY() + (host.getHeight() * 0.5F) + 1.0F, host.getPosZ()), new Vector3d(xSpeed, 0.0D, zSpeed), 1, 7, 0.0F);
+                            MWAWPacketHandler.packetHandler.sendToDimension(host.world.func_234923_W_(), spawnParticleMessage);
                         }
 
                         List<LivingEntity> entities = EntityHelper.getEntityLivingBaseNearby(host, 10, 3, 10, 10);
@@ -846,8 +841,8 @@ public class DendroidElderEntity extends CreatureEntity
 
                         host.playSound(SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 5.0F, 0.1F);
                         float wide = 0;
-                        Vec3d forward = new Vec3d(MathFuncHelper.signum(host.getLookVec().getX()), 1, MathFuncHelper.signum(host.getLookVec().getZ()));
-                        Vec3d right = MathFuncHelper.crossProduct(forward, new Vec3d(0, 1, 0));
+                        Vector3d forward = new Vector3d(MathFuncHelper.signum(host.getLookVec().getX()), 1, MathFuncHelper.signum(host.getLookVec().getZ()));
+                        Vector3d right = MathFuncHelper.crossProduct(forward, new Vector3d(0, 1, 0));
                         for (int dist = 0; dist < 10; ++dist)
                         {
                             for (int i = -(int) wide; i <= (int) wide; ++i)

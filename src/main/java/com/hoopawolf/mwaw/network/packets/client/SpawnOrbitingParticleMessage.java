@@ -2,15 +2,15 @@ package com.hoopawolf.mwaw.network.packets.client;
 
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class SpawnOrbitingParticleMessage extends MessageToClient
 {
-    private Vec3d targetCoordinates, targetSpeed;
+    private Vector3d targetCoordinates, targetSpeed;
     private int iteration, particle_type;
     private double spread;
 
-    public SpawnOrbitingParticleMessage(Vec3d i_targetCoordinates, Vec3d i_targetSpeed, int _iteration, int _particle_type, double _spread)
+    public SpawnOrbitingParticleMessage(Vector3d i_targetCoordinates, Vector3d i_targetSpeed, int _iteration, int _particle_type, double _spread)
     {
         messageIsValid = true;
         messageType = 2;
@@ -63,15 +63,15 @@ public class SpawnOrbitingParticleMessage extends MessageToClient
             return new SpawnOrbitingParticleMessage();
         }
 
-        return new SpawnOrbitingParticleMessage(new Vec3d(x, y, z), new Vec3d(speedx, speedy, speedz), iterationAmount, particletype, spreadDist);
+        return new SpawnOrbitingParticleMessage(new Vector3d(x, y, z), new Vector3d(speedx, speedy, speedz), iterationAmount, particletype, spreadDist);
     }
 
-    public Vec3d getTargetCoordinates()
+    public Vector3d getTargetCoordinates()
     {
         return targetCoordinates;
     }
 
-    public Vec3d getTargetSpeed()
+    public Vector3d getTargetSpeed()
     {
         return targetSpeed;
     }

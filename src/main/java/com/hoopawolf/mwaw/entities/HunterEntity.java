@@ -8,9 +8,12 @@ import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.merchant.Trades;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -21,10 +24,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
@@ -75,6 +75,11 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         this.moveController = new MWAWMovementController(this, 180);
     }
 
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 20.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+    }
+
     @Override
     protected void registerGoals()
     {
@@ -91,15 +96,6 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         this.goalSelector.addGoal(10, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
         this.goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override
@@ -148,19 +144,19 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand)
+    public ActionResultType func_230254_b_(PlayerEntity player, Hand hand)
     {
         ItemStack itemstack = player.getHeldItem(hand);
         boolean flag = itemstack.getItem() == Items.NAME_TAG;
         if (flag)
         {
             itemstack.interactWithEntity(player, this, hand);
-            return true;
+            return ActionResultType.func_233537_a_(this.world.isRemote);
         } else if (this.isAlive() && !this.hasCustomer() && !this.isChild())
         {
             if (this.getOffers().isEmpty() || this.getAttackTarget() != null)
             {
-                return super.processInteract(player, hand);
+                return super.func_230254_b_(player, hand);
             } else
             {
                 if (!this.world.isRemote)
@@ -169,11 +165,11 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
                     this.openMerchantContainer(player, this.getDisplayName(), 0);
                 }
 
-                return true;
+                return ActionResultType.func_233537_a_(this.world.isRemote);
             }
         } else
         {
-            return super.processInteract(player, hand);
+            return super.func_230254_b_(player, hand);
         }
     }
 
@@ -322,7 +318,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
     }
 
     @Override
-    protected boolean canEquipItem(ItemStack stack)
+    public boolean canEquipItem(ItemStack stack)
     {
         Item item = stack.getItem();
         ItemStack itemstack = this.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
@@ -379,7 +375,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
         ItemStack itemstack = this.findAmmo(this.getHeldItem(ProjectileHelper.getHandWith(this, Items.BOW)));
         AbstractArrowEntity abstractarrowentity = this.fireArrow(itemstack, distanceFactor);
         if (this.getHeldItemMainhand().getItem() instanceof net.minecraft.item.BowItem)
-            abstractarrowentity = ((net.minecraft.item.BowItem) this.getHeldItemMainhand().getItem()).customeArrow(abstractarrowentity);
+            abstractarrowentity = ((net.minecraft.item.BowItem) this.getHeldItemMainhand().getItem()).customArrow(abstractarrowentity);
         double d0 = target.getPosX() - this.getPosX();
         double d1 = target.getPosYHeight(0.3333333333333333D) - abstractarrowentity.getPosY();
         double d2 = target.getPosZ() - this.getPosZ();
@@ -430,7 +426,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
             ItemStack itemstack = HunterEntity.this.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
             if (itemstack.isEmpty() && !list.isEmpty())
             {
-                HunterEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), HunterEntity.this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+                HunterEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), HunterEntity.this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue());
             }
         }
 
@@ -440,7 +436,7 @@ public class HunterEntity extends AbstractVillagerEntity implements IRangedAttac
             List<ItemEntity> list = HunterEntity.this.world.getEntitiesWithinAABB(ItemEntity.class, HunterEntity.this.getBoundingBox().grow(8.0D, 8.0D, 8.0D), HunterEntity.TRUSTED_TARGET_SELECTOR);
             if (!list.isEmpty())
             {
-                HunterEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), HunterEntity.this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+                HunterEntity.this.getNavigator().tryMoveToEntityLiving(list.get(0), HunterEntity.this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue());
             }
 
         }

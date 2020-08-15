@@ -120,7 +120,7 @@ public class FairyModel extends EntityModel<FairyEntity>
         this.LegLeft.rotateAngleY = 0.0F;
         this.LegLeft.rotateAngleZ = 0.0F;
 
-        if (entityIn.isResting() && entityIn.onGround)
+        if (entityIn.isResting() && entityIn.isOnGround())
         {
             this.ArmRight.rotateAngleX = -(float) Math.PI / 5F;
             this.ArmLeft.rotateAngleX = -(float) Math.PI / 5F;

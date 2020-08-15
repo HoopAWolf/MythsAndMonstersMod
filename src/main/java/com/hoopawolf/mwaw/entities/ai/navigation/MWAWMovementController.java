@@ -1,7 +1,7 @@
 package com.hoopawolf.mwaw.entities.ai.navigation;
 
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.pathfinding.NodeProcessor;
 import net.minecraft.pathfinding.PathNavigator;
@@ -21,9 +21,9 @@ public class MWAWMovementController extends MovementController
     @Override
     public void tick()
     {
-        if (this.action == MWAWMovementController.Action.STRAFE)
+        if (this.action == Action.STRAFE)
         {
-            float f = (float) this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue();
+            float f = (float) this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             float f1 = (float) this.speed * f;
             float f2 = this.moveForward;
             float f3 = this.moveStrafe;
@@ -58,10 +58,10 @@ public class MWAWMovementController extends MovementController
             this.mob.setAIMoveSpeed(f1);
             this.mob.setMoveForward(this.moveForward);
             this.mob.setMoveStrafing(this.moveStrafe);
-            this.action = MWAWMovementController.Action.WAIT;
-        } else if (this.action == MWAWMovementController.Action.MOVE_TO)
+            this.action = Action.WAIT;
+        } else if (this.action == Action.MOVE_TO)
         {
-            this.action = MWAWMovementController.Action.WAIT;
+            this.action = Action.WAIT;
             double d0 = this.posX - this.mob.getPosX();
             double d1 = this.posZ - this.mob.getPosZ();
             double d2 = this.posY - this.mob.getPosY();
@@ -75,20 +75,20 @@ public class MWAWMovementController extends MovementController
 
             float f9 = (float) (MathHelper.atan2(d1, d0) * (180D / Math.PI)) - 90.0F;
             this.mob.rotationYaw = this.limitAngle(this.mob.rotationYaw, f9, maxRotate);
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue()));
 
             if (d2 > (double) this.mob.stepHeight && d0 * d0 + d1 * d1 < (double) Math.max(1.0F, this.mob.getWidth()))
             {
                 this.mob.getJumpController().setJumping();
-                this.action = MWAWMovementController.Action.JUMPING;
+                this.action = Action.JUMPING;
             }
-        } else if (this.action == MWAWMovementController.Action.JUMPING)
+        } else if (this.action == Action.JUMPING)
         {
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue()));
 
-            if (this.mob.onGround)
+            if (this.mob.isOnGround())
             {
-                this.action = MWAWMovementController.Action.WAIT;
+                this.action = Action.WAIT;
             }
         } else
         {

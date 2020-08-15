@@ -8,7 +8,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,7 +25,7 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel>
     }
 
     @Override
-    protected int getBlockLight(FairyEntity entityIn, float partialTicks)
+    protected int getBlockLight(FairyEntity entityIn, BlockPos partialTicks)
     {
         return 15;
     }
@@ -36,9 +37,9 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel>
     }
 
     @Override
-    public Vec3d getRenderOffset(FairyEntity entityIn, float partialTicks)
+    public Vector3d getRenderOffset(FairyEntity entityIn, float partialTicks)
     {
-        return entityIn.isResting() ? new Vec3d(0.0D, -0.2D, 0.0D) : ((entityIn.isPassenger() && entityIn.getRidingEntity() instanceof WolpertingerEntity) ? new Vec3d(entityIn.getRidingEntity().getForward().getX() * 0.7F, -0.9D, entityIn.getRidingEntity().getForward().getZ() * 0.7F) : super.getRenderOffset(entityIn, partialTicks));
+        return entityIn.isResting() ? new Vector3d(0.0D, -0.2D, 0.0D) : ((entityIn.isPassenger() && entityIn.getRidingEntity() instanceof WolpertingerEntity) ? new Vector3d(entityIn.getRidingEntity().getForward().getX() * 0.7F, -0.9D, entityIn.getRidingEntity().getForward().getZ() * 0.7F) : super.getRenderOffset(entityIn, partialTicks));
     }
 
     @Override

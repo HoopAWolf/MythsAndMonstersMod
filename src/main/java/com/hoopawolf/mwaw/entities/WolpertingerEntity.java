@@ -7,10 +7,13 @@ import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
 import net.minecraft.entity.ai.controller.JumpController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,11 +33,12 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 
 import javax.annotation.Nullable;
@@ -76,6 +80,12 @@ public class WolpertingerEntity extends AnimalEntity
         this.removePassengers();
     }
 
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.FLYING_SPEED, 1.2D).createMutableAttribute(Attributes.MAX_HEALTH, 5.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+    }
+
     @Override
     public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn)
     {
@@ -93,7 +103,7 @@ public class WolpertingerEntity extends AnimalEntity
     protected void registerGoals()
     {
         this.goalSelector.addGoal(0, new SwimGoal(this));
-        this.goalSelector.addGoal(0, new AnimalMeleeAttackGoal(this, this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue(), true));
+        this.goalSelector.addGoal(0, new AnimalMeleeAttackGoal(this, 1.0D, true, 2, 1));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, Ingredient.fromItems(Items.GOLDEN_CARROT), false));
         this.goalSelector.addGoal(5, new RandomWalkingWithRidden(this, 1.0D));
@@ -102,28 +112,17 @@ public class WolpertingerEntity extends AnimalEntity
         this.goalSelector.addGoal(8, new LookAtWithPassenger(this, CreatureEntity.class, 4.0F));
     }
 
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
-
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(5.0D);
-        this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.2D);
-    }
-
     private void MoveToPos(BlockPos p_226433_1_)
     {
         if (p_226433_1_ != null)
         {
-            this.navigator.tryMoveToXYZ(p_226433_1_.getX(), p_226433_1_.getY(), p_226433_1_.getZ(), WolpertingerEntity.this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+            this.navigator.tryMoveToXYZ(p_226433_1_.getX(), p_226433_1_.getY(), p_226433_1_.getZ(), 1.0D);
 
             if (ticksExisted % 5 == 0 && !this.world.isRemote)
             {
-                Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
-                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 3, getWidth());
-                MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                Vector3d _vec = new Vector3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
+                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, 0, 0), 1, 3, getWidth());
+                MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
             }
         }
     }
@@ -136,7 +135,7 @@ public class WolpertingerEntity extends AnimalEntity
             Path path = this.navigator.getPath();
             if (path != null && path.getCurrentPathIndex() < path.getCurrentPathLength())
             {
-                Vec3d vec3d = path.getPosition(this);
+                Vector3d vec3d = path.getPosition(this);
                 if (vec3d.y > this.getPosY() + 0.5D)
                 {
                     return 0.5F;
@@ -171,7 +170,7 @@ public class WolpertingerEntity extends AnimalEntity
                 double d1 = horizontalMag(this.getMotion());
                 if (d1 < 0.01D)
                 {
-                    this.moveRelative(0.1F, new Vec3d(0.0D, 0.0D, 1.0D));
+                    this.moveRelative(0.1F, new Vector3d(0.0D, 0.0D, 1.0D));
                 }
             }
 
@@ -278,13 +277,14 @@ public class WolpertingerEntity extends AnimalEntity
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
+        Biome optional = worldIn.getBiome(this.getPosition());
         int i = 0;
 
-        if (worldIn.getBiome(this.getPosition()) == Biomes.GIANT_TREE_TAIGA)
+        if (optional.equals(Biomes.GIANT_TREE_TAIGA))
             i = 1;
-        else if (worldIn.getBiome(this.getPosition()) == Biomes.SUNFLOWER_PLAINS)
+        else if (optional.equals(Biomes.SUNFLOWER_PLAINS))
             i = 2;
-        else if (worldIn.getBiome(this.getPosition()) == Biomes.WOODED_MOUNTAINS)
+        else if (optional.equals(Biomes.WOODED_MOUNTAINS))
             i = 3;
 
         this.setWolpertingerType(i);
@@ -292,6 +292,15 @@ public class WolpertingerEntity extends AnimalEntity
             this.setGrowingAge(-24000);
 
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable)
+    {
+        WolpertingerEntity wolpertingerbaby = new WolpertingerEntity(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), world);
+
+        wolpertingerbaby.setWolpertingerType(this.getWolpertingerType());
+        return wolpertingerbaby;
     }
 
     @Override
@@ -316,7 +325,7 @@ public class WolpertingerEntity extends AnimalEntity
                 if (this.moveController.isUpdating() && this.currentMoveTypeDuration == 0)
                 {
                     Path path = this.navigator.getPath();
-                    Vec3d vec3d = new Vec3d(this.moveController.getX(), this.moveController.getY(), this.moveController.getZ());
+                    Vector3d vec3d = new Vector3d(this.moveController.getX(), this.moveController.getY(), this.moveController.getZ());
                     if (path != null && path.getCurrentPathIndex() < path.getCurrentPathLength())
                     {
                         vec3d = path.getPosition(this);
@@ -404,7 +413,7 @@ public class WolpertingerEntity extends AnimalEntity
 
         if (!hasNoGravity() && !isJumping())
         {
-            Vec3d vec3d = this.getMotion();
+            Vector3d vec3d = this.getMotion();
             if (!this.onGround && vec3d.y < 0.0D)
             {
                 this.setMotion(vec3d.mul(1.0D, 0.6D, 1.0D));
@@ -474,15 +483,6 @@ public class WolpertingerEntity extends AnimalEntity
     }
 
     @Override
-    public AgeableEntity createChild(AgeableEntity ageable)
-    {
-        WolpertingerEntity wolpertingerbaby = new WolpertingerEntity(EntityRegistryHandler.WOLPERTINGER_ENTITY.get(), world);
-
-        wolpertingerbaby.setWolpertingerType(this.getWolpertingerType());
-        return wolpertingerbaby;
-    }
-
-    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
@@ -524,7 +524,7 @@ public class WolpertingerEntity extends AnimalEntity
     {
         if (id == 1)
         {
-            this.createRunningParticles();
+            this.func_233569_aL_();
             this.jumpDuration = 10;
             this.jumpTicks = 0;
         } else
@@ -617,7 +617,7 @@ public class WolpertingerEntity extends AnimalEntity
         {
             if (this.wolpertinger.getDistance(avoidTarget) < avoidDistance)
             {
-                Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.wolpertinger, 10, 5, this.avoidTarget.getPositionVec());
+                Vector3d vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.wolpertinger, 10, 5, this.avoidTarget.getPositionVec());
                 if (vec3d != null)
                 {
                     this.wolpertinger.setNoGravity(true);
@@ -692,12 +692,12 @@ public class WolpertingerEntity extends AnimalEntity
         @Override
         public void tick()
         {
-            this.wolpertinger.navigator.tryMoveToXYZ(tryGrabTarget.getPosition().getX(), tryGrabTarget.getPosition().getY(), tryGrabTarget.getPosition().getZ(), this.wolpertinger.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+            this.wolpertinger.navigator.tryMoveToXYZ(tryGrabTarget.getPosition().getX(), tryGrabTarget.getPosition().getY(), tryGrabTarget.getPosition().getZ(), this.wolpertinger.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue());
 
             if (this.wolpertinger.onGround && tryGrabTarget.getDistanceSq(this.wolpertinger) < 10)
             {
-                Vec3d dir = tryGrabTarget.getPositionVec().subtract(this.wolpertinger.getPositionVec()).normalize();
-                Vec3d motion = this.wolpertinger.getMotion().add(dir.x, dir.y * 1.5F, dir.z);
+                Vector3d dir = tryGrabTarget.getPositionVec().subtract(this.wolpertinger.getPositionVec()).normalize();
+                Vector3d motion = this.wolpertinger.getMotion().add(dir.x, dir.y * 1.5F, dir.z);
 
                 this.wolpertinger.setMotion(motion.getX(), motion.getY(), motion.getZ());
             }
@@ -734,7 +734,7 @@ public class WolpertingerEntity extends AnimalEntity
                 }
             }
 
-            Vec3d vec3d = this.getPosition();
+            Vector3d vec3d = this.getPosition();
             if (vec3d == null)
             {
                 return false;

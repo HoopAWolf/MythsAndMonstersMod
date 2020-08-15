@@ -6,13 +6,14 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.ShulkerBulletModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class FireSpiritRenderer extends EntityRenderer<FireSpiritEntity>
 {
@@ -26,7 +27,7 @@ public class FireSpiritRenderer extends EntityRenderer<FireSpiritEntity>
     }
 
     @Override
-    protected int getBlockLight(FireSpiritEntity entityIn, float partialTicks)
+    protected int getBlockLight(FireSpiritEntity entityIn, BlockPos partialTicks)
     {
         return 15;
     }

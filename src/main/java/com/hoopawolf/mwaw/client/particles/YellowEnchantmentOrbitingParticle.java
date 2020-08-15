@@ -3,8 +3,8 @@ package com.hoopawolf.mwaw.client.particles;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -12,12 +12,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
 {
 
-    private YellowEnchantmentOrbitingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
+    private YellowEnchantmentOrbitingParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, double spreadIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, spreadIn);
     }
 
-    private YellowEnchantmentOrbitingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    private YellowEnchantmentOrbitingParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         float f = this.rand.nextFloat() * 0.6F + 0.4F;
@@ -37,7 +37,7 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
             this.spriteSet = p_i50441_1_;
         }
 
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
         {
             YellowEnchantmentOrbitingParticle yellowenchantmentparticle = new YellowEnchantmentOrbitingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
@@ -45,7 +45,7 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             YellowEnchantmentOrbitingParticle yellowenchantmentparticle = new YellowEnchantmentOrbitingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
@@ -63,7 +63,7 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
             this.spriteSet = p_i50442_1_;
         }
 
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, double spread)
         {
             YellowEnchantmentOrbitingParticle yellowenchantmentparticle = new YellowEnchantmentOrbitingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, spread);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);
@@ -71,7 +71,7 @@ public class YellowEnchantmentOrbitingParticle extends OrbitingParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             YellowEnchantmentOrbitingParticle yellowenchantmentparticle = new YellowEnchantmentOrbitingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             yellowenchantmentparticle.selectSpriteRandomly(this.spriteSet);

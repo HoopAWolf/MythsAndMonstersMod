@@ -2,12 +2,11 @@ package com.hoopawolf.mwaw.util;
 
 import com.hoopawolf.mwaw.entities.HunterEntity;
 import com.hoopawolf.mwaw.entities.KitsuneEntity;
+import com.hoopawolf.mwaw.entities.ai.AnimalMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.monster.ZombieEntity;
@@ -16,7 +15,7 @@ import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -75,7 +74,7 @@ public class MWAWEventHandler
         {
             if (entity.getPassengers().size() > 0 && entity.getPassengers().get(0) instanceof ChickenEntity)
             {
-                Vec3d vec3d = entity.getMotion();
+                Vector3d vec3d = entity.getMotion();
                 entity.setMotion(vec3d.mul(1.0D, 0.95D, 1.0D));
             }
         }
@@ -143,11 +142,7 @@ public class MWAWEventHandler
 
             if (entity instanceof CowEntity || entity instanceof RabbitEntity || entity instanceof SheepEntity || entity instanceof AbstractHorseEntity || entity instanceof PigEntity || entity instanceof ChickenEntity)
             {
-                ((AnimalEntity) entity).getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-                ((AnimalEntity) entity).getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
-                ((AnimalEntity) entity).getAttribute(SharedMonsterAttributes.ATTACK_KNOCKBACK).setBaseValue(1.0D);
-
-                ((AnimalEntity) entity).goalSelector.addGoal(1, new MeleeAttackGoal(((AnimalEntity) entity), 1.0D, true));
+                ((AnimalEntity) entity).goalSelector.addGoal(1, new AnimalMeleeAttackGoal(((AnimalEntity) entity), 1.0D, true, 2, 1));
             }
         }
     }

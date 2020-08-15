@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MushroomBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -29,9 +29,9 @@ public class FairyMushroomBlock extends MushroomBlock
         if (worldIn.rand.nextInt(100) < 20)
         {
             int _iteration = worldIn.rand.nextInt(10);
-            Vec3d _vec = new Vec3d(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
-            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, -0.1f, 0), _iteration, 0, 0.5F);
-            MWAWPacketHandler.packetHandler.sendToDimension(worldIn.getDimension().getType(), spawnParticleMessage);
+            Vector3d _vec = new Vector3d(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
+            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, -0.1f, 0), _iteration, 0, 0.5F);
+            MWAWPacketHandler.packetHandler.sendToDimension(worldIn.func_234923_W_(), spawnParticleMessage);
         }
     }
 

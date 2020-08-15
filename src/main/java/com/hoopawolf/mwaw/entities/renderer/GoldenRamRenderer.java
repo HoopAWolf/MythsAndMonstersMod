@@ -8,6 +8,7 @@ import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -25,7 +26,7 @@ public class GoldenRamRenderer extends MobRenderer<GoldenRamEntity, GoldenRamMod
     }
 
     @Override
-    protected int getBlockLight(GoldenRamEntity entityIn, float partialTicks)
+    protected int getBlockLight(GoldenRamEntity entityIn, BlockPos partialTicks)
     {
         return entityIn.getSheared() ? super.getBlockLight(entityIn, partialTicks) : 11;
     }

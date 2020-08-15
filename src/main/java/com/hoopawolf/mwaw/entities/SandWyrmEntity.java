@@ -6,11 +6,14 @@ import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -24,10 +27,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -63,6 +67,12 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.experienceValue = 5;
     }
 
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.FLYING_SPEED, 1.7D).createMutableAttribute(Attributes.MAX_HEALTH, 24.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+    }
+
     @Override
     protected void registerData()
     {
@@ -74,7 +84,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     }
 
     @Override
-    public void move(MoverType typeIn, Vec3d pos)
+    public void move(MoverType typeIn, Vector3d pos)
     {
         super.move(typeIn, pos);
         this.doBlockCollisions();
@@ -90,20 +100,6 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         this.goalSelector.addGoal(6, new SandWyrmEntity.TiredMeleeAttackGoal(this, 0.5F, true));
 
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(24.0D);
-        this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.7D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(12.0D);
     }
 
     @Override
@@ -191,8 +187,8 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                 {
                     if (!world.isRemote)
                     {
-                        SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(this.getPositionVec(), new Vec3d(world.rand.nextInt(2), world.rand.nextInt(2), world.rand.nextInt(2)), 5, 2, 1.5F);
-                        MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                        SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(this.getPositionVec(), new Vector3d(world.rand.nextInt(2), world.rand.nextInt(2), world.rand.nextInt(2)), 5, 2, 1.5F);
+                        MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
                     }
                     this.playSound(SoundEvents.BLOCK_SAND_BREAK, 1.0F, 1.0F);
                 }
@@ -238,7 +234,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
 
         if (getAttackTarget() == null)
         {
-            double d0 = this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getBaseValue();
+            double d0 = this.getAttribute(Attributes.FOLLOW_RANGE).getBaseValue();
             List<PlayerEntity> entities = EntityHelper.getPlayersNearby(this, d0, d0, d0, d0 * 2);
             for (PlayerEntity entity : entities)
             {
@@ -294,9 +290,10 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
+        Biome optional = worldIn.getBiome(this.getPosition());
         int i = 0;
 
-        if (worldIn.getBiome(this.getPosition()) == Biomes.BADLANDS)
+        if (optional.equals(Biomes.BADLANDS))
             i = 1;
 
         this.setSandWyrmType(i);
@@ -522,8 +519,8 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                 entity.setRotation(2);
             } else
             {
-                Vec3d vec3d = livingentity.getPositionVec();
-                entity.moveController.setMoveTo(vec3d.x, vec3d.y - 3.0F, vec3d.z, entity.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                Vector3d vec3d = livingentity.getPositionVec();
+                entity.moveController.setMoveTo(vec3d.x, vec3d.y - 3.0F, vec3d.z, entity.getAttribute(Attributes.FLYING_SPEED).getBaseValue());
                 entity.setRotation(0);
             }
         }
@@ -605,7 +602,7 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
         {
             if (this.action == MovementController.Action.MOVE_TO)
             {
-                Vec3d vec3d = new Vec3d(this.posX - SandWyrmEntity.this.getPosX(), this.posY - SandWyrmEntity.this.getPosY(), this.posZ - SandWyrmEntity.this.getPosZ());
+                Vector3d vec3d = new Vector3d(this.posX - SandWyrmEntity.this.getPosX(), this.posY - SandWyrmEntity.this.getPosY(), this.posZ - SandWyrmEntity.this.getPosZ());
                 double d0 = vec3d.length();
                 if (d0 < SandWyrmEntity.this.getBoundingBox().getAverageEdgeLength())
                 {
@@ -615,18 +612,18 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
                 {
                     if (dived)
                     {
-                        SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().add(vec3d.scale(SandWyrmEntity.this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue() * 0.05D / d0)));
+                        SandWyrmEntity.this.setMotion(SandWyrmEntity.this.getMotion().add(vec3d.scale(SandWyrmEntity.this.getAttribute(Attributes.FLYING_SPEED).getBaseValue() * 0.05D / d0)));
 
                         if (!world.isRemote)
                         {
-                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(SandWyrmEntity.this.getPositionVec(), new Vec3d(world.rand.nextInt(2), world.rand.nextInt(2), world.rand.nextInt(2)), 5, 2, 1.5F);
-                            MWAWPacketHandler.packetHandler.sendToDimension(SandWyrmEntity.this.dimension, spawnParticleMessage);
+                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(SandWyrmEntity.this.getPositionVec(), new Vector3d(world.rand.nextInt(2), world.rand.nextInt(2), world.rand.nextInt(2)), 5, 2, 1.5F);
+                            MWAWPacketHandler.packetHandler.sendToDimension(SandWyrmEntity.this.world.func_234923_W_(), spawnParticleMessage);
                         }
                         SandWyrmEntity.this.playSound(SoundEvents.BLOCK_SAND_BREAK, 1.0F, 1.0F);
 
                         if (SandWyrmEntity.this.getAttackTarget() == null)
                         {
-                            Vec3d vec3d1 = SandWyrmEntity.this.getMotion();
+                            Vector3d vec3d1 = SandWyrmEntity.this.getMotion();
                             SandWyrmEntity.this.rotationYaw = -((float) MathHelper.atan2(vec3d1.x, vec3d1.z)) * (180F / (float) Math.PI);
                         } else
                         {

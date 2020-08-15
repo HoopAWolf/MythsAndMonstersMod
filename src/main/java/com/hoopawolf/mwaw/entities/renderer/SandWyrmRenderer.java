@@ -25,7 +25,7 @@ public class SandWyrmRenderer extends MobRenderer<SandWyrmEntity, SandWyrmModel>
     }
 
     @Override
-    protected int getBlockLight(SandWyrmEntity entityIn, float partialTicks)
+    protected int getBlockLight(SandWyrmEntity entityIn, BlockPos partialTicks)
     {
         return ((entityIn.world.getDayTime() > 1000 && entityIn.world.getDayTime() < 13000) ? entityIn.world.getLightFor(LightType.SKY, new BlockPos(entityIn.getPosition().getX(), entityIn.getPosition().getY() + 1, entityIn.getPosition().getZ())) : super.getBlockLight(entityIn, partialTicks));
     }

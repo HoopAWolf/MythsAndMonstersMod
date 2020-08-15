@@ -32,7 +32,7 @@ public class MWAWWalkNodeProcessor extends WalkNodeProcessor
             {
                 pos.setY(++y);
             }
-        } else if (this.entity.onGround)
+        } else if (this.entity.isOnGround())
         {
             y = MathHelper.floor(bounds.minY + 0.5D);
         } else

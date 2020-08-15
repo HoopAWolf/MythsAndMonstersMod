@@ -6,9 +6,10 @@ import com.hoopawolf.mwaw.network.packets.client.SpawnSuckingParticleMessage;
 import com.hoopawolf.mwaw.network.packets.server.FireParticleSpawnMessage;
 import com.hoopawolf.mwaw.ref.Reference;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.PacketTarget;
@@ -44,12 +45,12 @@ public class MWAWPacketHandler
         this.send(PacketDistributor.PLAYER.with(() -> player), message);
     }
 
-    public void sendToDimension(DimensionType dimension, Object message)
+    public void sendToDimension(RegistryKey<World> dimension, Object message)
     {
         this.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
     }
 
-    public void sendToNearbyPlayers(double x, double y, double z, double radius, DimensionType dimension, Object message)
+    public void sendToNearbyPlayers(double x, double y, double z, double radius, RegistryKey<World> dimension, Object message)
     {
         this.sendToNearbyPlayers(new TargetPoint(x, y, z, radius, dimension), message);
     }

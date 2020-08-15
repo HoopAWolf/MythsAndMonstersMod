@@ -6,8 +6,11 @@ import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,13 +25,13 @@ import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -60,6 +63,19 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.setPathPriority(PathNodeType.FENCE, -1.0F);
         this.staminaRemaining = this.maxStamina;
     }
+
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.FLYING_SPEED, 1.7D).createMutableAttribute(Attributes.MAX_HEALTH, 3.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.0D);
+    }
+
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable)
+    {
+        return null;
+    }
+
 
     @Override
     protected void registerData()
@@ -121,7 +137,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         super.writeAdditional(compound);
         if (this.HasFlowerPos())
         {
-            compound.put("FlowerPos", NBTUtil.writeBlockPos(this.GetFlowerPos()));
+            compound.put("FlowerPos", NBTUtil.writeBlockPos(this.getFlowerPos()));
         }
 
         compound.putFloat("StaminaLeft", this.staminaRemaining);
@@ -180,7 +196,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         this.attackTimer = 10;
         this.world.setEntityState(this, (byte) 4);
 
-        return entityIn.attackEntityFrom(new EntityDamageSource("fairy", this), (float) this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getValue());
+        return entityIn.attackEntityFrom(new EntityDamageSource("fairy", this), (float) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
     }
 
     @Override
@@ -199,7 +215,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         {
             this.setNoGravity(false);
 
-            Vec3d vec3d = this.getMotion();
+            Vector3d vec3d = this.getMotion();
             if (!this.onGround && vec3d.y < 0.0D)
             {
                 this.setMotion(vec3d.mul(1.0D, 0.6D, 1.0D));
@@ -209,9 +225,9 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         if (ticksExisted % 2 == 0 && !world.isRemote)
         {
             int _iteration = this.rand.nextInt(2);
-            Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
-            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, -0.1f, 0), _iteration, 0, getWidth());
-            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+            Vector3d _vec = new Vector3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
+            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, -0.1f, 0), _iteration, 0, getWidth());
+            MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
         }
     }
 
@@ -232,9 +248,9 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     {
         if (p_226433_1_ != null)
         {
-            Vec3d vec3d = new Vec3d(p_226433_1_);
+            Vector3d vec3d = new Vector3d(p_226433_1_.getX(), p_226433_1_.getY(), p_226433_1_.getZ());
             int i = 0;
-            BlockPos blockpos = new BlockPos(this);
+            BlockPos blockpos = this.getPosition();
             int j = (int) vec3d.y - blockpos.getY();
             if (j > 2)
             {
@@ -253,31 +269,31 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
                 l = i1 / 2;
             }
 
-            Vec3d vec3d1 = RandomPositionGenerator.func_226344_b_(this, k, l, i, vec3d, (float) Math.PI / 15F);
+            Vector3d vec3d1 = RandomPositionGenerator.func_226344_b_(this, k, l, i, vec3d, (float) Math.PI / 15F);
             if (vec3d1 != null)
             {
                 this.navigator.setRangeMultiplier(0.5F);
-                this.navigator.tryMoveToXYZ(vec3d1.x, vec3d1.y, vec3d1.z, FairyEntity.this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
-                this.getLookController().setLookPosition(new Vec3d(GetFlowerPos()));
+                this.navigator.tryMoveToXYZ(vec3d1.x, vec3d1.y, vec3d1.z, FairyEntity.this.getAttribute(Attributes.FLYING_SPEED).getBaseValue());
+                this.getLookController().setLookPosition(new Vector3d(getFlowerPos().getX(), getFlowerPos().getY(), getFlowerPos().getZ()));
 
                 if (ticksExisted % 5 == 0 && !this.world.isRemote)
                 {
-                    Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
-                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 1, getWidth());
-                    MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                    Vector3d _vec = new Vector3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(0.5D), this.getPosZ() + (double) 0.3F);
+                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, 0, 0), 1, 1, getWidth());
+                    MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
                 }
             }
         }
     }
 
-    public BlockPos GetFlowerPos()
+    public BlockPos getFlowerPos()
     {
         return this.flowerPos;
     }
 
     public boolean HasFlowerPos()
     {
-        return this.GetFlowerPos() != null;
+        return this.getFlowerPos() != null;
     }
 
     @Override
@@ -325,19 +341,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
     private boolean IsBlockFar(BlockPos p_226437_1_)
     {
-        return !this.IsWithinDistance(p_226437_1_, 15);
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(3.0D);
-        this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.7D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(12.0D);
+        return !this.isWithinDistance(p_226437_1_, 15);
     }
 
     @Override
@@ -398,12 +402,6 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     protected float getSoundVolume()
     {
         return 0.4F;
-    }
-
-    @Override
-    public FairyEntity createChild(AgeableEntity ageable)
-    {
-        return null;
     }
 
     @Override
@@ -481,14 +479,14 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
     }
 
     @Override
-    protected void handleFluidJump(Tag<Fluid> fluidTag)
+    protected void handleFluidJump(ITag<Fluid> fluidTag)
     {
         this.setMotion(this.getMotion().add(0.0D, 0.01D, 0.0D));
     }
 
-    private boolean IsWithinDistance(BlockPos p_226401_1_, int p_226401_2_)
+    private boolean isWithinDistance(BlockPos pos, int distance)
     {
-        return p_226401_1_.withinDistance(new BlockPos(this), p_226401_2_);
+        return pos.withinDistance(this.getPosition(), distance);
     }
 
     protected void DecreaseStamina()
@@ -564,7 +562,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         @Override
         public boolean func_225506_g_()
         {
-            return FairyEntity.this.flowerPos != null && FairyEntity.this.IsFlowerBlock(FairyEntity.this.flowerPos) && !FairyEntity.this.IsWithinDistance(FairyEntity.this.flowerPos, 2);
+            return FairyEntity.this.flowerPos != null && FairyEntity.this.IsFlowerBlock(FairyEntity.this.flowerPos) && !FairyEntity.this.isWithinDistance(FairyEntity.this.flowerPos, 2);
         }
 
         @Override
@@ -589,7 +587,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
             if (HasFlowerPos())
             {
-                FairyEntity.this.prevAttraction.add(new BlockPos(GetFlowerPos()));
+                FairyEntity.this.prevAttraction.add(new BlockPos(getFlowerPos()));
                 FairyEntity.this.flowerPos = null;
             }
 
@@ -609,7 +607,7 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
 
                 if (this.goToFlowerTimer > 300)
                 {
-                    FairyEntity.this.prevAttraction.add(new BlockPos(GetFlowerPos()));
+                    FairyEntity.this.prevAttraction.add(new BlockPos(getFlowerPos()));
                     FairyEntity.this.flowerPos = null;
 
                     if (FairyEntity.this.prevAttraction.size() > 10)
@@ -679,8 +677,8 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
                 FairyEntity.this.attackEntityAsMob(livingentity);
             } else
             {
-                Vec3d vec3d = livingentity.getEyePosition(1.0F);
-                FairyEntity.this.moveController.setMoveTo(vec3d.x, vec3d.y, vec3d.z, FairyEntity.this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue() * 2);
+                Vector3d vec3d = livingentity.getEyePosition(1.0F);
+                FairyEntity.this.moveController.setMoveTo(vec3d.x, vec3d.y, vec3d.z, FairyEntity.this.getAttribute(Attributes.FLYING_SPEED).getBaseValue() * 2);
             }
 
             this.parentEntity.setAngry(true);
@@ -709,10 +707,10 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
         @Override
         public void startExecuting()
         {
-            Vec3d vec3d = this.GetNextPosViaForward();
+            Vector3d vec3d = this.GetNextPosViaForward();
             if (vec3d != null)
             {
-                FairyEntity.this.navigator.setPath(FairyEntity.this.navigator.getPathToPos(new BlockPos(vec3d), 1), FairyEntity.this.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                FairyEntity.this.navigator.setPath(FairyEntity.this.navigator.getPathToPos(new BlockPos(vec3d), 1), FairyEntity.this.getAttribute(Attributes.FLYING_SPEED).getBaseValue());
             }
 
         }
@@ -756,13 +754,13 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
                             }
                         }
 
-                        if (FairyEntity.this.GetFlowerPos() != null)
+                        if (FairyEntity.this.getFlowerPos() != null)
                         {
                             break;
                         }
                     }
 
-                    if (FairyEntity.this.GetFlowerPos() != null)
+                    if (FairyEntity.this.getFlowerPos() != null)
                     {
                         break;
                     }
@@ -770,11 +768,11 @@ public class FairyEntity extends AnimalEntity implements IFlyingAnimal
             }
         }
 
-        private Vec3d GetNextPosViaForward()
+        private Vector3d GetNextPosViaForward()
         {
-            Vec3d vec3d = FairyEntity.this.getLook(0.0F);
+            Vector3d vec3d = FairyEntity.this.getLook(0.0F);
 
-            Vec3d vec3d2 = RandomPositionGenerator.findAirTarget(FairyEntity.this, 8, 7, FairyEntity.this.getLook(0.0F), ((float) Math.PI / 2F), 2, 1);
+            Vector3d vec3d2 = RandomPositionGenerator.findAirTarget(FairyEntity.this, 8, 7, FairyEntity.this.getLook(0.0F), ((float) Math.PI / 2F), 2, 1);
             return vec3d2 != null ? vec3d2 : RandomPositionGenerator.findGroundTarget(FairyEntity.this, 8, 4, -2, vec3d, (float) Math.PI / 2F);
         }
     }

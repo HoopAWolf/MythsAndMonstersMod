@@ -11,8 +11,11 @@ import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -26,7 +29,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -58,6 +61,12 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         spawned = false;
 
         this.moveController = new MWAWMovementController(this, 30);
+    }
+
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 250.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D).createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 015D);
     }
 
     @Override
@@ -97,19 +106,6 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     }
 
     @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-
-        this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(015D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(250.0D);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
-    }
-
-    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
@@ -142,7 +138,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     {
         if (!world.isRemote && _isHardenForm)
         {
-            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() * 0.7D);
+            this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() * 0.7D);
         }
 
         this.dataManager.set(HARDEN_FORM, _isHardenForm);
@@ -159,9 +155,9 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
         {
             if (!world.isRemote)
             {
-                this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
-                this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.08D);
-                this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
+                this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+                this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.08D);
+                this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(1.0D);
 
                 this.goalSelector.removeGoal(meleeGoal);
                 this.goalSelector.removeGoal(rangedGoal);
@@ -304,9 +300,9 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
                 if (ticksExisted % 10 == 0)
                 {
                     heal(1.0F);
-                    Vec3d _vec = new Vec3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(1.0D), this.getPosZ() + (double) 0.3F);
-                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, -0.5D, 0), 4, 5, getWidth());
-                    MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+                    Vector3d _vec = new Vector3d(this.getPosX() - (double) 0.3F, this.getPosYHeight(1.0D), this.getPosZ() + (double) 0.3F);
+                    SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, -0.5D, 0), 4, 5, getWidth());
+                    MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
                 }
             }
 

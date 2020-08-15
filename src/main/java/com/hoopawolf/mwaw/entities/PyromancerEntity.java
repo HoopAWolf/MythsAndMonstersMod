@@ -9,9 +9,12 @@ import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.BlazeEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FireballEntity;
@@ -27,7 +30,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Rotations;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -51,7 +54,6 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
     private static final DataParameter<Rotations> RIGHT_LEG_ROTATION = EntityDataManager.createKey(PyromancerEntity.class, DataSerializers.ROTATIONS);
     private static final DataParameter<Rotations> LEFT_LEG_ROTATION = EntityDataManager.createKey(PyromancerEntity.class, DataSerializers.ROTATIONS);
     public final AnimationHelper animation = new AnimationHelper();
-    float shootRenderTimer;
     MovementController groundController,
             airController;
     private ArrayList<FireSpiritEntity> spiritList = new ArrayList<>();
@@ -59,7 +61,6 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
     public PyromancerEntity(EntityType<? extends PyromancerEntity> type, World worldIn)
     {
         super(type, worldIn);
-        shootRenderTimer = 0.0F;
 
         animation.registerData(HEAD_ROTATION);
         animation.registerData(BODY_ROTATION);
@@ -71,6 +72,11 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
         groundController = new MWAWMovementController(this, 30);
         airController = new PyromancerEntity.MoveHelperController(this);
         this.moveController = groundController;
+    }
+
+    public static AttributeModifierMap.MutableAttribute func_234321_m_()
+    {
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 100.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
     }
 
     @Override
@@ -113,15 +119,6 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
         {
             return !(p_213621_0_ instanceof PillagerEntity) && !(p_213621_0_ instanceof PyromancerEntity) && !(p_213621_0_ instanceof BlazeEntity) && !(p_213621_0_ instanceof FireSpiritEntity);  //TODO future cult member
         }));
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     }
 
     @Override
@@ -282,19 +279,19 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
 
         if (!world.isRemote)
         {
-            Vec3d vec3d = this.getMotion();
+            Vector3d vec3d = this.getMotion();
 
-            Vec3d _vec = new Vec3d(this.getPosX(), this.getPosYHeight(1.2D), this.getPosZ());
-            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0.1f, 0), 2, 10, getWidth() * 0.35F);
-            MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnParticleMessage);
+            Vector3d _vec = new Vector3d(this.getPosX(), this.getPosYHeight(1.2D), this.getPosZ());
+            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, 0.1f, 0), 2, 10, getWidth() * 0.35F);
+            MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnParticleMessage);
 
             if (!this.onGround && vec3d.y < 0.0D)
             {
                 this.setMotion(vec3d.mul(1.0D, 0.6D, 1.0D));
 
-                Vec3d leg_vec = new Vec3d(this.getPosX(), this.getPosY(), this.getPosZ());
-                SpawnParticleMessage spawnFlyingParticleMessage = new SpawnParticleMessage(leg_vec, new Vec3d(0, -0.1f, 0), 2, 10, getWidth() * 0.35F);
-                MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnFlyingParticleMessage);
+                Vector3d leg_vec = new Vector3d(this.getPosX(), this.getPosY(), this.getPosZ());
+                SpawnParticleMessage spawnFlyingParticleMessage = new SpawnParticleMessage(leg_vec, new Vector3d(0, -0.1f, 0), 2, 10, getWidth() * 0.35F);
+                MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnFlyingParticleMessage);
             }
 
             if (isBurning())
@@ -306,9 +303,9 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
 
             if (isFlying())
             {
-                Vec3d leg_vec = new Vec3d(this.getPosX(), this.getPosY(), this.getPosZ());
-                SpawnParticleMessage spawnFlyingParticleMessage = new SpawnParticleMessage(leg_vec, new Vec3d(0, -0.1f, 0), 2, 10, getWidth() * 0.35F);
-                MWAWPacketHandler.packetHandler.sendToDimension(this.dimension, spawnFlyingParticleMessage);
+                Vector3d leg_vec = new Vector3d(this.getPosX(), this.getPosY(), this.getPosZ());
+                SpawnParticleMessage spawnFlyingParticleMessage = new SpawnParticleMessage(leg_vec, new Vector3d(0, -0.1f, 0), 2, 10, getWidth() * 0.35F);
+                MWAWPacketHandler.packetHandler.sendToDimension(this.world.func_234923_W_(), spawnFlyingParticleMessage);
 
                 if (!this.moveController.equals(airController))
                 {
@@ -482,7 +479,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
         {
             if (this.action == MovementController.Action.MOVE_TO)
             {
-                Vec3d vec3d = new Vec3d(this.posX - PyromancerEntity.this.getPosX(), this.posY - PyromancerEntity.this.getPosY(), this.posZ - PyromancerEntity.this.getPosZ());
+                Vector3d vec3d = new Vector3d(this.posX - PyromancerEntity.this.getPosX(), this.posY - PyromancerEntity.this.getPosY(), this.posZ - PyromancerEntity.this.getPosZ());
                 double d0 = vec3d.length();
                 if (d0 < PyromancerEntity.this.getBoundingBox().getAverageEdgeLength())
                 {
@@ -493,7 +490,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
                     PyromancerEntity.this.setMotion(PyromancerEntity.this.getMotion().add(vec3d.scale(this.speed * 0.05D / d0)));
                     if (PyromancerEntity.this.getAttackTarget() == null)
                     {
-                        Vec3d vec3d1 = PyromancerEntity.this.getMotion();
+                        Vector3d vec3d1 = PyromancerEntity.this.getMotion();
                         PyromancerEntity.this.rotationYaw = -((float) MathHelper.atan2(vec3d1.x, vec3d1.z)) * (180F / (float) Math.PI);
                     } else
                     {
@@ -539,7 +536,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
             BlockPos blockpos = PyromancerEntity.this.getAttackTarget().getPosition();
             if (blockpos == null)
             {
-                blockpos = new BlockPos(PyromancerEntity.this);
+                blockpos = PyromancerEntity.this.getPosition();
             }
 
             for (int i = 0; i < 3; ++i)
@@ -650,9 +647,9 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
 
             if (getShootingTimer() <= 0.5F && !hasShot)
             {
-                Vec3d _vec = new Vec3d(entityHost.getPosX() + entityHost.getForward().getX(), entityHost.getPosYHeight(0.5D), entityHost.getPosZ() + entityHost.getForward().getZ());
-                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0.1f, 0), 2, 10, getWidth() * 0.35F);
-                MWAWPacketHandler.packetHandler.sendToDimension(entityHost.dimension, spawnParticleMessage);
+                Vector3d _vec = new Vector3d(entityHost.getPosX() + entityHost.getForward().getX(), entityHost.getPosYHeight(0.5D), entityHost.getPosZ() + entityHost.getForward().getZ());
+                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, 0.1f, 0), 2, 10, getWidth() * 0.35F);
+                MWAWPacketHandler.packetHandler.sendToDimension(entityHost.world.func_234923_W_(), spawnParticleMessage);
 
                 float f = MathHelper.sqrt(d0) / this.attackRadius;
                 float lvt_5_1_ = MathHelper.clamp(f, 0.1F, 1.0F);
@@ -750,9 +747,9 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
 
             if (getExplosiveFireChargeTimer() > 0.5F)
             {
-                Vec3d _vec = new Vec3d(entityHost.getPosX() + entityHost.getForward().getX(), entityHost.getPosYHeight(0.5D), entityHost.getPosZ() + entityHost.getForward().getZ());
-                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0.1f, 0), 2, 10, getWidth() * 0.35F);
-                MWAWPacketHandler.packetHandler.sendToDimension(entityHost.dimension, spawnParticleMessage);
+                Vector3d _vec = new Vector3d(entityHost.getPosX() + entityHost.getForward().getX(), entityHost.getPosYHeight(0.5D), entityHost.getPosZ() + entityHost.getForward().getZ());
+                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vector3d(0, 0.1f, 0), 2, 10, getWidth() * 0.35F);
+                MWAWPacketHandler.packetHandler.sendToDimension(entityHost.world.func_234923_W_(), spawnParticleMessage);
             } else if (getExplosiveFireChargeTimer() <= 0.5F && !hasShot)
             {
                 float f = MathHelper.sqrt(d0) / this.attackRadius;
@@ -775,7 +772,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
         public SpiritBombGoal(PyromancerEntity attacker)
         {
             entityHost = attacker;
-            coolDown = 500;
+            coolDown = 400;
             this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Flag.LOOK));
         }
 
@@ -831,7 +828,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
             super.resetTask();
             this.attackTarget = null;
             setState(0);
-            coolDown = 500;
+            coolDown = 400;
         }
 
         @Override

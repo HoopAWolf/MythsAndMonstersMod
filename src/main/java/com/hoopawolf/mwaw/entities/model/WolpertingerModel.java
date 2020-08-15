@@ -148,7 +148,7 @@ public class WolpertingerModel extends EntityModel<WolpertingerEntity>
 
         this.jumpRotation = MathHelper.sin(entityIn.getJumpCompletion(f) * (float) Math.PI);
 
-        if (!entityIn.onGround && jumpRotation == 0)
+        if (!entityIn.isOnGround() && jumpRotation == 0)
         {
             RightWing.rotateAngleY = 0.47123894F + MathHelper.cos(ageInTicks * 1.5F) * (float) Math.PI * 0.05F;
             LeftWing.rotateAngleY = -RightWing.rotateAngleY;

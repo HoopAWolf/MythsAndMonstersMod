@@ -1,45 +1,49 @@
 package com.hoopawolf.mwaw.entities.ai;
 
-import com.hoopawolf.mwaw.network.MWAWPacketHandler;
-import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
 
-public class AnimalMeleeAttackGoal extends MWAWMeleeAttackGoal
+public class AnimalMeleeAttackGoal extends MeleeAttackGoal
 {
-    private final AnimalEntity parentEntity;
-    private final LivingEntity livingentity;
-    private final double speed;
+    private final CreatureEntity host;
+    private final double damage;
+    private final double knockBack;
 
-    public AnimalMeleeAttackGoal(AnimalEntity p_i225718_2_, double p_i225718_3_, boolean p_i225718_5_)
+    public AnimalMeleeAttackGoal(CreatureEntity creature, double speedIn, boolean useLongMemory, double damageIn, double knockBackIn)
     {
-        super(p_i225718_2_, p_i225718_3_, p_i225718_5_);
-        parentEntity = p_i225718_2_;
-        livingentity = parentEntity.getAttackTarget();
-        speed = p_i225718_3_;
+        super(creature, speedIn, useLongMemory);
+        host = creature;
+        damage = damageIn;
+        knockBack = knockBackIn;
     }
 
     @Override
-    public void tick()
+    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {
-        if (livingentity != null)
+        double d0 = this.getAttackReachSqr(enemy);
+        if (distToEnemySqr <= d0 && this.func_234041_j_() <= 0)
         {
-            if (parentEntity.ticksExisted % 5 == 0 && !parentEntity.world.isRemote)
-            {
-                Vec3d _vec = new Vec3d(parentEntity.getPosX() - (double) 0.3F, parentEntity.getPosYHeight(0.5D), parentEntity.getPosZ() + (double) 0.3F);
-                SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(_vec, new Vec3d(0, 0, 0), 1, 3, parentEntity.getWidth());
-                MWAWPacketHandler.packetHandler.sendToDimension(parentEntity.dimension, spawnParticleMessage);
-            }
+            this.func_234039_g_();
+            this.attacker.swingArm(Hand.MAIN_HAND);
 
-            if (parentEntity.getBoundingBox().intersects(livingentity.getBoundingBox().grow(1.0D)))
+            float f = (float) damage;
+            float f1 = (float) knockBack;
+
+            boolean flag = enemy.attackEntityFrom(DamageSource.causeMobDamage(host), f);
+
+            if (flag)
             {
-                livingentity.attackEntityFrom(new DamageSource("animal"), 2.0F);
-            } else
-            {
-                Vec3d vec3d = livingentity.getEyePosition(1.0F);
-                parentEntity.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, speed);
+                if (f1 > 0.0F && enemy instanceof LivingEntity)
+                {
+                    enemy.applyKnockback(f1 * 0.5F, MathHelper.sin(host.rotationYaw * ((float) Math.PI / 180F)), -MathHelper.cos(host.rotationYaw * ((float) Math.PI / 180F)));
+                    host.setMotion(host.getMotion().mul(0.6D, 1.0D, 0.6D));
+                }
+
+                host.setLastAttackedEntity(enemy);
             }
         }
     }

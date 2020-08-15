@@ -1,15 +1,15 @@
 package com.hoopawolf.mwaw.client.particles;
 
 import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class YellowEnchantmentParticle extends SpriteTexturedParticle
 {
-    private YellowEnchantmentParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    private YellowEnchantmentParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         this.motionX = this.motionX * (double) 0.01F + xSpeedIn;
@@ -91,7 +91,7 @@ public class YellowEnchantmentParticle extends SpriteTexturedParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             YellowEnchantmentParticle flameparticle = new YellowEnchantmentParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             flameparticle.selectSpriteRandomly(this.spriteSet);

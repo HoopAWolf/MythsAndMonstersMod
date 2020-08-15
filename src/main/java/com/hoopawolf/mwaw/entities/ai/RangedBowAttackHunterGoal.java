@@ -103,7 +103,7 @@ public class RangedBowAttackHunterGoal<T extends CreatureEntity & IRangedAttackM
                 ++this.strafingTime;
             } else
             {
-                this.entity.getNavigator().tryMoveToEntityLiving(livingentity, entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp);
+                this.entity.getNavigator().tryMoveToEntityLiving(livingentity, entity.isSneaking() ? this.moveSpeedAmp * 0.3D : this.moveSpeedAmp);
                 this.strafingTime = -1;
             }
 
@@ -132,7 +132,7 @@ public class RangedBowAttackHunterGoal<T extends CreatureEntity & IRangedAttackM
                     this.strafingBackwards = true;
                 }
 
-                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -(float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp) : (float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp), this.strafingClockwise ? (float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp) : -(float) (entity.isSneaking() ? this.moveSpeedAmp * 0.5D : this.moveSpeedAmp));
+                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -(float) (entity.isSneaking() ? this.moveSpeedAmp * 0.3D : this.moveSpeedAmp) : (float) (entity.isSneaking() ? this.moveSpeedAmp * 0.2D : this.moveSpeedAmp), this.strafingClockwise ? (float) (entity.isSneaking() ? this.moveSpeedAmp * 0.3D : this.moveSpeedAmp) : -(float) (entity.isSneaking() ? this.moveSpeedAmp * 0.3D : this.moveSpeedAmp));
                 this.entity.faceEntity(livingentity, 30.0F, 30.0F);
             } else
             {

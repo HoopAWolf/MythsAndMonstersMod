@@ -13,8 +13,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShootableItem;
 import net.minecraft.item.UseAction;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.*;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.function.Predicate;
@@ -25,22 +28,6 @@ public class GoldenBowItem extends ShootableItem
     public GoldenBowItem(Item.Properties builder)
     {
         super(builder);
-
-        this.addPropertyOverride(new ResourceLocation("pull"), (p_210310_0_, p_210310_1_, p_210310_2_) ->
-        {
-            if (p_210310_2_ == null)
-            {
-                return 0.0F;
-            } else
-            {
-                return !(p_210310_2_.getActiveItemStack().getItem() instanceof GoldenBowItem) ? 0.0F : (float) (p_210310_0_.getUseDuration() - p_210310_2_.getItemInUseCount()) / 20.0F;
-            }
-        });
-
-        this.addPropertyOverride(new ResourceLocation("pulling"), (p_210309_0_, p_210309_1_, p_210309_2_) ->
-        {
-            return p_210309_2_ != null && p_210309_2_.isHandActive() && p_210309_2_.getActiveItemStack() == p_210309_0_ ? 1.0F : 0.0F;
-        });
     }
 
     /**
@@ -63,8 +50,8 @@ public class GoldenBowItem extends ShootableItem
     {
         if (!worldIn.isRemote)
         {
-            SpawnOrbitingParticleMessage spawnParticleMessage = new SpawnOrbitingParticleMessage(livingEntityIn.getPositionVec(), new Vec3d(0.0D, 0.02D, 0.0D), 1, 0, 0.5F);
-            MWAWPacketHandler.packetHandler.sendToDimension(livingEntityIn.dimension, spawnParticleMessage);
+            SpawnOrbitingParticleMessage spawnParticleMessage = new SpawnOrbitingParticleMessage(livingEntityIn.getPositionVec(), new Vector3d(0.0D, 0.02D, 0.0D), 1, 0, 0.5F);
+            MWAWPacketHandler.packetHandler.sendToDimension(livingEntityIn.world.func_234923_W_(), spawnParticleMessage);
         }
     }
 
@@ -97,7 +84,7 @@ public class GoldenBowItem extends ShootableItem
                         GoldenArrowItem arrowitem = (GoldenArrowItem) (itemstack.getItem() instanceof GoldenArrowItem ? itemstack.getItem() : ItemBlockRegistryHandler.GOLDEN_ARROW.get());
                         AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, playerentity);
                         abstractarrowentity = customeArrow(abstractarrowentity);
-                        abstractarrowentity.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+                        abstractarrowentity.func_234612_a_(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
                         if (f == 1.0F)
                         {
                             abstractarrowentity.setIsCritical(true);
@@ -179,6 +166,12 @@ public class GoldenBowItem extends ShootableItem
     public Predicate<ItemStack> getInventoryAmmoPredicate()
     {
         return itemStack -> itemStack.getItem() instanceof GoldenArrowItem;
+    }
+
+    @Override
+    public int func_230305_d_()
+    {
+        return 15;
     }
 
     public AbstractArrowEntity customeArrow(AbstractArrowEntity arrow)

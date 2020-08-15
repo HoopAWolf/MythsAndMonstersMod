@@ -12,7 +12,7 @@ import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -86,8 +86,8 @@ public class MessageHandlerOnClient
                 SpawnParticleMessage _message = (((SpawnParticleMessage) message));
                 for (int i = 0; i < _message.getIteration(); ++i)
                 {
-                    Vec3d targetCoordinates = _message.getTargetCoordinates();
-                    Vec3d targetSpeed = _message.getTargetSpeed();
+                    Vector3d targetCoordinates = _message.getTargetCoordinates();
+                    Vector3d targetSpeed = _message.getTargetSpeed();
                     double spread = _message.getParticleSpread();
                     double spawnXpos = targetCoordinates.x;
                     double spawnYpos = targetCoordinates.y;
@@ -109,8 +109,8 @@ public class MessageHandlerOnClient
                 SpawnOrbitingParticleMessage _message = (((SpawnOrbitingParticleMessage) message));
                 for (int i = 0; i < _message.getIteration(); ++i)
                 {
-                    Vec3d targetCoordinates = _message.getTargetCoordinates();
-                    Vec3d targetSpeed = _message.getTargetSpeed();
+                    Vector3d targetCoordinates = _message.getTargetCoordinates();
+                    Vector3d targetSpeed = _message.getTargetSpeed();
                     double spawnXpos = targetCoordinates.x;
                     double spawnYpos = targetCoordinates.y;
                     double spawnZpos = targetCoordinates.z;
@@ -131,8 +131,8 @@ public class MessageHandlerOnClient
                 SpawnSuckingParticleMessage _message = (((SpawnSuckingParticleMessage) message));
                 for (int i = 0; i < _message.getIteration(); ++i)
                 {
-                    Vec3d targetCoordinates = _message.getTargetCoordinates();
-                    Vec3d targetSpeed = _message.getTargetSpeed();
+                    Vector3d targetCoordinates = _message.getTargetCoordinates();
+                    Vector3d targetSpeed = _message.getTargetSpeed();
                     double spawnXpos = targetCoordinates.x;
                     double spawnYpos = targetCoordinates.y;
                     double spawnZpos = targetCoordinates.z;

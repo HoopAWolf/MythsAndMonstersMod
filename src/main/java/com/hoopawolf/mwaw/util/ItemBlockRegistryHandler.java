@@ -7,12 +7,14 @@ import com.hoopawolf.mwaw.items.ShardItem;
 import com.hoopawolf.mwaw.items.weapons.*;
 import com.hoopawolf.mwaw.ref.Reference;
 import com.hoopawolf.mwaw.tab.MWAWItemGroup;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.LogBlock;
+import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.*;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.GenerationStage;
@@ -31,8 +33,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemBlockRegistryHandler
 {
-    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Reference.MOD_ID);
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Reference.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Reference.MOD_ID);
 
     public static final Food BAD_APPLE_STAT = (new Food.Builder()).hunger(4).saturation(1.2F).setAlwaysEdible().build();
 
@@ -82,8 +84,8 @@ public class ItemBlockRegistryHandler
     public static final RegistryObject<Item> HALLOWEEN_STAFF = ITEMS.register("halloweenstaff", ItemBase::new);
     public static final RegistryObject<Item> CHRISTMAS_STAFF = ITEMS.register("christmasstaff", ItemBase::new);*/
     //BLOCKS
-    public static final RegistryObject<Block> FAIRY_MUSHROOM_BLOCK = BLOCKS.register("fairymushroom", () -> new FairyMushroomBlock(Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().sound(SoundType.PLANT).lightValue(5)));
-    public static final RegistryObject<Block> CORPSE_WOOD_BLOCK = BLOCKS.register("corpsewood", () -> new LogBlock(MaterialColor.BROWN, Block.Properties.create(Material.WOOD, MaterialColor.BROWN).hardnessAndResistance(2.0F).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> FAIRY_MUSHROOM_BLOCK = BLOCKS.register("fairymushroom", () -> new FairyMushroomBlock(Block.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly().sound(SoundType.PLANT).setLightLevel((p_235464_0_) -> 5)));
+    public static final RegistryObject<Block> CORPSE_WOOD_BLOCK = BLOCKS.register("corpsewood", () -> new RotatedPillarBlock(AbstractBlock.Properties.create(Material.WOOD, MaterialColor.GRAY).hardnessAndResistance(2.0F).sound(SoundType.WOOD)));
 
     public static final RegistryObject<Item> FAIRY_MUSHROOM_ITEM = ITEMS.register("fairymushroom", () -> new BlockItem(FAIRY_MUSHROOM_BLOCK.get(), new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<Item> CORPSE_WOOD_ITEM = ITEMS.register("corpsewood", () -> new BlockItem(CORPSE_WOOD_BLOCK.get(), new Item.Properties().group(MWAWItemGroup.instance)));
@@ -99,6 +101,7 @@ public class ItemBlockRegistryHandler
     public static final RegistryObject<MWAWSpawnEggItem> GOLDEN_RAM_SPAWN_EGG = ITEMS.register("goldenramspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.GOLDEN_RAM_ENTITY, 0x15235F, 0x16234F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> DENDROID_ELDER_SPAWN_EGG = ITEMS.register("dendroidelderspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.DENDROID_ELDER_ENTITY, 0x15235F, 0x16234F, new Item.Properties().group(MWAWItemGroup.instance)));
     public static final RegistryObject<MWAWSpawnEggItem> PYRO_SPAWN_EGG = ITEMS.register("pyrospawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.PYRO_ENTITY, 0x15153F, 0x20234F, new Item.Properties().group(MWAWItemGroup.instance)));
+    public static final RegistryObject<MWAWSpawnEggItem> DROP_BEAR_SPAWN_EGG = ITEMS.register("dropbearspawnegg", () -> new MWAWSpawnEggItem(EntityRegistryHandler.DROP_BEAR_ENTITY, 0x15153F, 0x20234F, new Item.Properties().group(MWAWItemGroup.instance)));
 
     public static void init(IEventBus _iEventBus)
     {
@@ -119,6 +122,29 @@ public class ItemBlockRegistryHandler
         {
             biome.addFeature(decoration, featureIn);
         }
+    }
+
+    public static void registerItemModelProperties()
+    {
+        ItemModelsProperties.func_239418_a_(GOLDEN_BOW.get(), new ResourceLocation("pull"),
+                (p_239427_0_, p_239427_1_, p_239427_2_) ->
+                {
+
+                    if (p_239427_2_ == null)
+                    {
+                        return 0.0F;
+                    } else
+                    {
+                        return !(p_239427_2_.getActiveItemStack().getItem() instanceof GoldenBowItem) ? 0.0F : (float) (p_239427_0_.getUseDuration() - p_239427_2_.getItemInUseCount()) / 20.0F;
+
+                    }
+                });
+
+        ItemModelsProperties.func_239418_a_(GOLDEN_BOW.get(), new ResourceLocation("pulling"),
+                (p_210309_0_, p_210309_1_, p_210309_2_) ->
+                {
+                    return p_210309_2_ != null && p_210309_2_.isHandActive() && p_210309_2_.getActiveItemStack() == p_210309_0_ ? 1.0F : 0.0F;
+                });
     }
 
 }
