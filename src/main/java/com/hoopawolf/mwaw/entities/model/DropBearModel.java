@@ -54,7 +54,7 @@ public class DropBearModel extends EntityModel<DropBearEntity>
     }
 
     @Override
-    public void setRotationAngles(DropBearEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setRotationAngles(DropBearEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         Body.rotateAngleX = -0.2618F;
         Face.rotateAngleX = 0.2618F;
@@ -62,6 +62,58 @@ public class DropBearModel extends EntityModel<DropBearEntity>
         FrontLeftLeg.rotateAngleX = 0.2618F;
         BackLeftLeg.rotateAngleX = 0.2618F;
         BackRightLeg.rotateAngleX = 0.2618F;
+
+        if (!entityIn.isHugging())
+        {
+            this.Face.rotateAngleX = this.Face.rotateAngleX + (headPitch * ((float) Math.PI / 180F)) + (float) Math.toRadians(entityIn.getHeadRotation().getX());
+            this.Face.rotateAngleY = (netHeadYaw * (((float) Math.PI / 180F))) + (float) Math.toRadians(entityIn.getHeadRotation().getY());
+        }
+
+        this.Face.rotateAngleZ = (float) Math.toRadians(entityIn.getHeadRotation().getZ());
+
+        this.Body.rotateAngleX = this.Body.rotateAngleX + (float) Math.toRadians(entityIn.getBodyRotation().getX());
+        this.Body.rotateAngleY = (float) Math.toRadians(entityIn.getBodyRotation().getY());
+        this.Body.rotateAngleZ = (float) Math.toRadians(entityIn.getBodyRotation().getZ());
+
+        this.FrontRightLeg.rotateAngleX = this.FrontRightLeg.rotateAngleX + (float) Math.toRadians(entityIn.getRightArmRotation().getX());
+        this.FrontRightLeg.rotateAngleY = (float) Math.toRadians(entityIn.getRightArmRotation().getY());
+        this.FrontRightLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getRightArmRotation().getZ());
+
+        this.FrontLeftLeg.rotateAngleX = this.FrontLeftLeg.rotateAngleX + (float) Math.toRadians(entityIn.getLeftArmRotation().getX());
+        this.FrontLeftLeg.rotateAngleY = (float) Math.toRadians(entityIn.getLeftArmRotation().getY());
+        this.FrontLeftLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftArmRotation().getZ());
+
+        this.BackRightLeg.rotateAngleX = this.BackRightLeg.rotateAngleX + (float) Math.toRadians(entityIn.getRightLegRotation().getX());
+        this.BackRightLeg.rotateAngleY = (float) Math.toRadians(entityIn.getRightLegRotation().getY());
+        this.BackRightLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getRightLegRotation().getZ());
+
+        this.BackLeftLeg.rotateAngleX = this.BackLeftLeg.rotateAngleX + (float) Math.toRadians(entityIn.getLeftLegRotation().getX());
+        this.BackLeftLeg.rotateAngleY = (float) Math.toRadians(entityIn.getLeftLegRotation().getY());
+        this.BackLeftLeg.rotateAngleZ = (float) Math.toRadians(entityIn.getLeftLegRotation().getZ());
+
+        if (entityIn.isHugging())
+        {
+            if (!entityIn.isTired())
+            {
+                this.Face.rotateAngleX = this.Face.rotateAngleX + (float) Math.toRadians(-30);
+                this.Body.rotateAngleX = this.Body.rotateAngleX + (float) Math.toRadians(90);
+                this.Body.rotateAngleY = this.Body.rotateAngleY + (float) Math.toRadians((90 * entityIn.getHuggingDir()));
+            } else
+            {
+                this.Face.rotateAngleX = this.Face.rotateAngleX + (float) Math.toRadians(75);
+                this.Body.rotateAngleX = this.Body.rotateAngleX + (float) Math.toRadians(90);
+                this.Body.rotateAngleY = this.Body.rotateAngleY - (float) Math.toRadians((90 * entityIn.getHuggingDir()));
+
+            }
+
+            this.FrontRightLeg.rotateAngleX = this.FrontRightLeg.rotateAngleX + (float) Math.toRadians(-30);
+            this.FrontLeftLeg.rotateAngleX = this.FrontLeftLeg.rotateAngleX + (float) Math.toRadians(-30);
+
+            this.BackRightLeg.rotateAngleX = this.BackRightLeg.rotateAngleX + (float) Math.toRadians(20);
+            this.BackLeftLeg.rotateAngleX = this.BackLeftLeg.rotateAngleX + (float) Math.toRadians(20);
+        }
+
+        entityIn.animation.animationTick(entityIn.getDataManager(), entityIn.getAnimationSpeed());
     }
 
     @Override

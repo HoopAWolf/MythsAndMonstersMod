@@ -1,4 +1,4 @@
-package com.hoopawolf.mwaw.entities.ai.navigation;
+package com.hoopawolf.mwaw.entities.ai.controller;
 
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;

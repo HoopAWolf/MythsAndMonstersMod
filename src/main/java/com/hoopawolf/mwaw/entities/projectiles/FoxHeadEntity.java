@@ -162,27 +162,28 @@ public class FoxHeadEntity extends DamagingProjectileEntity
                     {
                         ((PlayerEntity) entity).dropItem(((PlayerEntity) entity).inventory.getStackInSlot(((PlayerEntity) entity).inventory.currentItem), true, false);
                         ((PlayerEntity) entity).inventory.removeStackFromSlot(((PlayerEntity) entity).inventory.currentItem);
-                    }
-
-                    this.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1.0F, 1.0F);
-
-                    entity.attackEntityFrom(new EntityDamageSource("foxhead", this.owner), 8.0F);
-
-                    int i = 0;
-                    if (this.world.getDifficulty() == Difficulty.NORMAL)
+                    } else if (entity instanceof LivingEntity)
                     {
-                        i = 10;
-                    } else if (this.world.getDifficulty() == Difficulty.HARD)
-                    {
-                        i = 40;
-                    }
+                        this.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1.0F, 1.0F);
 
-                    if (i > 0)
-                    {
-                        ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20 * i, 1));
-                    }
+                        entity.attackEntityFrom(new EntityDamageSource("foxhead", this.owner), 8.0F);
 
-                    this.setDeadEffect();
+                        int i = 0;
+                        if (this.world.getDifficulty() == Difficulty.NORMAL)
+                        {
+                            i = 10;
+                        } else if (this.world.getDifficulty() == Difficulty.HARD)
+                        {
+                            i = 40;
+                        }
+
+                        if (i > 0)
+                        {
+                            ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20 * i, 1));
+                        }
+
+                        this.setDeadEffect();
+                    }
                 }
             }
         }

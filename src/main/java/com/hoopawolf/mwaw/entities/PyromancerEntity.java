@@ -2,7 +2,7 @@ package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.client.animation.AnimationHelper;
 import com.hoopawolf.mwaw.client.animation.PercentageRotation;
-import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.projectiles.SpiritBombEntity;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
@@ -852,6 +852,8 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
                 bomb.accelerationX = 0;
                 bomb.accelerationY = 0;
                 bomb.accelerationZ = 0;
+                bomb.setMotion(0.0D, 0.0D, 0.0D);
+                bomb.setVelocity(0.0D, 0.0D, 0.0D);
 
                 if (bomb.getChargeTimer() >= 100 || (entityHost.getHealth() / startHealth) * 100F < 80)
                 {
@@ -961,7 +963,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
             entityHost.setMotion(0.0D, 0.0D, 0.0D);
             entityHost.setVelocity(0.0D, 0.0D, 0.0D);
 
-            if (spiritList.size() < 5)
+            if (spiritList.size() < 3)
             {
                 if (entityHost.ticksExisted % 10 == 0)
                 {

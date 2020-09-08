@@ -2,7 +2,7 @@ package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
-import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.projectiles.ClayEntity;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;

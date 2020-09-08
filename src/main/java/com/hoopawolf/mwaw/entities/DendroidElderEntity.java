@@ -3,7 +3,7 @@ package com.hoopawolf.mwaw.entities;
 import com.hoopawolf.mwaw.client.animation.AnimationHelper;
 import com.hoopawolf.mwaw.client.animation.PercentageRotation;
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
-import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.entities.helper.MathFuncHelper;
@@ -333,16 +333,18 @@ public class DendroidElderEntity extends CreatureEntity
                         animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-45, 0, 0)));
                     }
 
-                    if (getAttackTimer() > attackTimerMax * 0.5F)
+                    if (getAttackTimer() > attackTimerMax * 0.3F)
                     {
                         if (getAttackingArm())
                         {
                             animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-95, -35, 0)));
                             animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(-55, 0, 0)));
+                            animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(-15, -11, 0)));
                         } else
                         {
                             animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-95, 35, 0)));
                             animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(-55, 0, 0)));
+                            animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(-15, 11, 0)));
                         }
                     } else if (getAttackTimer() > 0)
                     {
@@ -350,10 +352,12 @@ public class DendroidElderEntity extends CreatureEntity
                         {
                             animation.registerRotationPoints(LEFT_ARM_ROTATION, new PercentageRotation(getLeftArmRotation(), new Rotations(-55, 25, 0)));
                             animation.registerRotationPoints(LEFT_JOINT_ROTATION, new PercentageRotation(getLeftJointRotation(), new Rotations(0, 0, 20)));
+                            animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(10, 22, -3)));
                         } else
                         {
                             animation.registerRotationPoints(RIGHT_ARM_ROTATION, new PercentageRotation(getRightArmRotation(), new Rotations(-55, -25, 0)));
                             animation.registerRotationPoints(RIGHT_JOINT_ROTATION, new PercentageRotation(getRightJointRotation(), new Rotations(0, 0, -20)));
+                            animation.registerRotationPoints(BODY_ROTATION, new PercentageRotation(getBodyRotation(), new Rotations(10, -22, 3)));
                         }
                     } else
                     {

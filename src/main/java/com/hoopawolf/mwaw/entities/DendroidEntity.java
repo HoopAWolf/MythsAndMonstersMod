@@ -1,7 +1,7 @@
 package com.hoopawolf.mwaw.entities;
 
 import com.hoopawolf.mwaw.entities.ai.RangedAttackWithStrafeGoal;
-import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import net.minecraft.block.BlockState;

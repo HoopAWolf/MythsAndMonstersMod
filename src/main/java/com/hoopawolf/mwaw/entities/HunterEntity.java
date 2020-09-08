@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.hoopawolf.mwaw.entities.ai.LookAtCustomerHunterGoal;
 import com.hoopawolf.mwaw.entities.ai.RangedBowAttackHunterGoal;
 import com.hoopawolf.mwaw.entities.ai.TradeWithPlayerHunterGoal;
-import com.hoopawolf.mwaw.entities.ai.navigation.MWAWMovementController;
+import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.merchant.Trades;
 import net.minecraft.entity.*;
