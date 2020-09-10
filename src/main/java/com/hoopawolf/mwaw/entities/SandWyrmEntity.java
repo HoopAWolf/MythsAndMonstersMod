@@ -33,6 +33,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -364,7 +365,9 @@ public class SandWyrmEntity extends CreatureEntity implements IMob
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
     {
-        return worldIn.canSeeSky(getPosition());
+        int y = world.getHeight(Heightmap.Type.MOTION_BLOCKING, getPosition().getX(), getPosition().getZ());
+
+        return worldIn.canSeeSky(this.getPosition()) && (int) this.getPosY() == y;
     }
 
     @Override

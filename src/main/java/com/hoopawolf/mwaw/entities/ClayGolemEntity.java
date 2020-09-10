@@ -32,6 +32,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -66,7 +67,7 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
         return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 250.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D).createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D);
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D);
     }
 
     @Override
@@ -241,7 +242,9 @@ public class ClayGolemEntity extends CreatureEntity implements IMob, IRangedAtta
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
     {
-        return worldIn.canSeeSky(getPosition());
+        int y = world.getHeight(Heightmap.Type.MOTION_BLOCKING, getPosition().getX(), getPosition().getZ());
+
+        return worldIn.canSeeSky(this.getPosition()) && (int) this.getPosY() == y;
     }
 
     @Override

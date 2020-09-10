@@ -76,7 +76,7 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
 
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
-        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 100.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 100.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.35D);
     }
 
     @Override
@@ -843,7 +843,6 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
             }
 
             entityHost.setMotion(0.0D, 0.0D, 0.0D);
-            entityHost.setVelocity(0.0D, 0.0D, 0.0D);
 
             if (getSpiritBombTimer() > 0.5F)
             {
@@ -853,7 +852,6 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
                 bomb.accelerationY = 0;
                 bomb.accelerationZ = 0;
                 bomb.setMotion(0.0D, 0.0D, 0.0D);
-                bomb.setVelocity(0.0D, 0.0D, 0.0D);
 
                 if (bomb.getChargeTimer() >= 100 || (entityHost.getHealth() / startHealth) * 100F < 80)
                 {
@@ -961,7 +959,6 @@ public class PyromancerEntity extends CreatureEntity implements IRangedAttackMob
             }
 
             entityHost.setMotion(0.0D, 0.0D, 0.0D);
-            entityHost.setVelocity(0.0D, 0.0D, 0.0D);
 
             if (spiritList.size() < 3)
             {

@@ -91,7 +91,7 @@ public class DendroidElderEntity extends CreatureEntity
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
         return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 140.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 7.0D)
-                .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D);
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D);
     }
 
     @Override

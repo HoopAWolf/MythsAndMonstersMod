@@ -5,7 +5,6 @@ import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.entities.projectiles.SapEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -25,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 
 public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
 {
@@ -41,8 +41,8 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
 
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
-        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 10.0D).createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
-                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D);
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 10.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D);
     }
 
     @Override
@@ -102,7 +102,9 @@ public class DendroidEntity extends CreatureEntity implements IRangedAttackMob
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
     {
-        return worldIn.canSeeSky(getPosition()) && worldIn.getBlockState(this.getPositionUnderneath()).getBlock().equals(Blocks.GRASS_BLOCK);
+        int y = world.getHeight(Heightmap.Type.MOTION_BLOCKING, getPosition().getX(), getPosition().getZ());
+
+        return worldIn.canSeeSky(this.getPosition()) && (int) this.getPosY() == y;
     }
 
     @Override

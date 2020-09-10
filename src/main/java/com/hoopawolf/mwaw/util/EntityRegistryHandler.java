@@ -86,7 +86,7 @@ public class EntityRegistryHandler
             .build("firespirit"));
 
     public static final RegistryObject<EntityType<DropBearEntity>> DROP_BEAR_ENTITY = ENTITIES.register("dropbear", () -> EntityType.Builder.create(DropBearEntity::new, EntityClassification.CREATURE)
-            .size(0.4F, 0.8F)
+            .size(0.7F, 0.9F)
             .setShouldReceiveVelocityUpdates(false)
             .build("dropbear"));
 
