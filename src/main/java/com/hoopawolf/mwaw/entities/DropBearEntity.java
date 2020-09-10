@@ -378,9 +378,15 @@ public class DropBearEntity extends CreatureEntity implements IMob
     }
 
     @Override
+    protected float getSoundPitch()
+    {
+        return this.rand.nextFloat() - this.rand.nextFloat() * 0.2F + 1.9F;
+    }
+
+    @Override
     protected SoundEvent getAmbientSound()
     {
-        return null;
+        return (isTired() ? SoundEvents.ENTITY_FOX_SLEEP : null);
     }
 
     @Override
@@ -601,7 +607,10 @@ public class DropBearEntity extends CreatureEntity implements IMob
                                 }
                             } else
                             {
-                                break;
+                                if (y >= 3)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
