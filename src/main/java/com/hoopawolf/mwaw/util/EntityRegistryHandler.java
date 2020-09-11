@@ -133,7 +133,7 @@ public class EntityRegistryHandler
         {
             biome.getSpawns(classification).add(new Biome.SpawnListEntry(entity, weight, minGroup, maxGroup));
         }
-    }
+    }//TODO ADD KITSUNE SPAWN IN VILLAGE, SPAWNING RATE NEED FIX
 
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenderer()
@@ -158,7 +158,8 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(SPIRIT_BOMB_ENTITY.get(), SpiritBombRenderer::new);
 
         RenderTypeLookup.setRenderLayer(ItemBlockRegistryHandler.FAIRY_MUSHROOM_BLOCK.get(), RenderType.getCutout());
-    }//TODO ADD KITSUNE SPAWN IN VILLAGE, SPAWNING RATE NEED FIX
+        RenderTypeLookup.setRenderLayer(ItemBlockRegistryHandler.DENDROID_ROOTS_BLOCK.get(), RenderType.getCutout());
+    }
 
     public static void registerEntityAttributes()
     {

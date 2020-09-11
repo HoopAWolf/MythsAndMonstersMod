@@ -10,10 +10,8 @@ import com.hoopawolf.mwaw.entities.helper.MathFuncHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import com.hoopawolf.mwaw.network.packets.client.SpawnSuckingParticleMessage;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.IGrowable;
-import net.minecraft.block.LeavesBlock;
+import com.hoopawolf.mwaw.util.ItemBlockRegistryHandler;
+import net.minecraft.block.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -564,6 +562,38 @@ public class DendroidElderEntity extends CreatureEntity
     }
 
     @Override
+    protected void onDeathUpdate()
+    {
+        int radius = 5;
+
+        if (!this.world.isRemote)
+        {
+            for (float y = -radius; y < radius; ++y)
+            {
+                for (float x = -radius; x < radius; ++x)
+                {
+                    for (float z = -radius; z < radius; ++z)
+                    {
+                        BlockPos blockPos = new BlockPos(x + this.getPosX(), y + this.getPosY(), z + this.getPosZ());
+
+                        if (world.rand.nextInt(100) < 10)
+                        {
+                            if (this.world.getBlockState(blockPos).getBlock() instanceof SpreadableSnowyDirtBlock)
+                            {
+                                if (!this.world.getBlockState(new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ())).isSolid())
+                                {
+                                    this.world.setBlockState(new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ()), ItemBlockRegistryHandler.DENDROID_ROOTS_BLOCK.get().getDefaultState());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            this.remove();
+        }
+    }
+
+    @Override
     public boolean attackEntityAsMob(Entity entityIn)
     {
         this.setAttackTimer(attackTimerMax);
@@ -702,7 +732,10 @@ public class DendroidElderEntity extends CreatureEntity
 
                                 if (host.world.getBlockState(chosenBlock).getBlock() instanceof IGrowable && !(host.world.getBlockState(chosenBlock).getBlock() instanceof IPlantable))
                                 {
-                                    host.world.setBlockState(chosenBlock, Blocks.COARSE_DIRT.getDefaultState());
+                                    if (host.world.rand.nextInt(100) > 30)
+                                    {
+                                        host.world.setBlockState(chosenBlock, Blocks.COARSE_DIRT.getDefaultState());
+                                    }
                                 } else
                                 {
                                     host.world.setBlockState(chosenBlock, Blocks.AIR.getDefaultState());
@@ -766,6 +799,20 @@ public class DendroidElderEntity extends CreatureEntity
                         }
 
                         host.playSound(SoundEvents.ENTITY_EVOKER_CAST_SPELL, 5.0F, 0.1F);
+
+                        if (host.getAbsorbTimer() == host.getAbsorbTimerMax())
+                        {
+                            if (natureBlocks.size() > 0)
+                            {
+                                for (BlockPos pos : natureBlocks)
+                                {
+                                    if (host.world.getBlockState(pos).getBlock() instanceof IGrowable && !(host.world.getBlockState(pos).getBlock() instanceof IPlantable))
+                                    {
+                                        host.world.setBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()), ItemBlockRegistryHandler.DENDROID_ROOTS_BLOCK.get().getDefaultState());
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

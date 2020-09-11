@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mwaw:items/airegg"
+    "layer0": "mwaw:blocks/dendroidroots"
   },
   "display": {
     "thirdperson": {

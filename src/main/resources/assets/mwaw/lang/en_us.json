@@ -64,14 +64,11 @@
   "item.mwaw.dendroidelderspawnegg": "Dendroid Elder Spawn Egg",
   "item.mwaw.pyrospawnegg": "Pyromancer Spawn Egg",
   "item.mwaw.dropbearspawnegg": "Drop Bear Spawn Egg",
-
   "block.mwaw.fairymushroom": "Fairy Mushroom",
+  "block.mwaw.dendroidroots": "Dendroid Roots",
   "block.mwaw.corpsewood": "Corpse Log",
-
   "effect.mwaw.claysloweffect": "Clay Slug Effect",
-
   "itemGroup.mwawItemGroup": "Myths & Monsters",
-
   "tooltip.mwaw:dendroidinfo": "Hold Logs in your offhand to repair this weapon",
   "tooltip.mwaw:marrowinfo": "Turns hunger into health upon taking damage",
   "tooltip.mwaw:shard": "Infused with",
