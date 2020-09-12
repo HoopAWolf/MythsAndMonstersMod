@@ -562,7 +562,7 @@ public class DendroidElderEntity extends CreatureEntity
     }
 
     @Override
-    protected void onDeathUpdate()
+    public void remove()
     {
         int radius = 5;
 
@@ -576,7 +576,7 @@ public class DendroidElderEntity extends CreatureEntity
                     {
                         BlockPos blockPos = new BlockPos(x + this.getPosX(), y + this.getPosY(), z + this.getPosZ());
 
-                        if (world.rand.nextInt(100) < 10)
+                        if (world.rand.nextInt(100) < 40)
                         {
                             if (this.world.getBlockState(blockPos).getBlock() instanceof SpreadableSnowyDirtBlock)
                             {
@@ -589,7 +589,7 @@ public class DendroidElderEntity extends CreatureEntity
                     }
                 }
             }
-            this.remove();
+            super.remove();
         }
     }
 
@@ -732,10 +732,7 @@ public class DendroidElderEntity extends CreatureEntity
 
                                 if (host.world.getBlockState(chosenBlock).getBlock() instanceof IGrowable && !(host.world.getBlockState(chosenBlock).getBlock() instanceof IPlantable))
                                 {
-                                    if (host.world.rand.nextInt(100) > 30)
-                                    {
-                                        host.world.setBlockState(chosenBlock, Blocks.COARSE_DIRT.getDefaultState());
-                                    }
+                                    host.world.setBlockState(chosenBlock, Blocks.COARSE_DIRT.getDefaultState());
                                 } else
                                 {
                                     host.world.setBlockState(chosenBlock, Blocks.AIR.getDefaultState());
