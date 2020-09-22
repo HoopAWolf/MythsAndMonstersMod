@@ -90,6 +90,10 @@ public class EntityRegistryHandler
             .setShouldReceiveVelocityUpdates(false)
             .build("dropbear"));
 
+    public static final RegistryObject<EntityType<JackalopeEntity>> JACKALOPE_ENTITY = ENTITIES.register("jackalope", () -> EntityType.Builder.create(JackalopeEntity::new, EntityClassification.CREATURE)
+            .size(1.0F, 1.2F)
+            .setShouldReceiveVelocityUpdates(false)
+            .build("jackalope"));
 
     //PROJECTILE
     public static final RegistryObject<EntityType<GoldenArrowEntity>> GOLDEN_ARROW_ENTITY = ENTITIES.register("goldenarrow", () -> EntityType.Builder.<GoldenArrowEntity>create(GoldenArrowEntity::new, EntityClassification.MISC)
@@ -150,6 +154,7 @@ public class EntityRegistryHandler
         RenderingRegistry.registerEntityRenderingHandler(PYRO_ENTITY.get(), PyromancerRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(FIRE_SPIRIT_ENTITY.get(), FireSpiritRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(DROP_BEAR_ENTITY.get(), DropBearRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(JACKALOPE_ENTITY.get(), JackalopeRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(GOLDEN_ARROW_ENTITY.get(), GoldenArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SAP_ENTITY.get(), m -> new SpriteRenderer<SapEntity>(m, Minecraft.getInstance().getItemRenderer()));
@@ -175,5 +180,6 @@ public class EntityRegistryHandler
         GlobalEntityTypeAttributes.put(PYRO_ENTITY.get(), PyromancerEntity.func_234321_m_().create());
         GlobalEntityTypeAttributes.put(FIRE_SPIRIT_ENTITY.get(), FireSpiritEntity.func_234321_m_().create());
         GlobalEntityTypeAttributes.put(DROP_BEAR_ENTITY.get(), DropBearEntity.func_234321_m_().create());
+        GlobalEntityTypeAttributes.put(JACKALOPE_ENTITY.get(), JackalopeEntity.func_234321_m_().create());
     }
 }
