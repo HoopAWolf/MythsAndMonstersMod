@@ -65,4 +65,9 @@ public class AnimationHelper
     {
         return x == 0 && y == 0 && z == 0;
     }
+
+    public void resetRotation(EntityDataManager dataManager, DataParameter<Rotations> data)
+    {
+        dataManager.set(data, new Rotations(0, 0, 0));
+    }
 }

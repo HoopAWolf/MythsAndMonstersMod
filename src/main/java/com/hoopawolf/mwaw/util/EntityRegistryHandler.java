@@ -91,7 +91,7 @@ public class EntityRegistryHandler
             .build("dropbear"));
 
     public static final RegistryObject<EntityType<JackalopeEntity>> JACKALOPE_ENTITY = ENTITIES.register("jackalope", () -> EntityType.Builder.create(JackalopeEntity::new, EntityClassification.CREATURE)
-            .size(1.0F, 1.2F)
+            .size(1.0F, 1.0F)
             .setShouldReceiveVelocityUpdates(false)
             .build("jackalope"));
 

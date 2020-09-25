@@ -19,6 +19,22 @@ public class JackalopeRenderer extends MobRenderer<JackalopeEntity, JackalopeMod
         super(renderManagerIn, new JackalopeModel(), 0.7F);
     }
 
+//    @Override
+//    public void render(JackalopeEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+//    {
+//        if(entityIn.isEscaping())
+//        {
+//            matrixStackIn.push();
+//            matrixStackIn.translate(0.0D, entityIn.getEscapingTimer() * 2.0D, 0.0D);
+//            super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+//            matrixStackIn.pop();
+//        }
+//        else
+//        {
+//            super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+//        }
+//    }
+
     @Override
     public ResourceLocation getEntityTexture(JackalopeEntity entity)
     {

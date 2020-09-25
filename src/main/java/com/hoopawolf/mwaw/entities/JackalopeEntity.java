@@ -3,7 +3,6 @@ package com.hoopawolf.mwaw.entities;
 import com.hoopawolf.mwaw.entities.ai.MWAWMeleeAttackGoal;
 import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
-import com.hoopawolf.mwaw.entities.helper.EntityHelper;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
 import net.minecraft.block.BlockState;
@@ -12,7 +11,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -26,47 +24,45 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
 
 public class JackalopeEntity extends CreatureEntity
 {
     private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Float> TIME_REARING = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.FLOAT);
-    private static final DataParameter<Float> PREV_TIME_REARING = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.FLOAT);
-
-    private int sheepTimer,
-            ramingCoolDown;
+    private static final DataParameter<Boolean> ESCAPE = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Float> ESCAPE_TIMER = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.FLOAT);
+    private int ramingCoolDown,
+            escapeCoolDown;
     private boolean isRamming;
+    private Vector3d attackedPos;
 
     public JackalopeEntity(EntityType<? extends JackalopeEntity> type, World worldIn)
     {
         super(type, worldIn);
         ramingCoolDown = 0;
+        escapeCoolDown = 0;
         this.stepHeight = 1.0F;
+        attackedPos = null;
         this.moveController = new MWAWMovementController(this, 30);
     }
 
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
-        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 70.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 70.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
                 .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 
     @Override
     protected void registerGoals()
     {
-        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setCallsForHelp());
-
         this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(0, new AvoidPlayerJackalopeGoal(this, PlayerEntity.class, 10.0F, 1.0D, 1.2D));
         this.goalSelector.addGoal(3, new JackalopeEntity.RammingGoal(this));
-        this.goalSelector.addGoal(4, new JackalopeEntity.LeapAtTargetRamGoal(this, 0.4F));
-        this.goalSelector.addGoal(5, new JackalopeEntity.MeleeRamGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(3, new JackalopeEntity.EscapeGoal(this));
+        this.goalSelector.addGoal(4, new JackalopeEntity.LeapAtTargetJackalopeGoal(this, 0.4F));
+        this.goalSelector.addGoal(5, new JackalopeEntity.MeleeJackalopeGoal(this, 1.0D, true));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-        this.goalSelector.addGoal(7, new JackalopeEntity.LookAtRamGoal(this, PlayerEntity.class, 6.0F));
-        this.goalSelector.addGoal(8, new JackalopeEntity.LookAtRandomRamGoal(this));
+        this.goalSelector.addGoal(7, new JackalopeEntity.LookAtJackalopeGoal(this, PlayerEntity.class, 10.0F));
+        this.goalSelector.addGoal(8, new JackalopeEntity.LookAtRandomJackalopeGoal(this));
     }
 
     @Override
@@ -84,6 +80,11 @@ public class JackalopeEntity extends CreatureEntity
             {
                 --ramingCoolDown;
             }
+
+            if (escapeCoolDown > 0)
+            {
+                --escapeCoolDown;
+            }
         }
 
         super.updateAITasks();
@@ -93,11 +94,6 @@ public class JackalopeEntity extends CreatureEntity
     public void livingTick()
     {
         super.livingTick();
-
-        if (this.world.isRemote)
-        {
-            this.sheepTimer = Math.max(0, this.sheepTimer - 1);
-        }
 
         if (!this.world.isRemote)
         {
@@ -109,33 +105,17 @@ public class JackalopeEntity extends CreatureEntity
                 this.setAngry(true);
             }
 
-            if (isRamming)
+            if (isRamming || isEscaping())
             {
                 isJumping = false;
                 moveStrafing = 0.0F;
                 moveForward = 0.0F;
                 navigator.clearPath();
-            } else
-            {
-                if (this.getRearTime() > 0)
-                {
-                    this.setRearTime(this.getRearTime() + (0.8F * this.getRearTime() * this.getRearTime() * this.getRearTime() - this.getRearTime()) * 0.8F - 0.05F);
-                } else if (this.getRearTime() < 0)
-                {
-                    this.setRearTime(0.0F);
-                }
             }
 
-            if (getHealth() <= (getMaxHealth() * 0.5F) && ticksExisted % 5 == 0)
+            if (isEscaping())
             {
-                List<LivingEntity> entities = EntityHelper.getEntityLivingBaseNearby(this, 10, 3, 10, 10);
-                for (LivingEntity entity : entities)
-                {
-                    if (entity instanceof AnimalEntity && ((AnimalEntity) entity).getAttackTarget() == null)
-                    {
-                        ((AnimalEntity) entity).setAttackTarget(this.getAttackTarget());
-                    }
-                }
+                setEscapeTimer(getEscapingTimer() + 0.1F);
             }
         }
     }
@@ -145,21 +125,8 @@ public class JackalopeEntity extends CreatureEntity
     {
         super.registerData();
         this.dataManager.register(ANGRY, false);
-        this.dataManager.register(TIME_REARING, 0.0F);
-        this.dataManager.register(PREV_TIME_REARING, 0.0F);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void handleStatusUpdate(byte id)
-    {
-        if (id == 10)
-        {
-            this.sheepTimer = 40;
-        } else
-        {
-            super.handleStatusUpdate(id);
-        }
+        this.dataManager.register(ESCAPE, false);
+        this.dataManager.register(ESCAPE_TIMER, 0.0F);
     }
 
     public boolean isAngry()
@@ -172,58 +139,24 @@ public class JackalopeEntity extends CreatureEntity
         this.dataManager.set(ANGRY, angry);
     }
 
-    public float getPrevRearTime()
+    public boolean isEscaping()
     {
-        return this.dataManager.get(PREV_TIME_REARING);
+        return this.dataManager.get(ESCAPE);
     }
 
-    public void setPrevRearTime(float _prevreartime)
+    public void setEscape(boolean escape)
     {
-        this.dataManager.set(PREV_TIME_REARING, _prevreartime);
+        this.dataManager.set(ESCAPE, escape);
     }
 
-    public float getRearTime()
+    public float getEscapingTimer()
     {
-        return this.dataManager.get(TIME_REARING);
+        return this.dataManager.get(ESCAPE_TIMER);
     }
 
-    public void setRearTime(float _reartime)
+    public void setEscapeTimer(float escapeTimerIn)
     {
-        this.dataManager.set(TIME_REARING, _reartime);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public float getHeadRotationPointY(float p_70894_1_)
-    {
-        if (this.sheepTimer <= 0)
-        {
-            return 0.0F;
-        } else if (this.sheepTimer >= 4 && this.sheepTimer <= 36)
-        {
-            return 1.0F;
-        } else
-        {
-            return this.sheepTimer < 4 ? ((float) this.sheepTimer - p_70894_1_) / 4.0F : -((float) (this.sheepTimer - 40) - p_70894_1_) / 4.0F;
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public float getHeadRotationAngleX(float p_70890_1_)
-    {
-        if (this.sheepTimer > 4 && this.sheepTimer <= 36)
-        {
-            float f = ((float) (this.sheepTimer - 4) - p_70890_1_) / 32.0F;
-            return ((float) Math.PI / 5F) + 0.21991149F * MathHelper.sin(f * 28.7F);
-        } else
-        {
-            return this.sheepTimer > 0 ? ((float) Math.PI / 5F) : this.rotationPitch * ((float) Math.PI / 180F);
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public float getRearingAmount(float p_110223_1_)
-    {
-        return MathHelper.lerp(p_110223_1_, this.getPrevRearTime(), this.getRearTime());
+        this.dataManager.set(ESCAPE_TIMER, escapeTimerIn);
     }
 
     @Override
@@ -243,25 +176,60 @@ public class JackalopeEntity extends CreatureEntity
     @Override
     protected SoundEvent getAmbientSound()
     {
-        return SoundEvents.ENTITY_SHEEP_AMBIENT;
+        return SoundEvents.ENTITY_RABBIT_AMBIENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
-        return SoundEvents.ENTITY_SHEEP_HURT;
+        return SoundEvents.ENTITY_RABBIT_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound()
     {
-        return SoundEvents.ENTITY_SHEEP_DEATH;
+        return SoundEvents.ENTITY_RABBIT_DEATH;
     }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn)
     {
         this.playSound(SoundEvents.ENTITY_SHEEP_STEP, 0.15F, 1.0F);
+    }
+
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount)
+    {
+        if (!world.isRemote)
+        {
+            if (source.getImmediateSource() != null && !isRamming)
+            {
+                setEscape(true);
+                attackedPos = new Vector3d(source.getImmediateSource().getPosition().getX(), source.getImmediateSource().getPosition().getY(), source.getImmediateSource().getPosition().getZ());
+
+                if (world.rand.nextInt(100) < 50)
+                {
+                    if (source.getTrueSource() != null)
+                    {
+                        double d1 = source.getTrueSource().getPosX() - this.getPosX();
+
+                        double d0;
+                        for (d0 = source.getTrueSource().getPosZ() - this.getPosZ(); d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D)
+                        {
+                            d1 = (Math.random() - Math.random()) * 0.01D;
+                        }
+
+                        this.attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * (double) (180F / (float) Math.PI) - (double) this.rotationYaw);
+                        this.applyKnockback(0.4F, d1, d0);
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        return super.attackEntityFrom(source, amount);
+
     }
 
     @Override
@@ -273,7 +241,6 @@ public class JackalopeEntity extends CreatureEntity
     private class RammingGoal extends Goal
     {
         private final JackalopeEntity entity;
-        private boolean isRearing, isRamming;
         private Vector3d motion;
         private int timer;
 
@@ -285,22 +252,21 @@ public class JackalopeEntity extends CreatureEntity
         @Override
         public boolean shouldExecute()
         {
-            return rand.nextInt(100) < 40 && ramingCoolDown <= 0 && !entity.isRamming
-                    && entity.isOnGround() && entity.getAttackTarget() != null;
+            return ramingCoolDown <= 0 && !entity.isRamming
+                    && entity.isOnGround() && entity.getAttackTarget() != null && entity.getAttackTarget().getDistance(entity) < 5;
         }
 
         @Override
         public boolean shouldContinueExecuting()
         {
-            return entity.isRamming && entity.getAttackTarget() != null;
+            return entity.isRamming && entity.getAttackTarget() != null && entity.getAttackTarget().getDistance(entity) < 5;
         }
 
         @Override
         public void startExecuting()
         {
-            entity.isRamming = true;
-            isRamming = false;
-            isRearing = true;
+            entity.isRamming = false;
+            entity.setEscape(false);
             timer = 0;
         }
 
@@ -316,54 +282,24 @@ public class JackalopeEntity extends CreatureEntity
         @Override
         public void tick()
         {
-            entity.setPrevRearTime(entity.getRearTime());
             entity.getLookController().setLookPosition(entity.getAttackTarget().getPosX(), entity.getAttackTarget().getPosYEye(), entity.getAttackTarget().getPosZ());
             entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
 
-            if (isRearing)
+            if (!isRamming)
             {
                 double d2 = entity.getAttackTarget().getPosX() - entity.getPosX();
                 double d1 = entity.getAttackTarget().getPosZ() - entity.getPosZ();
                 entity.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
                 entity.renderYawOffset = entity.rotationYaw;
 
-                entity.setRearTime(entity.getRearTime() + (1.0F - entity.getRearTime()) * 0.2F + 0.05F);
-                if (entity.getRearTime() > 1.0F)
+                isRamming = true;
+
+                if (entity.getAttackTarget() != null)
                 {
-                    entity.setRearTime(1.0F);
-                    isRearing = false;
-                }
-            } else if (!isRamming)
-            {
-                entity.setRearTime(entity.getRearTime() + (0.8F * entity.getRearTime() * entity.getRearTime() * entity.getRearTime() - entity.getRearTime()) * 0.8F - 0.05F);
-                double d2 = entity.getAttackTarget().getPosX() - entity.getPosX();
-                double d1 = entity.getAttackTarget().getPosZ() - entity.getPosZ();
-                entity.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
-                entity.renderYawOffset = entity.rotationYaw;
+                    Vector3d dir = entity.getAttackTarget().getPositionVec().subtract(entity.getPositionVec()).normalize();
+                    motion = new Vector3d(dir.x, dir.y, dir.z);
 
-                if (entity.getRearTime() < 0.0F)
-                {
-                    entity.setRearTime(0.0F);
-                    isRamming = true;
-
-                    if (entity.getAttackTarget() != null)
-                    {
-                        Vector3d dir = entity.getAttackTarget().getPositionVec().subtract(entity.getPositionVec()).normalize();
-                        motion = new Vector3d(dir.x * 1.5F, dir.y, dir.z * 1.5F);
-
-                        for (int i = 1; i <= 180; ++i)
-                        {
-                            double yaw = i * 360 / 180;
-                            double speed = 5.5;
-                            double xSpeed = speed * Math.cos(Math.toRadians(yaw));
-                            double zSpeed = speed * Math.sin(Math.toRadians(yaw));
-
-                            SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(getPosX(), getPosY() + 0.1F, getPosZ()), new Vector3d(xSpeed, 0.0D, zSpeed), 3, 2, 0.0F);
-                            MWAWPacketHandler.packetHandler.sendToDimension(entity.world.func_234923_W_(), spawnParticleMessage);
-                        }
-
-                        entity.playSound(SoundEvents.ENTITY_PUFFER_FISH_BLOW_OUT, 3.0F, 0.1F);
-                    }
+                    entity.playSound(SoundEvents.BLOCK_WOOL_PLACE, 3.0F, 0.1F);
                 }
             } else if (isRamming)
             {
@@ -384,7 +320,7 @@ public class JackalopeEntity extends CreatureEntity
                     entity.isRamming = false;
                     entity.ramingCoolDown = 100;
                     entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
-                    entity.playSound(SoundEvents.BLOCK_ANVIL_LAND, 1.0F, 0.1F);
+                    entity.playSound(SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, 1.0F, 0.1F);
                 }
 
                 if (!world.isRemote)
@@ -392,7 +328,7 @@ public class JackalopeEntity extends CreatureEntity
                     for (int j = 0; j < 10; ++j)
                     {
                         SpawnParticleMessage spawnParticleMessage = new SpawnParticleMessage(new Vector3d(JackalopeEntity.this.getPosX(), JackalopeEntity.this.getPosY() + JackalopeEntity.this.getEyeHeight(), JackalopeEntity.this.getPosZ()),
-                                new Vector3d(0.0f, -0.1f, 0.0f), 4, 6, getWidth());
+                                new Vector3d(0.0f, -0.1f, 0.0f), 4, 4, getWidth());
                         MWAWPacketHandler.packetHandler.sendToDimension(JackalopeEntity.this.world.func_234923_W_(), spawnParticleMessage);
                     }
                 }
@@ -409,11 +345,70 @@ public class JackalopeEntity extends CreatureEntity
         }
     }
 
+    private class EscapeGoal extends Goal
+    {
+        private final JackalopeEntity entity;
+        private Vector3d motion;
 
-    private class LeapAtTargetRamGoal extends LeapAtTargetGoal
+        public EscapeGoal(JackalopeEntity _entity)
+        {
+            entity = _entity;
+        }
+
+        @Override
+        public boolean shouldExecute()
+        {
+            return entity.isEscaping() && attackedPos != null;
+        }
+
+        @Override
+        public boolean shouldContinueExecuting()
+        {
+            return entity.isEscaping() && entity.getEscapingTimer() < 0.5F;
+        }
+
+        @Override
+        public void startExecuting()
+        {
+            double d2 = attackedPos.getX() - entity.getPosX();
+            double d1 = attackedPos.getZ() - entity.getPosZ();
+            entity.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
+            entity.renderYawOffset = entity.rotationYaw;
+
+            Vector3d dir = attackedPos.subtract(entity.getPositionVec()).normalize().inverse();
+            motion = new Vector3d(dir.x * 0.09F, 0.0D, dir.z * 0.09F);
+            entity.playSound(SoundEvents.BLOCK_WOOL_PLACE, 3.0F, 0.1F);
+        }
+
+        @Override
+        public void resetTask()
+        {
+            entity.escapeCoolDown = 0;
+            attackedPos = null;
+            entity.setEscape(false);
+            entity.setEscapeTimer(0);
+            entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+        }
+
+        @Override
+        public void tick()
+        {
+            entity.getLookController().setLookPosition(attackedPos.getX(), attackedPos.getY() + 2, attackedPos.getZ());
+            entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D);
+
+            double d2 = attackedPos.getX() - entity.getPosX();
+            double d1 = attackedPos.getZ() - entity.getPosZ();
+            entity.rotationYaw = -((float) MathHelper.atan2(d2, d1)) * (180F / (float) Math.PI);
+            entity.renderYawOffset = entity.rotationYaw;
+
+            entity.setMotion(entity.getMotion().add(motion));
+        }
+    }
+
+    private class LeapAtTargetJackalopeGoal extends LeapAtTargetGoal
     {
 
-        public LeapAtTargetRamGoal(MobEntity leapingEntity, float leapMotionYIn)
+        public LeapAtTargetJackalopeGoal(MobEntity leapingEntity, float leapMotionYIn)
         {
             super(leapingEntity, leapMotionYIn);
         }
@@ -421,13 +416,13 @@ public class JackalopeEntity extends CreatureEntity
         @Override
         public boolean shouldExecute()
         {
-            return !JackalopeEntity.this.isRamming && super.shouldExecute();
+            return !JackalopeEntity.this.isRamming && super.shouldExecute() && !JackalopeEntity.this.isEscaping();
         }
     }
 
-    private class MeleeRamGoal extends MWAWMeleeAttackGoal
+    private class MeleeJackalopeGoal extends MWAWMeleeAttackGoal
     {
-        public MeleeRamGoal(CreatureEntity creature, double speedIn, boolean useLongMemory)
+        public MeleeJackalopeGoal(CreatureEntity creature, double speedIn, boolean useLongMemory)
         {
             super(creature, speedIn, useLongMemory);
         }
@@ -435,13 +430,13 @@ public class JackalopeEntity extends CreatureEntity
         @Override
         public boolean shouldExecute()
         {
-            return !JackalopeEntity.this.isRamming && super.shouldExecute();
+            return !JackalopeEntity.this.isRamming && super.shouldExecute() && !JackalopeEntity.this.isEscaping();
         }
     }
 
-    private class LookAtRamGoal extends LookAtGoal
+    private class LookAtJackalopeGoal extends LookAtGoal
     {
-        public LookAtRamGoal(MobEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance)
+        public LookAtJackalopeGoal(MobEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance)
         {
             super(entityIn, watchTargetClass, maxDistance);
         }
@@ -449,13 +444,13 @@ public class JackalopeEntity extends CreatureEntity
         @Override
         public boolean shouldExecute()
         {
-            return !JackalopeEntity.this.isRamming && super.shouldExecute();
+            return !JackalopeEntity.this.isRamming && super.shouldExecute() && !JackalopeEntity.this.isEscaping();
         }
     }
 
-    private class LookAtRandomRamGoal extends LookRandomlyGoal
+    private class LookAtRandomJackalopeGoal extends LookRandomlyGoal
     {
-        public LookAtRandomRamGoal(MobEntity entitylivingIn)
+        public LookAtRandomJackalopeGoal(MobEntity entitylivingIn)
         {
             super(entitylivingIn);
         }
@@ -463,7 +458,22 @@ public class JackalopeEntity extends CreatureEntity
         @Override
         public boolean shouldExecute()
         {
-            return !JackalopeEntity.this.isRamming && super.shouldExecute();
+            return !JackalopeEntity.this.isRamming && super.shouldExecute() && !JackalopeEntity.this.isEscaping();
+        }
+    }
+
+    private class AvoidPlayerJackalopeGoal extends AvoidEntityGoal
+    {
+
+        public AvoidPlayerJackalopeGoal(CreatureEntity entityIn, Class classToAvoidIn, float avoidDistanceIn, double farSpeedIn, double nearSpeedIn)
+        {
+            super(entityIn, classToAvoidIn, avoidDistanceIn, farSpeedIn, nearSpeedIn);
+        }
+
+        @Override
+        public boolean shouldExecute()
+        {
+            return (getAttackTarget() == null || JackalopeEntity.this.getHealth() < 5) && super.shouldExecute();
         }
     }
 }
