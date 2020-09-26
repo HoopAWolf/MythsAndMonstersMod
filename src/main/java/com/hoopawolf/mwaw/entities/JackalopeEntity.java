@@ -5,12 +5,14 @@ import com.hoopawolf.mwaw.entities.ai.controller.MWAWMovementController;
 import com.hoopawolf.mwaw.entities.ai.navigation.MWAWPathNavigateGround;
 import com.hoopawolf.mwaw.network.MWAWPacketHandler;
 import com.hoopawolf.mwaw.network.packets.client.SpawnParticleMessage;
+import com.hoopawolf.mwaw.util.EntityRegistryHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -25,7 +27,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class JackalopeEntity extends CreatureEntity
+public class JackalopeEntity extends AnimalEntity
 {
     private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ESCAPE = EntityDataManager.createKey(JackalopeEntity.class, DataSerializers.BOOLEAN);
@@ -47,7 +49,7 @@ public class JackalopeEntity extends CreatureEntity
 
     public static AttributeModifierMap.MutableAttribute func_234321_m_()
     {
-        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 70.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        return MonsterEntity.func_234295_eP_().createMutableAttribute(Attributes.MAX_HEALTH, 14.0D).createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.0D)
                 .createMutableAttribute(Attributes.FOLLOW_RANGE, 12.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 
@@ -118,6 +120,13 @@ public class JackalopeEntity extends CreatureEntity
                 setEscapeTimer(getEscapingTimer() + 0.1F);
             }
         }
+    }
+
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable)
+    {
+        JackalopeEntity jackalopebaby = new JackalopeEntity(EntityRegistryHandler.JACKALOPE_ENTITY.get(), world);
+        return jackalopebaby;
     }
 
     @Override
@@ -225,17 +234,16 @@ public class JackalopeEntity extends CreatureEntity
 
                     return false;
                 }
+
+                if (source.getTrueSource() instanceof LivingEntity)
+                {
+                    this.setAttackTarget((LivingEntity) source.getTrueSource());
+                }
             }
         }
 
         return super.attackEntityFrom(source, amount);
 
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
-    {
-        return 0.95F * sizeIn.height;
     }
 
     private class RammingGoal extends Goal
